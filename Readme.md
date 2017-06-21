@@ -1,5 +1,4 @@
 # weweb
----------
 
 - [简介](##简介)
 - [安装&使用方法](##安装&使用方法)
@@ -14,7 +13,9 @@ weweb是在做一个尝试，尝试把小程序转换成H5，让同一份小程�
 
 weweb的实现基于小程序开发者工具里包涵的WAService.js\WAWebview.js这二个库，这二个库官方做了混淆，我们花了大量的时间精力对他进行模块拆分整理，在理解了他的实现后做了相应的改造，在这过程中，我们参考了另一个开源项目wept, wept的作者写了几篇文章对小程序框架进行了深入的分析，让我们受益良多。在此特别感谢。
 
+
 ##安装 & 使用方法
+
 ### 源码下载 & 运行
 ```
 git clone https://github.com/wdfe/weweb.git
@@ -52,7 +53,9 @@ Options:
 
 > ** 注意事项 **
 小程序访问的后端接口不支持JSONP时，需在小程序配置文件`app.json`中添加服务器端代理地址，以实现跨域请求，配置如下：
- "requestProxy":"/remoteProxy"
+
+  "requestProxy":"/remoteProxy"
+
  //此处/remoteProxy是weweb自带server实现的一个代理接口
 
 
