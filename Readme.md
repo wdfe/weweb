@@ -69,7 +69,7 @@ Options:
 - 2、小程序转换为H5后，由于原来属于native的header与tabbar部分也变成了页面的一部分，所以页面若存在针对<page>根元素定位为fixed的元素，有可能会被header或tabbar遮挡，显示可能不正确，需自行调整。
 
 ### 感谢
-weweb前期参考了wept项目的实现，目前有部分代码也是沿用了wept的或在这基础上改造而来。在此，特别感谢wept的作者chemzqm 的无私奉献
+weweb前期参考了[wept]项目的实现，目前有部分代码也是沿用了[wept]的或在这基础上改造而来。在此，特别感谢[wept]的作者chemzqm 的无私奉献
 
 如果你有好的意见或建议，欢迎给我们提 [issue] 或 [PR]，为优化 [weweb] 贡献力量
 
