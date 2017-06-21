@@ -54,9 +54,7 @@ Options:
 
 > ** 注意事项 **
 小程序访问的后端接口不支持JSONP时，需在小程序配置文件`app.json`中添加服务器端代理地址，以实现跨域请求，配置如下：
-
   "requestProxy":"/remoteProxy"
-
  //此处/remoteProxy是weweb自带server实现的一个代理接口
 
 
