@@ -25,7 +25,7 @@ npm install
 构建：
 	gulp
 运行：
-	./bin/weweb 小程序路径
+	./bin/weweb ./demos/demo20170111/
 ```
 
 
@@ -35,8 +35,8 @@ npm install
 npm install weweb_cli -g
 
 运行示例:
-	weweb 小程序路径
-
+	#须确保./demos/demo20170111/这个位置存在你要转换的小程序
+	weweb ./demos/demo20170111/
 ```
 访问 ：
 	localhost:2000 预览转换后效果（默认端口为2000）
