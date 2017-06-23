@@ -16,6 +16,7 @@ weweb的实现基于小程序开发者工具里包涵的WAService.js\WAWebview.j
 ### 源码下载 & 运行
 ```
 git clone https://github.com/wdfe/weweb.git
+cd weweb
 npm install
 
 构建：
