@@ -209,10 +209,10 @@ function bootWebServer(){
 exec('rm -rf '+distPath+'/*',function(err,out) {
   printLog(out);
   err && printLog(err);
+  util.mkdirsSync(distPath)
+  printLog('文件将生成到:\n'+distPath);
+  doTransformFile();
 });
-util.mkdirsSync(distPath)
-printLog('文件将生成到:\n'+distPath);
-doTransformFile();
 
 process.on('uncaughtException', function (e) {
   printLog(chalk.red('发生了未知错误'))
