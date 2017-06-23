@@ -53,11 +53,23 @@ Options:
 
 
 > ** 注意事项 **
-小程序访问的后端接口不支持JSONP时，需在小程序配置文件`app.json`中添加服务器端代理地址，以实现跨域请求，配置如下：
+因转换成h5后，会存在跨域访问接口及脱离微信环境带来的一些api无法支持的问题，我们可以通过在app.json增加"weweb"配置项来解决一些常见问题：
+- 小程序访问的后端接口不支持JSONP时，可以在"weweb"项增加requestProxy这个配置项来配置服务器端代理地址，以实现跨域请求，配置如下：
 ```
-  "requestProxy":"/remoteProxy"
- //此处/remoteProxy是weweb自带server实现的一个代理接口
+"weweb":{
+  "requestProxy":"/remoteProxy"
+}
+ //此处/remoteProxy是weweb自带server实现的一个代理接口，建议接口支持jsonp格式
 ```
+- 转换成h5后将不支持小程序原生的登录方式，可以通过在"weweb"项增加loginUrl项来设置当调用wx.login时引导到设置好的h5登录页面，配置如下：
+```
+"weweb":{
+  "loginUrl":"/page/h5login"
+}
+ //注：此处的loginUrl地址必须是在app.json里注册了的小程序地址
+```
+
+
 
 ### 转换效果演示
 
