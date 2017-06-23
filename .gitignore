@@ -1,0 +1,9 @@
+.DS_Store
+npm-debug.log
+public/script
+node_modules
+.idea/
+.vscode
+build/
+tmp/bundle
+tmp/dist

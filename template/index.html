@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <link href="https://res.wx.qq.com/mpres/htmledition/images/favicon218877.ico" rel="Shortcut Icon">
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" type="text/css" href="css/index.css">
+  <meta name="viewport" content="width=device-width, height=device-height,user-scalable=no, initial-scale=1.0" />
+  <!-- <script src="/script/recorder.js"></script> -->
+</head>
+<body>
+  <audio id="audio" type="audio/mp3" style="display:none;"></audio>
+  <audio id="background-audio" type="audio/mp3" style="display:none;"></audio>
+  <div class="head">
+    <div class="jshook-ws-head" style="display: none">
+    <div class="head-back jshook-ws-head-back">
+      <i class="head-back-icon"></i>
+    <span class="jshook-ws-head-back-text"></span>
+  </div>
+  <div class="head-home jshook-ws-head-home">
+  <i class="head-home-icon"></i>
+  </div>
+  <h3 class="head-title jshook-ws-head-title">
+    <i class="head-title-loading"></i>
+    <span></span>
+  </h3>
+  <div class="head-option jshook-ws-head-option">
+
+  </div>
+  </div>
+  </div>
+  <div class="scrollable">
+  </div>
+  <div class="tabbar-root {{if _.topBar}}tabbar-root-top{{/}}">
+    {{if _.tabbarList && _.tabbarList.length}}
+    <div class="tabbar jshook-ws-tabbar" style="display:none;{{= _.tabStyle}}">
+      {{each _.tabbarList as item, idx}}
+      <div class="tabbar-item jshook-ws-tabbar-item" key="{{= idx}}">
+        {{if !_.topBar}}
+        <img class="tabbar-icon" src="{{= item.iconPath||''}}" icon="{{= item.iconPath||''}}" select-icon="{{= item.selectedIconPath||''}}" alt="" />
+        {{/}}
+        <p class="tabbar-label" style="color:{{= _.tabLabelColor}}">
+        {{= item.text||''}}
+        {{if _.topBar}}
+        <i class="tabbar-label-indicator" style="display: none; color:{{= _.tabLabelSelectedColor}}"></i>
+        {{/}}
+        </p>
+      </div>
+      {{/}}
+    </div>
+    {{/}}
+  </div>
+  <script>
+    var __wxConfig__ = {{! _.config}}
+    var __root__ = '{{= _.root}}'
+    var __ip__ = '{{= _.ip}}'
+  </script>
+  <script src="script/system.js?v={{= _.version}}"></script>
+  <script>
+    var __wxAppData = {}
+    var __wxRoute
+    var __wxRouteBegin
+    var __eval = eval
+    global = {}
+  </script>
+
+  <script src="script/view.js?v={{= _.version}}" type="text/javascript"></script>
+  <script src="script/service.js?v={{= _.version}}" type="text/javascript"></script>
+  <script src="script/app-service.js?v={{= _.version}}"></script>
+  <script>
+    ServiceJSBridge.doCommand({
+      sdkName: 'APP_SERVICE_COMPLETE'
+    })
+  </script>
+</body>
+</html>
