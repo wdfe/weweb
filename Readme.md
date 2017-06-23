@@ -29,7 +29,7 @@ npm install
 ### cli命令行工具安装
 
 ```
-npm install weweb_cli -g
+npm install weweb-cli -g
 
 运行示例:
 	weweb 小程序路径
