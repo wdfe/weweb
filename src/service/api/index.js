@@ -553,7 +553,7 @@ var apiObj = {//wx对象
         if(__wxConfig__.weweb.loginUrl.indexOf('/')!=0){
           __wxConfig__.weweb.loginUrl = '/'+__wxConfig__.weweb.loginUrl
         }
-        apiObj.navigateTo({
+        apiObj.redirectTo({
           url:__wxConfig__.weweb.loginUrl
         })
       }else{

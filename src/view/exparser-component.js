@@ -2305,9 +2305,10 @@ window.exparser.registerElement({
                     width: this.width,
                     height: this.height
                 })
-                self.mode === 'widthFix' &&
-                ((self.rate = this.width / this.height), (self.$$.style.height =
-                    self.$$.offsetWidth / self.rate + 'px'))
+              if(self.mode === 'widthFix'){
+                self.rate = this.width / this.height
+                self.$$.style.height = (self.$.div.offsetWidth || self.$$.offsetWidth) / self.rate + 'px'
+              }
             }
             document.addEventListener(
                 'pageReRender',

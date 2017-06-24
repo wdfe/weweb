@@ -1,5 +1,4 @@
 import Bus from './bus'
-import merge from 'merge'
 import Emitter from 'emitter'
 import {uid, createFrame, parsePath} from './util'
 require('whatwg-fetch')
@@ -244,6 +243,9 @@ export default class View extends Emitter {
         .then(function(response) {
             return response.text()
         }).then(function(res) {
+          if(window.__curPage__.id!=self.id){
+            return;
+          }
             let resArr = res.split('@css-body-start:')
             var func = new Function(resArr[0] + '\n return $gwx("./' + self.path + '.wxml")')
 
