@@ -1,12 +1,10 @@
 import Bus from './bus'
 import actionSheet from 'actionsheet'
 import {currentView} from './viewManage'
-import qrcode from './component/qrcode'
 import storage from './sdk/storage'
 import toast from './component/toast'
 import * as util from './util'
 
-let isWechat = /MicroMessenger/i.test(navigator.userAgent)
 let win = window.__wxConfig__['window']
 let header = {
   dom: null,
@@ -103,13 +101,6 @@ let header = {
           util.navigateHome()
         }
       },
-      qrcode: {
-        text: '手机访问',
-        callback: function () {
-          qrcode.show()
-        },
-        hide: isWechat
-      },
       clear: {
         text: '清除数据缓存',
         callback: function () {
@@ -117,12 +108,6 @@ let header = {
             storage.clear()
             toast('数据缓存已清除', {type: 'success'})
           }
-        }
-      },
-      feedback: {
-        text: '问题反馈',
-        callback: function () {
-
         }
       },
       cancel: {

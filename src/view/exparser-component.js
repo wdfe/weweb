@@ -5836,10 +5836,8 @@ window.exparser.registerElement({
                     )
                 })
                 var textarea = self.$.textarea
-                textarea.style.width =
-                    selfSizeInfo.width - lrSize[0] - lrSize[1] + 'px'
-                textarea.style.height =
-                    selfSizeInfo.height - tbSize[0] - tbSize[1] + 'px'
+                textarea.style.width = selfSizeInfo.width - lrSize[0] - lrSize[1] + 'px'
+                textarea.style.height = selfSizeInfo.height - tbSize[0] - tbSize[1] + 'px'
                 console.log(selfSizeInfo.height - tbSize[0] - tbSize[1] + 'px')
                 textarea.style.fontWeight = selfStyle.fontWeight
                 textarea.style.fontSize = selfStyle.fontSize || '16px'

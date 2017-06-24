@@ -5,7 +5,6 @@ const jrQrcode = require('jr-qrcode')
 
 module.exports = (function () {
   let overlay = document.createElement('div')
-  let ip = window.__ip__
   assign(overlay.style, {
     position: 'fixed',
     left: 0,
@@ -26,11 +25,11 @@ module.exports = (function () {
   })
 
   return {
-    show: function () {
+    show: function (url) {
       document.body.appendChild(overlay)
       let img = overlay.querySelector('img')
       let loc = window.location
-      let base64 = jrQrcode.getQrBase64(`http://${ip}:${loc.port}/${loc.hash}`, {
+      let base64 = jrQrcode.getQrBase64(url, {
         padding: 5,   //二维码四边空白，默认为10px
         width: 256,  //二维码图片宽度，默认为256px
         height: 256,  //二维码图片高度，默认为256px
