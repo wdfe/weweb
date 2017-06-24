@@ -1,12 +1,16 @@
+
+[![npm package](https://img.shields.io/npm/v/weweb-cli.svg)](https://www.npmjs.com/package/weweb-cli)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+
 # weweb
 
-- [简介](###简介)
-- [源码下载&运行](###源码下载&运行)
-- [cli命令行工具安装](###cli命令行工具安装)
-- [转换效果演示](###转换效果演示)
-- [转换效果说明](###转换效果说明)
-- [感谢](###感谢)
-- [LICENCE](###LICENCE)
+- [简介](#简介)
+- [源码下载&运行](#源码下载&运行)
+- [cli命令行工具安装](#cli命令行工具安装)
+- [转换效果演示](#转换效果演示)
+- [转换效果说明](#转换效果说明)
+- [感谢](#感谢)
+- [LICENCE](#LICENCE)
 
 
 ### 简介
