@@ -72,7 +72,7 @@ Options:
 "weweb":{
   "requestProxy":"/remoteProxy"
 }
-# 此处/remoteProxy是weweb自带server实现的一个代理接口，建议接口支持jsonp格式
+# 此处/remoteProxy是weweb自带server实现的一个代理接口，实际项目中请改成自己的真实代理地址。建议接口支持返回jsonp格式，则无需做此配置
 ```
 
 - 转换成h5后将不支持小程序原生的登录方式，可以通过在"weweb"项增加loginUrl项来设置当调用wx.login时引导到设置好的h5登录页面，配置如下：
