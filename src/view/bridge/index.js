@@ -112,7 +112,7 @@ window.addEventListener("message", function (event) {//处理地图相关通讯
     if("locationPicker" == data.module){
       systemBridge.doCommand(data);
     }
-    alert("map handle:" + JSON.stringify(data))
+    //alert("map handle:" + JSON.stringify(data))
   }
 })
 window.WeixinJSBridge = {
