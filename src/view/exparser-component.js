@@ -971,13 +971,13 @@ window.exparser.registerBehavior({
             }
         }
     },
-    _isiOS: function () {
-        var ua = window.navigator.userAgent.toLowerCase()
-        return /iphone/.test(ua)
+    _isiOS: function () {//转成h5后，此处统一返回false 不走native的处理方式
+        //var ua = window.navigator.userAgent.toLowerCase()
+        return false ///iphone/.test(ua)
     },
     _isAndroid: function () {
-        var ua = window.navigator.userAgent.toLowerCase()
-        return /android/.test(ua)
+        //var ua = window.navigator.userAgent.toLowerCase()
+        return false ///android/.test(ua)
     },
     _isMobile: function () {
         return this._isiOS() || this._isAndroid()
@@ -1877,10 +1877,12 @@ window.exparser.registerElement({
                                             _url = _arr[0],
                                             params = _arr.slice(1)
                                         self._images = self._images || {}
+/*
                                         _url = _url.replace(
                                             'wdfile://',
                                             'http://wxfile.open.weixin.qq.com/'
                                         )
+*/
 
                                         if (self._images[_url]) {
                                             ctx.drawImage.apply(
@@ -2368,10 +2370,10 @@ window.exparser.registerElement({
                         }
                     })
                 : this._srcChanged(
-                    filePath.replace(
+                    filePath/*.replace(
                         'wdfile://',
                         'http://wxfile.open.weixin.qq.com/'
-                    )
+                    )*/
                 )
         }
     },
@@ -2866,7 +2868,7 @@ window.exparser.registerElement({
 // add map sdk
 !(function () {
     window.addEventListener('DOMContentLoaded', function () {
-        if (window.__wxConfig__.nomap) return
+        if (window.__wxConfig__.weweb && window.__wxConfig__.weweb.nomap) return
         var script = document.createElement('script')
         script.async = true
         script.type = 'text/javascript'

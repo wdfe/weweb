@@ -107,9 +107,11 @@ function doTransformFile(){
   util.copyDir(rootPath+'/public', distPath, function () {
     util.copyDir('./',distPath,{filename:['.git'],extname:['.js','.json','.wxss','.css','.git','.md','.wxml']})
     core.getIndex.then(function(content){
+/*
       if(program.transform){
-        content = content.replace('var __wxConfig__ = {','var __wxConfig__ = {"weweb":{ "requestProxy":"/remoteProxy" },')
+        content = content.replace('var __wxConfig__ = {"weweb":{','var __wxConfig__ = {"weweb":{ "requestProxy":"/remoteProxy",')
       }
+*/
       util.createFile(distPath,'index.html',content,null,program.transform);
     })
 

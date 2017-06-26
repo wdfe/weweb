@@ -110,5 +110,8 @@
     "uploadFile": 10000,
     "downloadFile": 10000
   },
+  "weweb":{
+    "nomap":false
+  },
   "debug": false
 }
