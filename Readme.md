@@ -40,7 +40,7 @@ npm install
 npm install weweb-cli -g
 
 运行示例:
-	#须确保./demos/demo20170111/这个位置存在你要转换的小程序
+	#须确保./demos/demo20170111/这个位置存在你要转换的小程序,如果省略路径，则默认在当前目录查找小程序
 	weweb ./demos/demo20170111/
 ```
 访问 ：
