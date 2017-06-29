@@ -125,6 +125,7 @@ function doTransformFile(){
 
     util.readFile('./app.json').then(function(config){
       let appConfig = JSON.parse(config);
+      let tabBar = appConfig.tabBar;
       let pages = appConfig.pages;
       let count = 0;
       pages.forEach(function(path){
@@ -136,7 +137,13 @@ function doTransformFile(){
         core.getPage(fullpath).then(function(arr){
           let content = arr[0]//.replace(/(src=[\"\']?)\/+/,"$1");//对以/开始的路径做处理
           if(arr[1]){
-            content += '@css-body-start:'+arr[1].replace(/\/\*#\s*sourceMappingURL=.*\*\/$/,'');
+            arr[1] = arr[1].replace(/\/\*#\s*sourceMappingURL=.*\*\/$/,'').replace(/(position:\s*fixed\s*[^\}]*[^w]top:)\s*0\s*;/g,'$142px;');
+            if(tabBar && tabBar.list.findIndex(item => item.pagePath.replace(/^(\/|\.\/)/,'') === fullpath)!=-1){
+              if(tabBar.position!='top'){
+                arr[1] = arr[1].replace(/(position:\s*fixed\s*[^\}]*[^w]bottom:)\s*0\s*;/g,'$156px;');
+              }
+            }
+            content += '@css-body-start:'+arr[1];
           }
           util.createFile(distPath+'/src/'+path,file+'.js',content,function(){
             count++;

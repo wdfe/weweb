@@ -34,6 +34,7 @@ var Tabbar = {
   },
   select: function(path){
     let list = tabBar.list || []
+    this.activeIdx = -1
     for(let i in list){
       if(list[i].pagePath === path){
         this.activeIdx = i

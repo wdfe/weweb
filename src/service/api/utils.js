@@ -219,6 +219,9 @@ function convertObjectValueToString(obj) {//把对象元素都转成字符串
         return res
     }, {})
 }
+function renameProperty(obj, oldName, newName) {
+  isObject(obj) !== !1 && oldName != newName && obj.hasOwnProperty(oldName) && (obj[newName] = obj[oldName], delete obj[oldName])
+}
 
 var words = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
     btoa = btoa ||
@@ -265,5 +268,6 @@ export default  {
     convertObjectValueToString: convertObjectValueToString,
     anyTypeToString: surroundByTryCatchFactory(anyTypeToString, "anyTypeToString"),
     stringToAnyType: surroundByTryCatchFactory(stringToAnyType, "stringToAnyType"),
-    AppServiceSdkKnownError: AppServiceSdkKnownError
+  AppServiceSdkKnownError: AppServiceSdkKnownError,
+  renameProperty: renameProperty
 }

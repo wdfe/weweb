@@ -8,7 +8,7 @@ const initFontSize = function () {
       let screenWidth = window.innerWidth > 0
         ? window.innerWidth
         : screen.width
-      //screenWidth = screenWidth>375?375:screenWidth
+      screenWidth = screenWidth>375?375:screenWidth
       document.documentElement.style.fontSize = screenWidth / Enums.RPX_RATE + 'px'
     },
     1e3
