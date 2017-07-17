@@ -101,6 +101,7 @@
     "minimatch": "^3.0.2",
     "nprogress": "^0.2.0",
     "pinch-zoom": "^0.3.8",
+    "prettier-standard": "^5.1.0",
     "prop-detect": "^1.1.0",
     "radio-component": "0.0.2",
     "react": "^15.4.0",
