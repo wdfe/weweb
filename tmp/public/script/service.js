@@ -2263,6 +2263,27 @@ var wd =
 	  hideToast: function hideToast(e) {
 	    _bridge2.default.invokeMethod("hideToast", e);
 	  },
+	  showLoading: function showLoading() {
+	    var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {},
+	        defaultArgs = { title: "", icon: "loading", mask: !1, duration: 1e8 };
+	    defaultArgs = _utils2.default.extend(defaultArgs, params);
+	    params.image && (defaultArgs.image = _utils2.default.getRealRoute(currUrl, params.image, !1));
+	    paramCheck("showLoading", defaultArgs, {
+	      duration: 1,
+	      title: ""
+	    }) && _bridge2.default.invokeMethod("showToast", defaultArgs, {
+	      beforeAll: function beforeAll(res) {
+	        res.errMsg = res.errMsg.replace("showToast", "showLoading");
+	      }
+	    });
+	  },
+	  hideLoading: function hideLoading(args) {
+	    _bridge2.default.invokeMethod("hideToast", args, {
+	      beforeAll: function beforeAll(res) {
+	        res.errMsg = res.errMsg.replace("hideToast", "hideLoading");
+	      }
+	    });
+	  },
 	  showActionSheet: function showActionSheet() {
 	    var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {},
 	        options = {

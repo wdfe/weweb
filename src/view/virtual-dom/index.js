@@ -9,7 +9,7 @@ import Init from './Init'
 Init.init()
 
 window.__mergeData__ = AppData.mergeData
-window.__DOMTree__ = void 0
+window.__DOMTree__ = void 0//虚拟dom生成的domtree
 window.firstRender = 0
 let domReady = '__DOMReady'
 let rootNode = void 0
@@ -115,7 +115,7 @@ const firstTimeRender = function (event) {
 
 const reRender = function (event) {
     let newBodyNode = createBodyNode(event.data)
-    if(window.__curPage__ && window.__curPage__.rootNode!=rootNode){
+    if(window.__curPage__ && window.__curPage__.rootNode!=rootNode){//切换页面了
         rootNode = window.__curPage__.rootNode
     }
     let patch = rootNode.diff(newBodyNode)

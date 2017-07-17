@@ -20,13 +20,13 @@ const diffNode = function (oriEle, newEle, patches, index) {
         if (
           oriEle.tagName === newEle.tagName && oriEle.wxKey === newEle.wxKey
         ) {
-          if (oriEle.tagName === 'virtual' && oriEle.wxVkey !== newEle.wxVkey) {
+          if (oriEle.tagName === 'virtual' && oriEle.wxVkey !== newEle.wxVkey) {//虚拟节点变化
             patch = appendPatch(
               patch,
               new VPatch(Enums.PATCH_TYPE.VNODE, oriEle, newEle)
             )
           } else {
-            let propPatches = diffProps(newEle.props, newEle.newProps)
+            let propPatches = diffProps(newEle.props, newEle.newProps)//属性变化
             propPatches &&
               (patch = appendPatch(
                 patch,

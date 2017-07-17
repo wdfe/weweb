@@ -842,6 +842,27 @@ var apiObj = {//wx对象
   hideToast: function (e) {
     bridge.invokeMethod("hideToast", e)
   },
+  showLoading: function () {
+    var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {},
+      defaultArgs = {title: "", icon: "loading", mask: !1, duration: 1e8};
+    defaultArgs = utils.extend(defaultArgs, params)
+    params.image && (defaultArgs.image = utils.getRealRoute(currUrl, params.image, !1))
+    paramCheck("showLoading", defaultArgs, {
+      duration: 1,
+      title: ""
+    }) && bridge.invokeMethod("showToast", defaultArgs, {
+      beforeAll: function (res) {
+        res.errMsg = res.errMsg.replace("showToast", "showLoading")
+      }
+    })
+  },
+  hideLoading: function (args) {
+    bridge.invokeMethod("hideToast", args, {
+      beforeAll: function (res) {
+        res.errMsg = res.errMsg.replace("hideToast", "hideLoading")
+      }
+    })
+  },
   showActionSheet: function () {
     var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {},
       options = {
