@@ -5,8 +5,8 @@ const now = Date.now()
 export function triggerEvent (target, type, detail, options) {
   options = options || {}
   let originalEvent = options.originalEvent,
-    bubbles = !options.bubbles,
-    composed = !options.composed,
+    noBubbles = !options.bubbles,
+    noComposed = !options.composed,
     extraFields = options.extraFields || {},
     stopTarget = false,
     timeStamp = Date.now() - now,
@@ -40,8 +40,8 @@ export function triggerEvent (target, type, detail, options) {
     eventOpt.currentTarget = targetEle
     const res = event.call(targetEle, [eventOpt])
     if (res === !1) {
-        preventDefault()
-        stopTarget = !0
+      preventDefault()
+      stopPropagation()
     }
   }
   let targetParent = nTarget.parentNode
@@ -53,14 +53,14 @@ export function triggerEvent (target, type, detail, options) {
       if (targetEle.__wxEvents) {
         targetEle.__wxEvents[type] && exeEvent(targetEle.__wxEvents[type], targetEle)
       }
-      return !bubbles && !stopTarget
+      return !noBubbles && !stopTarget
     }
     return false
   }
 
   for (; goAhead();) {
     if (targetEle.__host) {
-      if (composed) break
+      if (noComposed) break
       if (!(targetParent && targetParent.__domElement)) {
         targetParent = targetEle.__host
         eventOpt.target = targetParent
@@ -71,7 +71,7 @@ export function triggerEvent (target, type, detail, options) {
       if (targetEle.__domElement || targetEle.__virtual) {
         isDomOrVirtualEle = !1
       }
-      targetEle = isDomOrVirtualEle || composed ? targetEle.parentNode : targetEle.__slotParent
+      targetEle = isDomOrVirtualEle || noComposed ? targetEle.parentNode : targetEle.__slotParent
     }
   }
 }

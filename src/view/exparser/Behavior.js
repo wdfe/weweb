@@ -39,9 +39,9 @@ Behavior.create = function (opt) {
     for (prop in currBehavior.methods) {
       insBehavior.methods[prop] = currBehavior.methods[prop]
     }
-    for (let ancestorIte = 0; ancestorIte < currBehavior.ancestors.length; ancestorIte++) {
-      if (ancestors.indexOf(currBehavior.ancestors[ancestorIte]) < 0) {
-        ancestors.push(currBehavior.ancestors[ancestorIte])
+    for (let i = 0; i < currBehavior.ancestors.length; i++) {
+      if (ancestors.indexOf(currBehavior.ancestors[i]) < 0) {
+        ancestors.push(currBehavior.ancestors[i])
       }
     }
   }
@@ -79,11 +79,11 @@ Behavior.prototype.getAllListeners = function () {
   let tempObj = Object.create(null), ancestors = this.ancestors, idx = 0
   for (; idx < ancestors.length; idx++) {
     let ancestor = this.ancestors[idx]
-    for (let listener in ancestor.listeners) {
-      if (tempObj[listener]) {
-        tempObj[listener].push(ancestor.listeners[listener])
+    for (let key in ancestor.listeners) {
+      if (tempObj[key]) {
+        tempObj[key].push(ancestor.listeners[key])
       } else {
-        tempObj[listener] = [ancestor.listeners[listener]]
+        tempObj[key] = [ancestor.listeners[key]]
       }
     }
   }
@@ -93,11 +93,11 @@ Behavior.prototype.getAllListeners = function () {
 Behavior.prototype.getAllLifeTimeFuncs = function () {
   let tempObj = Object.create(null),
     ancestors = this.ancestors
-  cycle.forEach(function (cyc) {
-    let lifeTimeFunc = tempObj[cyc] = Events.create('Lifetime Method'), idx = 0
+  cycle.forEach(function (key) {
+    let lifeTimeFunc = tempObj[key] = Events.create('Lifetime Method'), idx = 0
     for (; idx < ancestors.length; idx++) {
       let ancestor = ancestors[idx]
-      ancestor[cyc] && lifeTimeFunc.add(ancestor[cyc])
+      ancestor[key] && lifeTimeFunc.add(ancestor[key])
     }
   })
   return tempObj

@@ -16,7 +16,7 @@ Events._setGlobalOptionsGetter = function (opt) {
 Events.create = function (type) {
   const viewUtilObject = Object.create(Events.prototype)
   viewUtilObject.empty = true
-  viewUtilObject._type = type
+  viewUtilObject._type = type//错误报告用到区分事件类型
   viewUtilObject._arr = []
   viewUtilObject._index = 0
   return viewUtilObject
@@ -53,13 +53,13 @@ Events.prototype.remove = function (itemToRemove) {
   return false
 }
 
-Events.prototype.call = function (ele, args) {
-  let _arr = this._arr, isCallFailed = false, idx = 0
+Events.prototype.call = function (ele, args) {//以element执行注册的所有方法
+  let _arr = this._arr, isPreventDefault = false, idx = 0
   for (; idx < _arr.length; idx++) {
     let res = safeCallback(this._type, _arr[idx].func, ele, args)
-    res === false && (isCallFailed = true)
+    res === false && (isPreventDefault = true)
   }
-  if (isCallFailed) {
+  if (isPreventDefault) {
     return false
   }
 }
@@ -68,7 +68,7 @@ const globalError = Events.create()
 const errHandle = function (err, errData) {
   if (!errData.type || globalError.call(null, [err, errData]) !== false) {
     console.error(errData.message)
-    if (globalOptions().throwGlobalError) {
+    if (globalOptions().throwGlobalError) {//是否扔出错误
       throw err
     }
     console.error(err.stack)
@@ -93,7 +93,7 @@ const safeCallback = function (type, method, element, args) {//以element执行�
 
 Events.safeCallback = safeCallback
 
-Events.addGlobalErrorListener = function (func) {
+Events.addGlobalErrorListener = function (func) {//注册出错时的处理方法
   return globalError.add(func)
 }
 

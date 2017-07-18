@@ -65,7 +65,7 @@ function applyProperties (ele, props) {
               if (isElementAttribute) {
                 if (propName === 'style') {
                   !(function () {
-                    let animationStyle = ele.animationStyle || {},
+                    let animationStyle = ele.animationStyle || {},//动画执行结果样式
                       transition = animationStyle.transition,
                       transform = animationStyle.transform,
                       transitionProperty = animationStyle.transitionProperty,
@@ -91,8 +91,8 @@ function applyProperties (ele, props) {
 
                     const refinedAttrs = Object.keys(cssAttributes)
                       .filter(function (attribute) {
-                        return !((/transform|transition/i.test(attribute) &&
-                          cssAttributes[attribute] === '') ||
+                        return !(
+                          (/transform|transition/i.test(attribute) && cssAttributes[attribute] === '') ||
                           attribute.trim() === '' ||
                           void 0 === cssAttributes[attribute] ||
                           cssAttributes[attribute] === '' ||
@@ -119,8 +119,7 @@ function applyProperties (ele, props) {
                 }
               } else {
                 const isAnimationProp = propName === 'animation' && typeof(propValue) === 'object'
-                const isPropHasActions = propValue.actions &&
-                  propValue.actions.length > 0
+                const isPropHasActions = propValue.actions && propValue.actions.length > 0
                 if (isAnimationProp && isPropHasActions) {
                   !(function () {
                     const execAnimationAction = function () {

@@ -10,7 +10,7 @@ let loadedApp = false;
 var BASE_DEVICE_WIDTH = 750
 var EPS = 0.0001
 var RPXRE = /%%\?[+-]?\d+(\.\d+)?rpx\?%%/g
-var widthScreen = window.innerWidth>375?375:window.innerWidth
+var widthScreen = window.innerWidth//>375?375:window.innerWidth
 var ratio = window.devicePixelRatio
 function transformByDPR(a, width, dpr) {
     a = a / BASE_DEVICE_WIDTH * width

@@ -96,26 +96,26 @@ const childObserver = function (ele, observerName, targetNode) {
     Observer._callObservers(ele, '__childObservers', opt)
   }
 }
-const attachShadowRoot = function (originalParentNode, newNode, oldNode, willRemoveOldNode) {
+const attachShadowRoot = function (originalParentNode, newNode, oldNode, isRemoveOldNode) {//增、删、改节点
   let copyOfOriginalElement = originalParentNode
-    //从父节点中找出非virtual节点为copyOfOriginalElement
+    //找dom根节点
   if (copyOfOriginalElement instanceof Element) {
     for (; copyOfOriginalElement.__virtual;) {
       let slotParent = copyOfOriginalElement.__slotParent
       if (!slotParent) {
         return
       }
-      if (newNode && !oldNode) {
+      if (newNode && !oldNode) {//为插入新节点做铺垫
         let oldNodeIdx = slotParent.__slotChildren.indexOf(copyOfOriginalElement)
         oldNode = slotParent.__slotChildren[oldNodeIdx + 1]
       }
       copyOfOriginalElement = slotParent
     }
-    copyOfOriginalElement instanceof Element && (copyOfOriginalElement = copyOfOriginalElement.__domElement)
+    copyOfOriginalElement = copyOfOriginalElement.__domElement
   }
 
   let newDomEle = null
-  if (newNode) {
+  if (newNode) {//找newNode的dom节点
     if (newNode.__virtual) {
       let fragment = document.createDocumentFragment()
       let appendDomElement = function (ele) {
@@ -134,9 +134,9 @@ const attachShadowRoot = function (originalParentNode, newNode, oldNode, willRem
   let oldDomEle = null
   if (oldNode) {
     if (oldNode.__virtual) {
-      let origParentNode = originalParentNode
+      let oldParentNode = originalParentNode
       let oldNodeIdx = 0
-      if (willRemoveOldNode) {
+      if (isRemoveOldNode) {
         let removeDomElement = function (ele) {
           for (let slotChildIdx = 0; slotChildIdx < ele.__slotChildren.length; slotChildIdx++) {
             let slotChild = ele.__slotChildren[slotChildIdx]
@@ -144,11 +144,11 @@ const attachShadowRoot = function (originalParentNode, newNode, oldNode, willRem
           }
         }
         removeDomElement(oldNode)
-        willRemoveOldNode = !1
+        isRemoveOldNode = !1
         oldNodeIdx = originalParentNode.__slotChildren.indexOf(oldNode) + 1
       } else {
-        origParentNode = oldNode.__slotParent
-        oldNodeIdx = origParentNode.__slotChildren.indexOf(oldNode)
+        oldParentNode = oldNode.__slotParent
+        oldNodeIdx = oldParentNode.__slotChildren.indexOf(oldNode)
       }
       if (newNode) {
         let findNonVirtualNode = function (ele, idx) {
@@ -164,9 +164,9 @@ const attachShadowRoot = function (originalParentNode, newNode, oldNode, willRem
           }
         }
         oldNode = null
-        let nOrigParentNode = origParentNode
-        for (; oldNode = findNonVirtualNode(nOrigParentNode, oldNodeIdx), !oldNode && nOrigParentNode.__virtual; nOrigParentNode = nOrigParentNode.__slotParent) {
-          oldNodeIdx = nOrigParentNode.__slotParent.__slotChildren.indexOf(nOrigParentNode) + 1
+        let curOldParentNode = oldParentNode
+        for (; oldNode = findNonVirtualNode(curOldParentNode, oldNodeIdx), !oldNode && curOldParentNode.__virtual; curOldParentNode = curOldParentNode.__slotParent) {
+          oldNodeIdx = curOldParentNode.__slotParent.__slotChildren.indexOf(curOldParentNode) + 1
         }
         oldNode && (oldDomEle = oldNode.__domElement)//??是否存在的!oldNode 但nOrigParentNode.__virtual为false?
       }
@@ -175,7 +175,7 @@ const attachShadowRoot = function (originalParentNode, newNode, oldNode, willRem
     }
   }
 
-  if (willRemoveOldNode) {
+  if (isRemoveOldNode) {
     newDomEle ? copyOfOriginalElement.replaceChild(newDomEle, oldDomEle) : copyOfOriginalElement.removeChild(oldDomEle)
   } else {
     newDomEle && (oldDomEle ? copyOfOriginalElement.insertBefore(newDomEle, oldDomEle) : copyOfOriginalElement.appendChild(newDomEle))
