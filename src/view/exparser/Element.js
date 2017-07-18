@@ -111,7 +111,7 @@ const attachShadowRoot = function (originalParentNode, newNode, oldNode, isRemov
       }
       copyOfOriginalElement = slotParent
     }
-    copyOfOriginalElement = copyOfOriginalElement.__domElement
+    copyOfOriginalElement instanceof Element &&(copyOfOriginalElement = copyOfOriginalElement.__domElement)
   }
 
   let newDomEle = null
