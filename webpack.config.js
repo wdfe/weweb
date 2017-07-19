@@ -82,7 +82,9 @@ const varTypeModuleConfigService = Object.assign({}, commonConfig, {
 const normalModuleConfig = Object.assign({}, commonConfig, {
     entry: {
         "virtual-dom": getSourcePath('view/virtual-dom/'),
-        "exparser-component": getSourcePath('view/exparser-component.js')
+        "exparser-component": getSourcePath('view/exparser-component.js'),
+        "behaviors":getSourcePath('view/behaviors/'),
+        "components":getSourcePath('view/components/')
     },
     output: {
         filename: '[name].js',

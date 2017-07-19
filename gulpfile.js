@@ -33,6 +33,8 @@ gulp.task('build', function (callback) {
       './tmp/bundle/view/wx.js',
       './tmp/bundle/view/exparser.js',
       './tmp/bundle/view/exparser-component.js',
+        './tmp/bundle/view/behaviors.js',
+        './tmp/bundle/view/components.js',
       './tmp/bundle/view/virtual-dom.js',
       './tmp/bundle/view/common.js'
     ]
@@ -66,6 +68,8 @@ gulp.task('concat', function (callback) {
     './tmp/bundle/view/wx.js',
     './tmp/bundle/view/exparser.js',
     './tmp/bundle/view/exparser-component.js',
+      './tmp/bundle/view/behaviors.js',
+      './tmp/bundle/view/components.js',
     // './tmp/bundle/old/view-exparser-ext.js',
     './tmp/bundle/view/virtual-dom.js',
     './tmp/bundle/view/common.js'
