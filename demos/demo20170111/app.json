@@ -45,6 +45,7 @@
     "page/API/pages/template-message/template-message",
 
     "page/API/pages/set-navigation-bar-title/set-navigation-bar-title",
+    "page/API/pages/set-navigation-bar-color/set-navigation-bar-color",
     "page/API/pages/navigation-bar-loading/navigation-bar-loading",
     "page/API/pages/navigator/navigator",
     "page/API/pages/pull-down-refresh/pull-down-refresh",
