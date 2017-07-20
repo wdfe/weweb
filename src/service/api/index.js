@@ -26,6 +26,22 @@ function paramCheck(apiName, params, paramTpl) {
   return !res || (logErr(apiName, params, apiName + ":fail parameter error: " + res), !1)
 }
 
+function paramCheckFail(apiName){
+    var res = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {},
+        n = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : "",
+        errMsg = apiName + ":fail " + n;
+    console.error(errMsg);
+    var fail = Reporter.surroundThirdByTryCatch(options.fail || emptyFn, "at api " + apiName + " fail callback function"),
+        complete = Reporter.surroundThirdByTryCatch(options.complete || emptyFn, "at api " + apiName + " complete callback function");
+    fail({
+        errMsg: errMsg
+    })
+    complete({
+        errMsg: errMsg
+    })
+
+}
+
 function checkUrl(apiName, params) { //判断当前页面是否在app.json里
   var matchArr = /^(.*)\.html/gi.exec(params.url);
   return !matchArr || __wxConfig__.pages.indexOf(matchArr[1]) !== -1 || (logErr(apiName, params, apiName + ":fail url not in app.json"), !1)
@@ -131,6 +147,27 @@ var apiObj = {//wx对象
       })
     }
   },
+  //关闭所有页面，打开到应用内的某个页面
+  reLaunch: function (params) {
+      arguments.length > 1 && void 0 !== arguments[1] && arguments[1];
+      if("active" != utils.defaultRunningStatus){
+        return paramCheckFail("reLaunch",params,"can not invoke reLaunch in background");
+      }
+      if(paramCheck("reLaunch", params, {url: ""})){
+          params.url =  utils.getRealRoute(currUrl, params.url)
+          params.url =  utils.encodeUrlQuery(params.url)
+          checkUrl("reLaunch", params) &&  bridge.invokeMethod("reLaunch", params, {
+              afterSuccess: function () {
+                  currUrl = params.url
+              },afterFail: function () {
+              console.log('failed')
+            }
+
+          })
+      }
+
+  },
+
   navigateTo: function (params) {
     arguments.length > 1 && void 0 !== arguments[1] && arguments[1];
     if(paramCheck("navigateTo", params, {url: ""})){
@@ -698,6 +735,9 @@ var apiObj = {//wx对象
   },
   onAppEnterForeground: function (params) {
     appContextSwitch.onAppEnterForeground.call(apiObj, params)
+  },
+  onAppRunningStatusChange:function (params) {
+    appContextSwitch.onAppRunningStatusChange.call(apiObj, params)
   },
   setAppData: function (data) {
     var options = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {},

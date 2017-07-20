@@ -62,6 +62,9 @@ var localImgDataIng = !1,
       navigateTo: function (params) {
         defInvoke("navigateTo", params)
       },
+      reLaunch:function (params) {
+        defInvoke("reLaunch", params)
+      },
       switchTab: function (params) {
         defInvoke("switchTab", params)
       },

@@ -91,9 +91,14 @@ export function onBack() {
 export function onNavigate(data, type = 'navigateTo') {
   if (!data.args.url) throw new Error('url not found')
   let view = currentView()
+  console.log(view)
   if ((type == 'navigateTo' || type == 'redirectTo')
-      && isTabbar(view.url)) {
+      && isTabbar(view.path)) {
     console.error('wx.navigateTo wx.redirectTo 不允许跳转到 tabbar 页面，请使用 wx.switchTab')
+    return
+  }
+  if(type == 'reLaunch' && isTabbar(view.path) && view.query){
+     console.error('wx.reLaunch 跳转到 tabbar 页面时不允许携带参数，请去除参数或使用 wx.switchTab')
     return
   }
   //message({

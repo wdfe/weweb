@@ -69,7 +69,23 @@ export function navigateTo(path) {
     }
     onRoute()
 }
-
+export function reLaunch(path) {
+  path = normalize(path)
+  let exists = tabViews[path]
+  if (curr) curr.hide()
+  if (exists) {
+    curr = exists
+    exists.show()
+  } else {
+    let isTabView = util.isTabbar(path)
+    let v = curr = new View(path)
+    curr.pid = null
+    views = []
+    views[v.id] = v
+    if (isTabView) tabViews[path] = curr
+  }
+  onRoute()
+}
 export function switchTo(path) {
     path = normalize(path)
     if (util.isTabbar(curr.path)) curr.hide()

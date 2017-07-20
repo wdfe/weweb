@@ -63,6 +63,10 @@ export default  window.exparser.registerElement({
                 return void wx.switchTab({
                     url: this.url
                 })
+          case"reLaunch":
+                return void wx.reLaunch({
+                    url: this.url
+                })
             default:
                 return void console.error(
                     'navigator: invalid openType ' + this.openType

@@ -168,6 +168,11 @@ var skipPage = function(routePath, pWebViewId, pageParams, pApiKey) {//打开、
             pageUnload(pageItem);
         }
         isExist || utils.error("Page route 错误(system error)", "navigateBack with an unexist webviewId " + pWebViewId);
+    }else if ("reLaunch" === pApiKey) {
+        currentPage && pageUnload(currentPage);
+        pageStackObjs.hasOwnProperty(pWebViewId) ?
+          utils.error("Page route 错误(system error)", "redirectTo with an already exist webviewId " + pWebViewId) :
+         pageParse(routePath, pWebViewId, pageParams);
     } else if ("switchTab" === pApiKey) {
         for (var onlyOnePage = !0; pageStack.length > 1;) {
             pageUnload(pageStack[pageStack.length - 1]);

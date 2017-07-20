@@ -268,6 +268,7 @@ export default  {
     convertObjectValueToString: convertObjectValueToString,
     anyTypeToString: surroundByTryCatchFactory(anyTypeToString, "anyTypeToString"),
     stringToAnyType: surroundByTryCatchFactory(stringToAnyType, "stringToAnyType"),
-  AppServiceSdkKnownError: AppServiceSdkKnownError,
-  renameProperty: renameProperty
+    AppServiceSdkKnownError: AppServiceSdkKnownError,
+    renameProperty: renameProperty,
+    defaultRunningStatus : "active"
 }

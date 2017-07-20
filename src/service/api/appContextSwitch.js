@@ -3,6 +3,7 @@
 import pubsub from './bridge'
 import EventEmitter2 from './EventEmitter2'
 import configFlags from './configFlags'
+import utils from './utils'
 
 
 var eventEmitter = new EventEmitter2();
@@ -16,6 +17,13 @@ pubsub.onMethod("onAppEnterBackground",
   function () {
     var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
     eventEmitter.emit("onAppEnterBackground", params)
+  }
+);
+pubsub.onMethod("onAppRunningStatusChange",
+  function () {
+    var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
+    utils.defaultRunningStatus = params.status;
+    eventEmitter.emit("onAppRunningStatusChange", params)
   }
 );
 
@@ -45,9 +53,15 @@ var onAppEnterBackground = function (fn) {
     "function" == typeof fn && fn(params)
   })
 };
+var onAppRunningStatusChange = function (fn) {
+  eventEmitter.on("onAppRunningStatusChange",function (params) {
+    "function"  == typeof fn && fn(params)
+  })
+};
 
 export default {
   onAppEnterForeground: onAppEnterForeground,
-  onAppEnterBackground: onAppEnterBackground
+  onAppEnterBackground: onAppEnterBackground,
+  onAppRunningStatusChange: onAppRunningStatusChange
 }
 

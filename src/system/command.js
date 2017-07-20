@@ -141,6 +141,12 @@ export function navigateTo(data) {
   viewManage.navigateTo(data.args.url)
   onNavigate(data, 'navigateTo')
 }
+export function reLaunch (data) {
+  sessionStorage.clear()
+  Nprogress.start()
+  viewManage.reLaunch(data.args.url)
+  onNavigate(data, 'reLaunch')
+}
 
 export function navigateBack(data) {
   data.args = data.args || {}
