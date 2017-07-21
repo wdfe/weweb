@@ -129,6 +129,48 @@ let header = {
   onHome:function() {
     util.navigateHome()
   },
+  setNavigationBarColor: function(style) { 
+    // insert keyframes
+    // https://stackoverflow.com/questions/18481550/how-to-dynamically-create-keyframe-css-animations
+    // https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleSheet/insertRule
+    var styleEl = document.createElement('style'), addKeyFrames = null
+    document.head.appendChild(styleEl)
+    var styleSheet = styleEl.sheet
+    if (CSS && CSS.supports && CSS.supports('animation: name')) {
+      // we can safely assume that the browser supports unprefixed version.
+      addKeyFrames = function (name, frames) {
+        var pos = styleSheet.cssRules.length
+        styleSheet.insertRule('@keyframes ' + name + '{' + frames + '}', pos)
+      }
+    } else {
+      addKeyFrames = function (name, frames) {
+        // Ugly and terrible, but users with this terrible of a browser
+        // *cough* IE *cough* don't deserve a fast site
+        var str = name + '{' + frames + '}', pos = styleSheet.cssRules.length
+        styleSheet.insertRule('@-webkit-keyframes ' + str, pos)
+        styleSheet.insertRule('@keyframes ' + str, pos + 1)
+      }
+    }
+
+    const timingFuncMapping = {
+      'linear': 'linear',
+      'easeIn': 'ease-in',
+      'easeOut': 'ease-out',
+      'easeInOut': 'ease-in-out',
+    }
+    if (style.animation) {
+      console.log(this.state.backgroundColor, style.backgroundColor)
+      addKeyFrames(
+        'bgcAnimation',
+        `0% {background-color: ${this.state.backgroundColor}} 100% {background-color: ${style.backgroundColor}`
+      )
+      this.dom.head.style.animation = `bgcAnimation ${style.animation.duration || 0}ms ${timingFuncMapping[style.animation.timingFunc] || 'linear'} forwards`
+    } else {
+      this.dom.head.style.backgroundColor = style.backgroundColor
+    }
+    this.state.backgroundColor = style.backgroundColor
+
+  },
   setState:function(data){
     if(data)Object.assign(this.state,data);
     let state = this.state;

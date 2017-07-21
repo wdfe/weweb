@@ -283,6 +283,16 @@ export function setNavigationBarTitle(data) {
   if (title) header.setTitle(title)
 }
 
+export function setStatusBarStyle(data) {
+  let color = data.args.color
+  if (color) header.setState({color: color})
+}
+
+export function setNavigationBarColor(data) {
+  let styles = data.args
+  if (styles) header.setNavigationBarColor(styles)
+}
+
 export function showNavigationBarLoading() {
   header.showLoading()
 }
