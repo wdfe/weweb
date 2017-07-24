@@ -1,10 +1,4 @@
-function toArray(arg) { // 把e转成array
-    if (Array.isArray(arg)) {
-        for (var t = 0, n = Array(arg.length); t < arg.length; t++) n[t] = arg[t]
-        return n
-    }
-    return Array.from(arg)
-}
+import utils from './utils';
 
 class Animation {
     constructor(...options) {
@@ -37,7 +31,7 @@ class Animation {
         })
         this.actions.push({
             animates: Object.keys(this.currentTransform).reduce(function (res, cur) {
-                return [].concat(toArray(res), [that.currentTransform[cur]])
+                return [].concat(utils.toArray(res), [that.currentTransform[cur]])
             }, []),
             option: {
                 transformOrigin: typeof params.transformOrigin !== 'undefined' ? params.transformOrigin : this.option.transformOrigin,

@@ -53,6 +53,7 @@ function checkUrl(apiName, params) { //判断当前页面是否在app.json里
 var emptyFn = function () {},
   pageData = {},
   currUrl = "",
+  SDKVersion = "1.4.2",
   appRouteCallbacks = [],
   appRouteDoneCallback = [],
   pageEventFn = void 0,
@@ -970,6 +971,13 @@ var apiObj = {//wx对象
       }
     })
   },
+  canIuse: function () {
+    var param1 = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "",
+        param2 = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : SDKVersion;
+    if ("string" != typeof param1)throw new utils.AppServiceSdkKnownError("canIUse: schema should be an object");
+    var params = param1.split(".");
+    return utils.canIUse(utils.toArray(params),param2);
+  }
 };
 
 apiObj.onAppEnterBackground(),
