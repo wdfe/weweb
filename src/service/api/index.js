@@ -121,6 +121,36 @@ var apiObj = {//wx对象
   onPullDownRefresh: function (e) {
     console.log("onPullDownRefresh has been removed from api list")
   },
+  setNavigationBarColor:function () {
+    var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {}
+    if (
+      paramCheck('setNavigationBarColor', params, {
+        frontColor: '',
+        backgroundColor: ''
+      })
+    ) {
+      if (['#ffffff', '#000000'].indexOf(params.frontColor) === -1) {
+        logErr(
+          'setNavigationBarColor',
+          params,
+          'invalid frontColor "' + params.frontColor + '"'
+        )
+      }
+
+      params.frontColor === '#ffffff'
+        ? bridge.invokeMethod('setStatusBarStyle', {
+          color: 'white'
+        })
+        : params.frontColor === '#000000' &&
+            bridge.invokeMethod('setStatusBarStyle', {
+              color: 'black'
+            })
+
+      var t = Object.assign({}, params)
+      delete t.alpha
+      bridge.invokeMethod('setNavigationBarColor', t)
+    }
+  },
   setNavigationBarTitle: function () {
     var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
     paramCheck("setNavigationBarTitle", params, {

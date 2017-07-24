@@ -34,6 +34,10 @@ Page({
           {
             zh: '设置界面标题',
             url: 'set-navigation-bar-title/set-navigation-bar-title'
+          },
+           {
+            zh: '设置标题栏颜色',
+            url: 'set-navigation-bar-color/set-navigation-bar-color'
           }, {
             zh: '标题栏加载动画',
             url: 'navigation-bar-loading/navigation-bar-loading'
