@@ -147,7 +147,32 @@ export function reLaunch (data) {
   viewManage.reLaunch(data.args.url)
   onNavigate(data, 'reLaunch')
 }
-
+//页面滚动API
+export function pageScrollTo (param) {
+    var scrollable = document.querySelector(".scrollable"), scrollTop = param.args.scrollTop;
+    if (void 0 !== scrollTop) {
+        scrollTop< 0 && (scrollTop = 0);
+        var clientHeight = getWindowHeight(), scrollHeight = getScrollHeight();
+        scrollTop > scrollHeight - clientHeight && (scrollTop = scrollHeight - clientHeight);
+        var init = function() {
+            scrollable.style.transition = "";
+            scrollable.style.webkitTransition = "";
+            scrollable.style.transform = "";
+            scrollable.style.webkitTransform = "";
+            scrollable.scrollTop = scrollTop;
+            scrollable.removeEventListener("transitionend", param);
+            scrollable.removeEventListener("webkitTransitionEnd", param);
+        },
+            l = "translateY(" + (scrollable.scrollTop - scrollTop) + "px) translateZ(0)";
+        scrollable.style.transition = "transform .3s ease-out";
+        scrollable.style.webkitTransition = "-webkit-transform .3s ease-out";
+        scrollable.addEventListener("transitionend", init);
+        scrollable.addEventListener("webkitTransitionEnd", init);
+        scrollable.style.transform = l;
+        scrollable.style.webkitTransform = l;
+        scrollable.style.scrollTop = scrollTop;
+    }
+}
 export function navigateBack(data) {
   data.args = data.args || {}
   data.args.url = viewManage.currentView().path + '.html'
@@ -886,4 +911,25 @@ function publishPagEevent(eventName, extra) {
     }
   }
   toAppService(obj)
+}
+
+function getWindowHeight () {
+  var scrollable = document.querySelector(".scrollable");
+    return  scrollable.clientHeight;
+}
+function getScrollHeight (){
+    var e = 0, t = 0;
+    var scrollable = document.querySelector(".scrollable");
+    return scrollable && (e = scrollable.scrollHeight);
+}
+function checkScrollBottom(){
+    var t = o - window.scrollY <= 0;
+    return o = window.scrollY, !!(window.scrollY + n() + e >= i() && t)
+}
+var a = !1,
+    s =  !0;
+function triggerPullUpRefresh (){
+    s && !a && (wx.publishPageEvent("onReachBottom", {}), s = !1, setTimeout(function () {
+        s = !0
+    }, 350))
 }

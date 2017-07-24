@@ -209,6 +209,18 @@ var apiObj = {//wx对象
     console.log(111);
     return  new utils.wxQuerySelector(t);
   },
+
+  pageScrollTo: function(param){ //将页面滚动到目标位置
+    var target = getCurrentPages(),
+        viewId = target[target.length - 1].__wxWebviewId__;
+        if(param.hasOwnProperty("page") && param.page.hasOwnProperty("__wxWebviewId__")) {
+            viewId = param.page.__wxWebviewId__;
+        }
+
+      bridge.invokeMethod("pageScrollTo", param, [viewId]);
+
+  },
+
   navigateTo: function (params) {
     arguments.length > 1 && void 0 !== arguments[1] && arguments[1];
     if(paramCheck("navigateTo", params, {url: ""})){

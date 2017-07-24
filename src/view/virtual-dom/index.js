@@ -167,7 +167,6 @@ wx.onAppDataChange(
         STATE_FLAGS.funcReady ? renderOnDataChange(event) : dataChangeEventQueue.push(event)
     })
 )
-
 document.addEventListener(
     'generateFuncReady',
     ErrorCatcher.catchError(function (event) {

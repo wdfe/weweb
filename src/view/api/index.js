@@ -151,6 +151,11 @@ var localImgDataIng = !1,
           callback(params)
         })
       },
+      onPageScrollTo: function (callback) {
+          bridge.subscribe("pageScrollTo",function (params) {
+            callback(params);
+          })
+      },
       publishPageEvent: function (eventName, data) {
         bridge.publish("PAGE_EVENT", {
           eventName: eventName,
