@@ -598,6 +598,104 @@ function canIUse (params,version){
     }
 
 }
+
+
+function checkParam(e, t) {
+    if (!(e instanceof t))
+        throw new TypeError("Cannot call a class as a function")
+}
+
+var  config= function (){
+    function e(e, t) {
+        for (var n = 0; n < t.length; n++) {
+            var obj = t[n];
+            obj.enumerable = obj.enumerable || !1,
+                obj.configurable = !0,
+            "value"in obj && (obj.writable = !0),
+                Object.defineProperty(e, obj.key, obj)
+        }
+    }
+    return function(t, n, obj) {
+        return n && e(t.prototype, n),
+        obj && e(t, obj),
+            t
+    }
+}();
+var setSelect = function() {
+    function e(t, n, r) {
+        checkParam(this, e),
+            this._selectorQuery = t,
+            this._selector = n,
+            this._single = r
+    }
+    return config(e, [{
+        key: "fields",
+        value: function(e, t) {
+            return this._selectorQuery._push(this._selector, this._single, e, t),
+                this._selectorQuery
+        }
+    }, {
+        key: "boundingClientRect",
+        value: function(e) {
+            return this._selectorQuery._push(this._selector, this._single, {
+                id: !0,
+                dataset: !0,
+                rect: !0,
+                size: !0
+            }, e),
+                this._selectorQuery
+        }
+    }, {
+        key: "scrollOffset",
+        value: function(e) {
+            return this._selectorQuery._push(this._selector, this._single, {
+                id: !0,
+                dataset: !0,
+                scrollOffset: !0
+            }, e),
+                this._selectorQuery
+        }
+    }]),
+        e
+}();
+var wxQuerySelector = function(){
+    function init (t) {
+        checkParam(this,init);
+        this._webviewId = t;
+        this._queue = [];
+        this._queueCb = [];
+    }
+    return config(init,[{
+        key: "select", value: function (e) {
+            return new setSelect(this, e, !0)
+        }
+    }, {
+        key: "selectAll", value: function (e) {
+            return new setSelect(this, e, !1)
+        }
+    }, {
+        key: "selectViewport", value: function () {
+            return new setSelect(this, "viewport", !0)
+        }
+    }, {
+        key: "_push", value: function (e, t, n, o) {
+            this._queue.push({selector: e, single: t, fields: n}), this._queueCb.push(o || null)
+        }
+    }, {
+        key: "exec", value: function (e) {
+            var t = this;
+            u(this._webviewId, this._queue, function (n) {
+                var o = t._queueCb;
+                n.forEach(function (e, n) {
+                    "function" == typeof o[n] && o[n].call(t, e)
+                }),
+                "function" == typeof e && e.call(t, n)
+            })
+        }
+    }]),
+    init
+}();
+
 export default  {
     surroundByTryCatchFactory: surroundByTryCatchFactory,
     getDataType: getDataType,
@@ -621,5 +719,6 @@ export default  {
     renameProperty: renameProperty,
     defaultRunningStatus : "active",
     toArray: toArray,
-    canIUse:canIUse
+    canIUse:canIUse,
+    wxQuerySelector:wxQuerySelector
 }

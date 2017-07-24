@@ -198,7 +198,17 @@ var apiObj = {//wx对象
       }
 
   },
-
+  createSelectorQuery : function(e){//返回一个SelectorQuery对象实例
+    var t =null;
+    if(e && e.page){
+      t.e.page__wxWebViewId__;
+    } else {
+      var n = getCurrentPages();
+      t = n[n.length - 1].__wxWebviewId__;
+    }
+    console.log(111);
+    return  new utils.wxQuerySelector(t);
+  },
   navigateTo: function (params) {
     arguments.length > 1 && void 0 !== arguments[1] && arguments[1];
     if(paramCheck("navigateTo", params, {url: ""})){
