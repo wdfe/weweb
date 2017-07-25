@@ -1,7 +1,7 @@
 //通过遍历tree找出patchIndexs中相应索引对应的node,返回nodes
 const getDomIndex = function (rootNode, tree, patchIndexs) {
   if (patchIndexs && patchIndexs.length != 0) {
-    patchIndexs = patchIndexs.sort(function (a, b) {
+    patchIndexs = patchIndexs.sort(function (a, b) {//升序
       return a - b
     })
     let nodes = {} // real dom <-> vdom : key = nodeindex, value = real node

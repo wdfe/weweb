@@ -13,14 +13,14 @@ class Patch {
     let that = this
     if (this.patchIndexes.length === 0) return rootNode
 
-    let domIndex = DomIndex.getDomIndex(
+    let doms = DomIndex.getDomIndex(
       rootNode,
       this.oldTree,
       this.patchIndexes
     )
 
     this.patchIndexes.forEach(function (patchIdx) {
-      let dom = domIndex[patchIdx]
+      let dom = doms[patchIdx]
       if (dom) {
         let patches = that.patches[patchIdx]
         patches.forEach(function (vpatch) {

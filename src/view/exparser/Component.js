@@ -104,7 +104,7 @@ Component.register = function (nElement) {
       set: function (value) {
         let behProp = behaviorProperties[propKey]
         value = normalizeValue(value, behProp.type)
-        let propData = this.__propData[propKey]
+        let propData = this.__propData[propKey]//old value
 
         if (behProp.coerce) {
           let realVal = Events.safeCallback('Property Filter', behProp.coerce, this, [value, propData])
@@ -128,7 +128,7 @@ Component.register = function (nElement) {
         }
       }
     }
-  })
+  })//end forEach
 
   let proto = Object.create(Element.prototype, propDefination)
   proto.__behavior = componentBehavior
@@ -175,13 +175,13 @@ Component.create = function (tagName) {
   tagName = tagName ? tagName.toLowerCase() : 'virtual'
   let newElement = document.createElement(tagName)
   let sysComponent = Component.list[tagName] || Component.list['']
-  let newComponent = Object.create(sysComponent.proto)
+  let newComponent = Object.create(sysComponent.proto)//虚拟dom
 
   Element.initialize(newComponent)
   newComponent.__domElement = newElement
   newElement.__wxElement = newComponent
   newComponent.__propData = JSON.parse(sysComponent.defaultValuesJSON)
-  let templateInstance = newComponent.__templateInstance = sysComponent.template.createInstance(newComponent)
+  let templateInstance = newComponent.__templateInstance = sysComponent.template.createInstance(newComponent)//参数多余？
 
   if (templateInstance.shadowRoot instanceof Element) {//VirtualNode
     Element._attachShadowRoot(newComponent, templateInstance.shadowRoot)
@@ -198,7 +198,7 @@ Component.create = function (tagName) {
   newComponent.$ = templateInstance.idMap
   newComponent.$$ = newElement
   templateInstance.slots[''] || (templateInstance.slots[''] = newElement)
-  newComponent.__slots = templateInstance.slots
+  newComponent.__slots = templateInstance.slots//占位节点
   newComponent.__slots[''].__slotChildren = newComponent.childNodes
 
   let innerEvents = sysComponent.innerEvents
@@ -206,17 +206,17 @@ Component.create = function (tagName) {
     let innerEventNameSlice = innerEventName.split('.', 2)
     let listenerName = innerEventNameSlice[innerEventNameSlice.length - 1]
     let nComponent = newComponent
-    let isComponentNotTouched = true
+    let isRootNode = true
     if (innerEventNameSlice.length === 2) {
       if (innerEventNameSlice[0] !== '') {
-        isComponentNotTouched = !1
+        isRootNode = !1
         innerEventNameSlice[0] !== 'this' && (nComponent = newComponent.$[innerEventNameSlice[0]])
       }
     }
     if (nComponent) {
       let innerEvent = innerEvents[innerEventName], listenerIdx = 0
       for (; listenerIdx < innerEvent.length; listenerIdx++) {
-        if (isComponentNotTouched) {
+        if (isRootNode) {
           addListenerToElement(nComponent.shadowRoot, listenerName, innerEvent[listenerIdx].bind(newComponent))
         } else {
           addListenerToElement(nComponent, listenerName, innerEvent[listenerIdx].bind(newComponent))

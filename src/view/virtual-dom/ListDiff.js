@@ -85,50 +85,50 @@ const listDiff = function (aChildren, bChildren) {
   let inserts = []
 
   for (let idx = 0; idx < bChildren.length;) {
-    let wantedItem = bChildren[idx]
-    let bKeyOfWantedItem = getItemKey(wantedItem)
+    let itemNode = bChildren[idx]
+    let itemKey = getItemKey(itemNode)
 
     let simulateItem = simulate[simulateIndex]
-    let copyKeyOfSimulateItem = getItemKey(simulateItem)
+    let newItemKey = getItemKey(simulateItem)
 
     // remove items
     for (; simulateItem === null;) {
       // if null remove it
-      removes.push(remove(simulate, simulateIndex, copyKeyOfSimulateItem))
+      removes.push(remove(simulate, simulateIndex, newItemKey))
 
       // update simulateItem info
       simulateItem = simulate[simulateIndex]
-      copyKeyOfSimulateItem = getItemKey(simulateItem)
+      newItemKey = getItemKey(simulateItem)
     }
 
-    if (copyKeyOfSimulateItem === bKeyOfWantedItem) {
+    if (newItemKey === itemKey) {
       ++simulateIndex
       ++idx
     } else {
       // if we need a key in this position...
-      if (bKeyOfWantedItem) {
-        if (copyKeyOfSimulateItem) {
-          if (bKeys[copyKeyOfSimulateItem] === idx + 1) {
+      if (itemKey) {
+        if (newItemKey) {
+          if (bKeys[newItemKey] === idx + 1) {
             inserts.push({
-              key: bKeyOfWantedItem,
+              key: itemKey,
               index: idx
             })
           } else {
             // if an insert doesn't put this key in place, it needs to move
             removes.push(
-              remove(simulate, simulateIndex, copyKeyOfSimulateItem)
+              remove(simulate, simulateIndex, newItemKey)
             )
             simulateItem = simulate[simulateIndex]
 
             // items are matching, so skip ahead
             if (
-              simulateItem && getItemKey(simulateItem) === bKeyOfWantedItem
+              simulateItem && getItemKey(simulateItem) === itemKey
             ) {
               ++simulateIndex
             } else {
               // if the remove didn't put the wanted item in place, we need to insert it
               inserts.push({
-                key: bKeyOfWantedItem,
+                key: itemKey,
                 index: idx
               })
             }
@@ -136,14 +136,14 @@ const listDiff = function (aChildren, bChildren) {
         } else {
           // insert a keyed wanted item
           inserts.push({
-            key: bKeyOfWantedItem,
+            key: itemKey,
             index: idx
           })
           ++idx
         }
       } else {
         // a key in simulate has no matching wanted key, remove it
-        removes.push(remove(simulate, simulateIndex, copyKeyOfSimulateItem))
+        removes.push(remove(simulate, simulateIndex, newItemKey))
 
         // simulateItem will update at the beginning of  next iteration
       }
@@ -177,8 +177,8 @@ const makeKeyAndFreeIndexes = function (children) {
   let keyIndexes = {}, freeIndexes = []
   for (let idx = 0; idx < children.length; ++idx) {
     let child = children[idx]
-    let itemKeyOfChild = getItemKey(child)
-    itemKeyOfChild ? (keyIndexes[itemKeyOfChild] = idx) : freeIndexes.push(idx)
+    let wxKey = getItemKey(child)
+    wxKey ? (keyIndexes[wxKey] = idx) : freeIndexes.push(idx)
   }
   return {
     keyIndexes: keyIndexes,

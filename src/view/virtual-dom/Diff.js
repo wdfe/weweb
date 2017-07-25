@@ -15,7 +15,8 @@ const diffNode = function (oriEle, newEle, patches, index) {
     let patch = patches[index]
     if (newEle == null) {
       patch = appendPatch(patch, new VPatch(Enums.PATCH_TYPE.REMOVE, oriEle))
-    } else if (Utils.isVirtualNode(newEle)) {
+    } else if (Utils.isVirtualNode(newEle))
+    {
       if (Utils.isVirtualNode(oriEle)) {
         if (
           oriEle.tagName === newEle.tagName && oriEle.wxKey === newEle.wxKey

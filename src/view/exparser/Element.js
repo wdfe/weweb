@@ -96,8 +96,8 @@ const childObserver = function (ele, observerName, targetNode) {
     Observer._callObservers(ele, '__childObservers', opt)
   }
 }
-const attachShadowRoot = function (originalParentNode, newNode, oldNode, isRemoveOldNode) {//增、删、改节点
-  let copyOfOriginalElement = originalParentNode
+const attachShadowRoot = function (componentObj, newNode, oldNode, isRemoveOldNode) {//增、删、改节点
+  let copyOfOriginalElement = componentObj
     //找dom根节点
   if (copyOfOriginalElement instanceof Element) {
     for (; copyOfOriginalElement.__virtual;) {
@@ -134,7 +134,7 @@ const attachShadowRoot = function (originalParentNode, newNode, oldNode, isRemov
   let oldDomEle = null
   if (oldNode) {
     if (oldNode.__virtual) {
-      let oldParentNode = originalParentNode
+      let oldParentNode = componentObj
       let oldNodeIdx = 0
       if (isRemoveOldNode) {
         let removeDomElement = function (ele) {
@@ -145,7 +145,7 @@ const attachShadowRoot = function (originalParentNode, newNode, oldNode, isRemov
         }
         removeDomElement(oldNode)
         isRemoveOldNode = !1
-        oldNodeIdx = originalParentNode.__slotChildren.indexOf(oldNode) + 1
+        oldNodeIdx = componentObj.__slotChildren.indexOf(oldNode) + 1
       } else {
         oldParentNode = oldNode.__slotParent
         oldNodeIdx = oldParentNode.__slotChildren.indexOf(oldNode)
