@@ -1200,6 +1200,46 @@
 	  onHome: function onHome() {
 	    util.navigateHome();
 	  },
+	  setNavigationBarColor: function setNavigationBarColor(style) {
+	    // insert keyframes
+	    // https://stackoverflow.com/questions/18481550/how-to-dynamically-create-keyframe-css-animations
+	    // https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleSheet/insertRule
+	    var styleEl = document.createElement('style'),
+	        addKeyFrames = null;
+	    document.head.appendChild(styleEl);
+	    var styleSheet = styleEl.sheet;
+	    if (CSS && CSS.supports && CSS.supports('animation: name')) {
+	      // we can safely assume that the browser supports unprefixed version.
+	      addKeyFrames = function addKeyFrames(name, frames) {
+	        var pos = styleSheet.cssRules.length;
+	        styleSheet.insertRule('@keyframes ' + name + '{' + frames + '}', pos);
+	      };
+	    } else {
+	      addKeyFrames = function addKeyFrames(name, frames) {
+	        // Ugly and terrible, but users with this terrible of a browser
+	        // *cough* IE *cough* don't deserve a fast site
+	        var str = name + '{' + frames + '}',
+	            pos = styleSheet.cssRules.length;
+	        styleSheet.insertRule('@-webkit-keyframes ' + str, pos);
+	        styleSheet.insertRule('@keyframes ' + str, pos + 1);
+	      };
+	    }
+
+	    var timingFuncMapping = {
+	      'linear': 'linear',
+	      'easeIn': 'ease-in',
+	      'easeOut': 'ease-out',
+	      'easeInOut': 'ease-in-out'
+	    };
+	    if (style.animation) {
+	      console.log(this.state.backgroundColor, style.backgroundColor);
+	      addKeyFrames('bgcAnimation', '0% {background-color: ' + this.state.backgroundColor + '} 100% {background-color: ' + style.backgroundColor);
+	      this.dom.head.style.animation = 'bgcAnimation ' + (style.animation.duration || 0) + 'ms ' + (timingFuncMapping[style.animation.timingFunc] || 'linear') + ' forwards';
+	    } else {
+	      this.dom.head.style.backgroundColor = style.backgroundColor;
+	    }
+	    this.state.backgroundColor = style.backgroundColor;
+	  },
 	  setState: function setState(data) {
 	    if (data) (0, _assign2.default)(this.state, data);
 	    var state = this.state;
@@ -2666,6 +2706,7 @@
 
 	exports.redirectTo = redirectTo;
 	exports.navigateTo = navigateTo;
+	exports.reLaunch = reLaunch;
 	exports.switchTo = switchTo;
 	exports.navigateBack = navigateBack;
 	exports.openExternal = openExternal;
@@ -2757,7 +2798,23 @@
 	    }
 	    onRoute();
 	}
-
+	function reLaunch(path) {
+	    path = normalize(path);
+	    var exists = tabViews[path];
+	    if (curr) curr.hide();
+	    if (exists) {
+	        curr = exists;
+	        exists.show();
+	    } else {
+	        var isTabView = util.isTabbar(path);
+	        var v = curr = new _view2.default(path);
+	        curr.pid = null;
+	        views = [];
+	        views[v.id] = v;
+	        if (isTabView) tabViews[path] = curr;
+	    }
+	    onRoute();
+	}
 	function switchTo(path) {
 	    path = normalize(path);
 	    if (util.isTabbar(curr.path)) curr.hide();
@@ -5913,8 +5970,13 @@
 
 	  if (!data.args.url) throw new Error('url not found');
 	  var view = (0, _viewManage.currentView)();
-	  if ((type == 'navigateTo' || type == 'redirectTo') && (0, _util.isTabbar)(view.url)) {
+	  console.log(view);
+	  if ((type == 'navigateTo' || type == 'redirectTo') && (0, _util.isTabbar)(view.path)) {
 	    console.error('wx.navigateTo wx.redirectTo 不允许跳转到 tabbar 页面，请使用 wx.switchTab');
+	    return;
+	  }
+	  if (type == 'reLaunch' && (0, _util.isTabbar)(view.path) && view.query) {
+	    console.error('wx.reLaunch 跳转到 tabbar 页面时不允许携带参数，请去除参数或使用 wx.switchTab');
 	    return;
 	  }
 	  //message({
@@ -5964,6 +6026,8 @@
 	exports.WEBVIEW_READY = WEBVIEW_READY;
 	exports.redirectTo = redirectTo;
 	exports.navigateTo = navigateTo;
+	exports.reLaunch = reLaunch;
+	exports.pageScrollTo = pageScrollTo;
 	exports.navigateBack = navigateBack;
 	exports.APP_SERVICE_COMPLETE = APP_SERVICE_COMPLETE;
 	exports.GET_APP_DATA = GET_APP_DATA;
@@ -5973,6 +6037,8 @@
 	exports.SET_APP_STORAGE = SET_APP_STORAGE;
 	exports.send_app_data = send_app_data;
 	exports.setNavigationBarTitle = setNavigationBarTitle;
+	exports.setStatusBarStyle = setStatusBarStyle;
+	exports.setNavigationBarColor = setNavigationBarColor;
 	exports.showNavigationBarLoading = showNavigationBarLoading;
 	exports.hideNavigationBarLoading = hideNavigationBarLoading;
 	exports.chooseImage = chooseImage;
@@ -6241,7 +6307,40 @@
 	  viewManage.navigateTo(data.args.url);
 	  (0, _service.onNavigate)(data, 'navigateTo');
 	}
-
+	function reLaunch(data) {
+	  sessionStorage.clear();
+	  _nprogress2.default.start();
+	  viewManage.reLaunch(data.args.url);
+	  (0, _service.onNavigate)(data, 'reLaunch');
+	}
+	//页面滚动API
+	function pageScrollTo(param) {
+	  var scrollable = document.querySelector(".scrollable"),
+	      scrollTop = param.args.scrollTop;
+	  if (void 0 !== scrollTop) {
+	    scrollTop < 0 && (scrollTop = 0);
+	    var clientHeight = getWindowHeight(),
+	        scrollHeight = getScrollHeight();
+	    scrollTop > scrollHeight - clientHeight && (scrollTop = scrollHeight - clientHeight);
+	    var init = function init() {
+	      scrollable.style.transition = "";
+	      scrollable.style.webkitTransition = "";
+	      scrollable.style.transform = "";
+	      scrollable.style.webkitTransform = "";
+	      scrollable.scrollTop = scrollTop;
+	      scrollable.removeEventListener("transitionend", param);
+	      scrollable.removeEventListener("webkitTransitionEnd", param);
+	    },
+	        l = "translateY(" + (scrollable.scrollTop - scrollTop) + "px) translateZ(0)";
+	    scrollable.style.transition = "transform .3s ease-out";
+	    scrollable.style.webkitTransition = "-webkit-transform .3s ease-out";
+	    scrollable.addEventListener("transitionend", init);
+	    scrollable.addEventListener("webkitTransitionEnd", init);
+	    scrollable.style.transform = l;
+	    scrollable.style.webkitTransform = l;
+	    scrollable.style.scrollTop = scrollTop;
+	  }
+	}
 	function navigateBack(data) {
 	  data.args = data.args || {};
 	  data.args.url = viewManage.currentView().path + '.html';
@@ -6407,6 +6506,16 @@
 	function setNavigationBarTitle(data) {
 	  var title = data.args.title;
 	  if (title) _header2.default.setTitle(title);
+	}
+
+	function setStatusBarStyle(data) {
+	  var color = data.args.color;
+	  if (color) _header2.default.setState({ color: color });
+	}
+
+	function setNavigationBarColor(data) {
+	  var styles = data.args;
+	  if (styles) _header2.default.setNavigationBarColor(styles);
 	}
 
 	function showNavigationBarLoading() {
@@ -7007,6 +7116,28 @@
 	    }
 	  };
 	  (0, _service.toAppService)(obj);
+	}
+
+	function getWindowHeight() {
+	  var scrollable = document.querySelector(".scrollable");
+	  return scrollable.clientHeight;
+	}
+	function getScrollHeight() {
+	  var e = 0,
+	      t = 0;
+	  var scrollable = document.querySelector(".scrollable");
+	  return scrollable && (e = scrollable.scrollHeight);
+	}
+	function checkScrollBottom() {
+	  var t = o - window.scrollY <= 0;
+	  return o = window.scrollY, !!(window.scrollY + n() + e >= i() && t);
+	}
+	var a = !1,
+	    s = !0;
+	function triggerPullUpRefresh() {
+	  s && !a && (wx.publishPageEvent("onReachBottom", {}), s = !1, setTimeout(function () {
+	    s = !0;
+	  }, 350));
 	}
 
 /***/ }),

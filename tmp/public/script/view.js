@@ -1749,6 +1749,9 @@ var wx =
 	  navigateTo: function navigateTo(params) {
 	    defInvoke("navigateTo", params);
 	  },
+	  reLaunch: function reLaunch(params) {
+	    defInvoke("reLaunch", params);
+	  },
 	  switchTab: function switchTab(params) {
 	    defInvoke("switchTab", params);
 	  },
@@ -1832,6 +1835,11 @@ var wx =
 	  },
 	  onAppDataChange: function onAppDataChange(callback) {
 	    _bridge2.default.subscribe("appDataChange", function (params) {
+	      callback(params);
+	    });
+	  },
+	  onPageScrollTo: function onPageScrollTo(callback) {
+	    _bridge2.default.subscribe("pageScrollTo", function (params) {
 	      callback(params);
 	    });
 	  },
@@ -13383,6 +13391,10 @@ var exparser =
 	                return void wx.switchTab({
 	                    url: this.url
 	                });
+	            case "reLaunch":
+	                return void wx.reLaunch({
+	                    url: this.url
+	                });
 	            default:
 	                return void console.error('navigator: invalid openType ' + this.openType);
 	        }
@@ -16482,7 +16494,6 @@ var exparser =
 	    STATE_FLAGS.dataReady = !0;
 	    STATE_FLAGS.funcReady ? renderOnDataChange(event) : dataChangeEventQueue.push(event);
 	}));
-
 	document.addEventListener('generateFuncReady', _ErrorCatcher2.default.catchError(function (event) {
 	    console.log('generateFuncReady --- speedReports');
 	    webViewInfo.funcReady = Date.now();

@@ -1,5 +1,5 @@
 import Events from './Events'
-
+//监视器模块
 const Observer = function () {}
 
 Observer.prototype = Object.create(Object.prototype, {
@@ -33,7 +33,7 @@ const updateSubtreeCaches = Observer._updateSubtreeCaches = function (ele, count
 Observer.prototype.observe = function (ele, opt) {
   opt = opt || {}
   let count = 0
-  let subtree = opt.subtree ? this._cb : this._noSubtreeCb
+  let subtree = opt.subtree ? this._cb : this._noSubtreeCb//是否对子节点observe
   if (opt.properties) {
     ele.__propObservers || (ele.__propObservers = Events.create('Observer Callback'))
     this._binded.push({

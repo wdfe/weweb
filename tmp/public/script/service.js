@@ -1434,6 +1434,10 @@ var wd =
 
 	var _keys2 = _interopRequireDefault(_keys);
 
+	var _assign = __webpack_require__(79);
+
+	var _assign2 = _interopRequireDefault(_assign);
+
 	var _bridge = __webpack_require__(111);
 
 	var _bridge2 = _interopRequireDefault(_bridge);
@@ -1442,7 +1446,7 @@ var wd =
 
 	var _utils2 = _interopRequireDefault(_utils);
 
-	var _Animation = __webpack_require__(113);
+	var _Animation = __webpack_require__(122);
 
 	var _Animation2 = _interopRequireDefault(_Animation);
 
@@ -1493,6 +1497,21 @@ var wd =
 	  return !res || (logErr(apiName, params, apiName + ":fail parameter error: " + res), !1);
 	}
 
+	function paramCheckFail(apiName) {
+	  var res = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {},
+	      n = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : "",
+	      errMsg = apiName + ":fail " + n;
+	  console.error(errMsg);
+	  var fail = Reporter.surroundThirdByTryCatch(options.fail || emptyFn, "at api " + apiName + " fail callback function"),
+	      complete = Reporter.surroundThirdByTryCatch(options.complete || emptyFn, "at api " + apiName + " complete callback function");
+	  fail({
+	    errMsg: errMsg
+	  });
+	  complete({
+	    errMsg: errMsg
+	  });
+	}
+
 	function checkUrl(apiName, params) {
 	  //判断当前页面是否在app.json里
 	  var matchArr = /^(.*)\.html/gi.exec(params.url);
@@ -1504,6 +1523,7 @@ var wd =
 	var emptyFn = function emptyFn() {},
 	    pageData = {},
 	    currUrl = "",
+	    SDKVersion = "1.4.2",
 	    appRouteCallbacks = [],
 	    appRouteDoneCallback = [],
 	    pageEventFn = void 0,
@@ -1568,6 +1588,27 @@ var wd =
 	  onPullDownRefresh: function onPullDownRefresh(e) {
 	    console.log("onPullDownRefresh has been removed from api list");
 	  },
+	  setNavigationBarColor: function setNavigationBarColor() {
+	    var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
+	    if (paramCheck('setNavigationBarColor', params, {
+	      frontColor: '',
+	      backgroundColor: ''
+	    })) {
+	      if (['#ffffff', '#000000'].indexOf(params.frontColor) === -1) {
+	        logErr('setNavigationBarColor', params, 'invalid frontColor "' + params.frontColor + '"');
+	      }
+
+	      params.frontColor === '#ffffff' ? _bridge2.default.invokeMethod('setStatusBarStyle', {
+	        color: 'white'
+	      }) : params.frontColor === '#000000' && _bridge2.default.invokeMethod('setStatusBarStyle', {
+	        color: 'black'
+	      });
+
+	      var t = (0, _assign2.default)({}, params);
+	      delete t.alpha;
+	      _bridge2.default.invokeMethod('setNavigationBarColor', t);
+	    }
+	  },
 	  setNavigationBarTitle: function setNavigationBarTitle() {
 	    var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
 	    paramCheck("setNavigationBarTitle", params, {
@@ -1595,6 +1636,49 @@ var wd =
 	      });
 	    }
 	  },
+	  //关闭所有页面，打开到应用内的某个页面
+	  reLaunch: function reLaunch(params) {
+	    arguments.length > 1 && void 0 !== arguments[1] && arguments[1];
+	    if ("active" != _utils2.default.defaultRunningStatus) {
+	      return paramCheckFail("reLaunch", params, "can not invoke reLaunch in background");
+	    }
+	    if (paramCheck("reLaunch", params, { url: "" })) {
+	      params.url = _utils2.default.getRealRoute(currUrl, params.url);
+	      params.url = _utils2.default.encodeUrlQuery(params.url);
+	      checkUrl("reLaunch", params) && _bridge2.default.invokeMethod("reLaunch", params, {
+	        afterSuccess: function afterSuccess() {
+	          currUrl = params.url;
+	        }, afterFail: function afterFail() {
+	          console.log('failed');
+	        }
+
+	      });
+	    }
+	  },
+	  createSelectorQuery: function createSelectorQuery(e) {
+	    //返回一个SelectorQuery对象实例
+	    var t = null;
+	    if (e && e.page) {
+	      t.e.page__wxWebViewId__;
+	    } else {
+	      var n = getCurrentPages();
+	      t = n[n.length - 1].__wxWebviewId__;
+	    }
+	    console.log(111);
+	    return new _utils2.default.wxQuerySelector(t);
+	  },
+
+	  pageScrollTo: function pageScrollTo(param) {
+	    //将页面滚动到目标位置
+	    var target = getCurrentPages(),
+	        viewId = target[target.length - 1].__wxWebviewId__;
+	    if (param.hasOwnProperty("page") && param.page.hasOwnProperty("__wxWebviewId__")) {
+	      viewId = param.page.__wxWebviewId__;
+	    }
+
+	    _bridge2.default.invokeMethod("pageScrollTo", param, [viewId]);
+	  },
+
 	  navigateTo: function navigateTo(params) {
 	    arguments.length > 1 && void 0 !== arguments[1] && arguments[1];
 	    if (paramCheck("navigateTo", params, { url: "" })) {
@@ -2133,6 +2217,9 @@ var wd =
 	  onAppEnterForeground: function onAppEnterForeground(params) {
 	    _appContextSwitch2.default.onAppEnterForeground.call(apiObj, params);
 	  },
+	  onAppRunningStatusChange: function onAppRunningStatusChange(params) {
+	    _appContextSwitch2.default.onAppRunningStatusChange.call(apiObj, params);
+	  },
 	  setAppData: function setAppData(data) {
 	    var options = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {},
 	        webviewIds = arguments[2];
@@ -2352,6 +2439,13 @@ var wd =
 	        delete res.err_msg;
 	      }
 	    });
+	  },
+	  canIuse: function canIuse() {
+	    var param1 = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : "",
+	        param2 = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : SDKVersion;
+	    if ("string" != typeof param1) throw new _utils2.default.AppServiceSdkKnownError("canIUse: schema should be an object");
+	    var params = param1.split(".");
+	    return _utils2.default.canIUse(_utils2.default.toArray(params), param2);
 	  }
 	};
 
@@ -3974,10 +4068,66 @@ var wd =
 /***/ }),
 /* 77 */,
 /* 78 */,
-/* 79 */,
-/* 80 */,
-/* 81 */,
-/* 82 */,
+/* 79 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(80), __esModule: true };
+
+/***/ }),
+/* 80 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	__webpack_require__(81);
+	module.exports = __webpack_require__(3).Object.assign;
+
+/***/ }),
+/* 81 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	// 19.1.3.1 Object.assign(target, source)
+	var $export = __webpack_require__(25);
+
+	$export($export.S + $export.F, 'Object', {assign: __webpack_require__(82)});
+
+/***/ }),
+/* 82 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	// 19.1.2.1 Object.assign(target, source, ...)
+	var getKeys  = __webpack_require__(9)
+	  , gOPS     = __webpack_require__(68)
+	  , pIE      = __webpack_require__(69)
+	  , toObject = __webpack_require__(7)
+	  , IObject  = __webpack_require__(13)
+	  , $assign  = Object.assign;
+
+	// should work with symbols and should have deterministic property order (V8 bug)
+	module.exports = !$assign || __webpack_require__(34)(function(){
+	  var A = {}
+	    , B = {}
+	    , S = Symbol()
+	    , K = 'abcdefghijklmnopqrst';
+	  A[S] = 7;
+	  K.split('').forEach(function(k){ B[k] = k; });
+	  return $assign({}, A)[S] != 7 || Object.keys($assign({}, B)).join('') != K;
+	}) ? function assign(target, source){ // eslint-disable-line no-unused-vars
+	  var T     = toObject(target)
+	    , aLen  = arguments.length
+	    , index = 1
+	    , getSymbols = gOPS.f
+	    , isEnum     = pIE.f;
+	  while(aLen > index){
+	    var S      = IObject(arguments[index++])
+	      , keys   = getSymbols ? getKeys(S).concat(getSymbols(S)) : getKeys(S)
+	      , length = keys.length
+	      , j      = 0
+	      , key;
+	    while(length > j)if(isEnum.call(S, key = keys[j++]))T[key] = S[key];
+	  } return T;
+	} : $assign;
+
+/***/ }),
 /* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4340,6 +4490,10 @@ var wd =
 	    value: true
 	});
 
+	var _defineProperty = __webpack_require__(83);
+
+	var _defineProperty2 = _interopRequireDefault(_defineProperty);
+
 	var _getPrototypeOf = __webpack_require__(86);
 
 	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
@@ -4355,6 +4509,10 @@ var wd =
 	var _inherits2 = __webpack_require__(91);
 
 	var _inherits3 = _interopRequireDefault(_inherits2);
+
+	var _from = __webpack_require__(113);
+
+	var _from2 = _interopRequireDefault(_from);
 
 	var _keys = __webpack_require__(4);
 
@@ -4593,6 +4751,16 @@ var wd =
 	    isObject(obj) !== !1 && oldName != newName && obj.hasOwnProperty(oldName) && (obj[newName] = obj[oldName], delete obj[oldName]);
 	}
 
+	function toArray(arg) {
+	    // 把e转成array
+	    if (Array.isArray(arg)) {
+	        for (var t = 0, n = Array(arg.length); t < arg.length; t++) {
+	            n[t] = arg[t];
+	        }return n;
+	    }
+	    return (0, _from2.default)(arg);
+	}
+
 	var words = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
 	    btoa = btoa || function (str) {
 	    for (var curPosFlag, curCodeValue, text = String(str), res = "", i = 0, wordTpl = words; text.charAt(0 | i) || (wordTpl = "=", i % 1); res += wordTpl.charAt(63 & curPosFlag >> 8 - i % 1 * 8)) {
@@ -4626,6 +4794,434 @@ var wd =
 	    return AppServiceSdkKnownError;
 	}(Error);
 
+	var Components = {
+	    //components
+	    audio: { "1.0.0": ["id", "src", "loop", "controls", "poster", "name", "author", "binderror", "bindplay", "bindpause", "bindtimeupdate", "bindended"] },
+	    button: {
+	        "1.0.0": [{ size: ["default", "mini"] }, { type: ["primary", "default", "warn"] }, "plain", "disabled", "loading", { "form-type": ["submit", "reset"] }, "hover-class", "hover-start-time", "hover-stay-time"],
+	        "1.1.0": [{ "open-type": ["contact"] }],
+	        "1.2.0": [{ "open-type": ["share"] }],
+	        "1.4.0": ["session-from"],
+	        "1.3.0": [{ "open-type": ["getUserInfo"] }]
+	    },
+	    canvas: { "1.0.0": ["canvas-id", "disable-scroll", "bindtouchstart", "bindtouchmove", "bindtouchend", "bindtouchcancel", "bindlongtap", "binderror"] },
+	    "checkbox-group": { "1.0.0": ["bindchange"] },
+	    checkbox: { "1.0.0": ["value", "disabled", "checked", "color"] },
+	    "contact-button": { "1.0.0": ["size", { type: ["default-dark", "default-light"] }, "session-from"] },
+	    "cover-view": { "1.4.0": [] },
+	    "cover-image": { "1.4.0": ["src"] },
+	    form: { "1.0.0": ["report-submit", "bindsubmit", "bindreset"], "1.2.0": ["bindautofill"] },
+	    icon: { "1.0.0": [{ type: ["success", "success_no_circle", "info", "warn", "waiting", "cancel", "download", "search", "clear"] }, "size", "color"] },
+	    image: { "1.0.0": ["src", { mode: ["scaleToFill", "aspectFit", "aspectFill", "widthFix", "top", "bottom", "center", "left", "right", "top left", "top right", "bottom left", "bottom right"] }, "binderror", "bindload"] },
+	    input: {
+	        "1.0.0": ["value", { type: ["text", "number", "idcard", "digit"] }, "password", "placeholder", "placeholder-style", "placeholder-class", "disabled", "maxlength", "cursor-spacing", "auto-focus", "focus", "bindinput", "bindfocus", "bindblur", "bindconfirm"],
+	        "1.1.0": [{ "confirm-type": ["send", "search", "next", "go", "done"] }, "confirm-hold"],
+	        "1.2.0": ["auto-fill"]
+	    },
+	    label: { "1.0.0": ["for"] },
+	    map: {
+	        "1.0.0": ["longitude", "latitude", "scale", { markers: ["id", "latitude", "longitude", "title", "iconPath", "rotate", "alpha", "width", "height"] }, "covers", { polyline: ["points", "color", "width", "dottedLine"] }, { circles: ["latitude", "longitude", "color", "fillColor", "radius", "strokeWidth"] }, { controls: ["id", "position", "iconPath", "clickable"] }, "include-points", "show-location", "bindmarkertap", "bindcontroltap", "bindregionchange", "bindtap"],
+	        "1.2.0": [{ markers: ["callout", "label", "anchor"] }, { polyline: ["arrowLine", "borderColor", "borderWidth"] }, "bindcallouttap"]
+	    },
+	    modal: { "1.0.0": [] },
+	    "movable-area": { "1.2.0": [] },
+	    "movable-view": { "1.2.0": ["direction", "inertia", "out-of-bounds", "x", "y", "damping", "friction"] },
+	    navigator: {
+	        "1.0.0": ["url", { "open-type": ["navigate", "redirect", "switchTab"] }, "delta", "hover-class", "hover-start-time", "hover-stay-time"],
+	        "1.1.0": [{ "open-type": ["reLaunch", "navigateBack"] }]
+	    },
+	    "open-data": { "1.4.0": [{ type: ["groupName"] }, "open-gid"] },
+	    "picker-view": { "1.0.0": ["value", "indicator-style", "bindchange"], "1.1.0": ["indicator-class"] },
+	    "picker-view-column": { "1.0.0": [] },
+	    picker: {
+	        "1.0.0": ["range", "range-key", "value", "bindchange", "disabled", "start", "end", { fields: ["year", "month", "day"] }, { mode: ["selector", "date", "time"] }],
+	        "1.2.0": ["auto-fill"],
+	        "1.4.0": ["bindcolumnchange", { mode: ["multiSelector", "region"] }]
+	    },
+	    progress: { "1.0.0": ["percent", "show-info", "stroke-width", "color", "activeColor", "backgroundColor", "active"] },
+	    "radio-group": { "1.0.0": ["bindchange"] },
+	    radio: { "1.0.0": ["value", "checked", "disabled", "color"] },
+	    "rich-text": { "1.4.0": [{ nodes: ["name", "attrs", "children"] }] },
+	    "scroll-view": { "1.0.0": ["scroll-x", "scroll-y", "upper-threshold", "lower-threshold", "scroll-top", "scroll-left", "scroll-into-view", "scroll-with-animation", "enable-back-to-top", "bindscrolltoupper", "bindscrolltolower", "bindscroll"] },
+	    slider: { "1.0.0": ["min", "max", "step", "disabled", "value", "color", "selected-color", "activeColor", "backgroundColor", "show-value", "bindchange"] },
+	    swiper: {
+	        "1.0.0": ["indicator-dots", "autoplay", "current", "interval", "duration", "circular", "vertical", "bindchange"],
+	        "1.1.0": ["indicator-color", "indicator-active-color"]
+	    },
+	    "swiper-item": { "1.0.0": [] },
+	    "switch": { "1.0.0": ["checked", { type: ["switch", "checkbox"] }, "bindchange", "color"] },
+	    text: { "1.0.0": [], "1.1.0": ["selectable"], "1.4.0": [{ space: ["ensp", "emsp", "nbsp"] }, "decode"] },
+	    textarea: {
+	        "1.0.0": ["value", "placeholder", "placeholder-style", "placeholder-class", "disabled", "maxlength", "auto-focus", "focus", "auto-height", "fixed", "cursor-spacing", "bindfocus", "bindblur", "bindlinechange", "bindinput", "bindconfirm"],
+	        "1.2.0": ["auto-fill"]
+	    },
+	    video: {
+	        "1.0.0": ["src", "controls", "danmu-list", "danmu-btn", "enable-danmu", "autoplay", "bindplay", "bindpause", "bindended", "bindtimeupdate", "objectFit", "poster"],
+	        "1.1.0": ["duration"],
+	        "1.4.0": ["loop", "muted", "bindfullscreenchange"]
+	    },
+	    view: { "1.0.0": ["hover-class", "hover-start-time", "hover-stay-time"] }
+	};
+	var APIs = {
+	    //APIS
+	    onAccelerometerChange: { "1.0.0": [{ callback: ["x", "y", "z"] }] },
+	    startAccelerometer: { "1.1.0": [] },
+	    stopAccelerometer: { "1.1.0": [] },
+	    chooseAddress: { "1.1.0": [{ success: ["userName", "postalCode", "provinceName", "cityName", "countyName", "detailInfo", "nationalCode", "telNumber"] }] },
+	    createAnimation: { "1.0.0": [{ object: ["duration", { timingFunction: ["linear", "ease", "ease-in", "ease-in-out", "ease-out", "step-start", "step-end"] }, "delay", "transformOrigin"] }] },
+	    createAudioContext: { "1.0.0": [] },
+	    canIUse: { "1.0.0": [] },
+	    login: { "1.0.0": [{ success: ["code"] }] },
+	    checkSession: { "1.0.0": [] },
+	    createMapContext: { "1.0.0": [] },
+	    requestPayment: { "1.0.0": [{ object: ["timeStamp", "nonceStr", "package", "signType", "paySign"] }] },
+	    showToast: { "1.0.0": [{ object: ["title", "icon", "duration", "mask"] }], "1.1.0": [{ object: ["image"] }] },
+	    showLoading: { "1.1.0": [{ object: ["title", "mask"] }] },
+	    hideToast: { "1.0.0": [] },
+	    hideLoading: { "1.1.0": [] },
+	    showModal: {
+	        "1.0.0": [{ object: ["title", "content", "showCancel", "cancelText", "cancelColor", "confirmText", "confirmColor"] }, { success: ["confirm"] }],
+	        "1.1.0": [{ success: ["cancel"] }]
+	    },
+	    showActionSheet: { "1.0.0": [{ object: ["itemList", "itemColor"] }, { success: ["tapIndex"] }] },
+	    arrayBufferToBase64: { "1.1.0": [] },
+	    base64ToArrayBuffer: { "1.1.0": [] },
+	    createVideoContext: { "1.0.0": [] },
+	    authorize: { "1.2.0": [{ object: ["scope"] }] },
+	    openBluetoothAdapter: { "1.1.0": [] },
+	    closeBluetoothAdapter: { "1.1.0": [] },
+	    getBluetoothAdapterState: { "1.1.0": [{ success: ["discovering", "available"] }] },
+	    onBluetoothAdapterStateChange: { "1.1.0": [{ callback: ["available", "discovering"] }] },
+	    startBluetoothDevicesDiscovery: { "1.1.0": [{ object: ["services", "allowDuplicatesKey", "interval"] }, { success: ["isDiscovering"] }] },
+	    stopBluetoothDevicesDiscovery: { "1.1.0": [] },
+	    getBluetoothDevices: { "1.1.0": [{ success: ["devices"] }] },
+	    onBluetoothDeviceFound: { "1.1.0": [{ callback: ["devices"] }] },
+	    getConnectedBluetoothDevices: { "1.1.0": [{ object: ["services"] }, { success: ["devices"] }] },
+	    createBLEConnection: { "1.1.0": [{ object: ["deviceId"] }] },
+	    closeBLEConnection: { "1.1.0": [{ object: ["deviceId"] }] },
+	    getBLEDeviceServices: { "1.1.0": [{ object: ["deviceId"] }, { success: ["services"] }] },
+	    getBLEDeviceCharacteristics: { "1.1.0": [{ object: ["deviceId", "serviceId"] }, { success: ["characteristics"] }] },
+	    readBLECharacteristicValue: { "1.1.0": [{ object: ["deviceId", "serviceId", "characteristicId"] }, { success: ["characteristic"] }] },
+	    writeBLECharacteristicValue: { "1.1.0": [{ object: ["deviceId", "serviceId", "characteristicId", "value"] }] },
+	    notifyBLECharacteristicValueChange: { "1.1.1": [{ object: ["deviceId", "serviceId", "characteristicId", "state"] }] },
+	    onBLEConnectionStateChange: { "1.1.1": [{ callback: ["deviceId", "connected"] }] },
+	    onBLECharacteristicValueChange: { "1.1.0": [{ callback: ["deviceId", "serviceId", "characteristicId", "value"] }] },
+	    captureScreen: { "1.4.0": [{ success: ["tempFilePath"] }] },
+	    addCard: { "1.1.0": [{ object: ["cardList"] }, { success: ["cardList"] }] },
+	    openCard: { "1.1.0": [{ object: ["cardList"] }] },
+	    setClipboardData: { "1.1.0": [{ object: ["data"] }] },
+	    getClipboardData: { "1.1.0": [{ success: ["data"] }] },
+	    onCompassChange: { "1.0.0": [{ callback: ["direction"] }] },
+	    startCompass: { "1.1.0": [] },
+	    stopCompass: { "1.1.0": [] },
+	    setStorage: { "1.0.0": [{ object: ["key", "data"] }] },
+	    getStorage: { "1.0.0": [{ object: ["key"] }, { success: ["data"] }] },
+	    getStorageSync: { "1.0.0": [] },
+	    getStorageInfo: { "1.0.0": [{ success: ["keys", "currentSize", "limitSize"] }] },
+	    removeStorage: { "1.0.0": [{ object: ["key"] }] },
+	    removeStorageSync: { "1.0.0": [] },
+	    clearStorage: { "1.0.0": [] },
+	    clearStorageSync: { "1.0.0": [] },
+	    getNetworkType: { "1.0.0": [{ success: ["networkType"] }] },
+	    onNetworkStatusChange: { "1.1.0": [{ callback: ["isConnected", { networkType: ["wifi", "2g", "3g", "4g", "none", "unknown"] }] }] },
+	    setScreenBrightness: { "1.2.0": [{ object: ["value"] }] },
+	    getScreenBrightness: { "1.2.0": [{ success: ["value"] }] },
+	    vibrateLong: { "1.2.0": [] },
+	    vibrateShort: { "1.2.0": [] },
+	    getExtConfig: { "1.1.0": [{ success: ["extConfig"] }] },
+	    getExtConfigSync: { "1.1.0": [] },
+	    saveFile: { "1.0.0": [{ object: ["tempFilePath"] }, { success: ["savedFilePath"] }] },
+	    getSavedFileList: { "1.0.0": [{ success: ["fileList"] }] },
+	    getSavedFileInfo: { "1.0.0": [{ object: ["filePath"] }, { success: ["size", "createTime"] }] },
+	    removeSavedFile: { "1.0.0": [{ object: ["filePath"] }] },
+	    openDocument: { "1.0.0": [{ object: ["filePath"] }], "1.4.0": [{ object: ["fileType"] }] },
+	    getBackgroundAudioManager: { "1.2.0": [] },
+	    getFileInfo: { "1.4.0": [{ object: ["filePath", { digestAlgorithm: ["md5", "sha1"] }] }, { success: ["size", "digest"] }] },
+	    startBeaconDiscovery: { "1.2.0": [{ object: ["uuids"] }] },
+	    stopBeaconDiscovery: { "1.2.0": [] },
+	    getBeacons: { "1.2.0": [{ success: ["beacons"] }] },
+	    onBeaconUpdate: { "1.2.0": [{ callback: ["beacons"] }] },
+	    onBeaconServiceChange: { "1.2.0": [{ callback: ["available", "discovering"] }] },
+	    getLocation: {
+	        "1.0.0": [{ object: ["type"] }, { success: ["latitude", "longitude", "speed", "accuracy"] }],
+	        "1.2.0": [{ success: ["altitude", "verticalAccuracy", "horizontalAccuracy"] }]
+	    },
+	    chooseLocation: { "1.0.0": [{ object: ["cancel"] }, { success: ["name", "address", "latitude", "longitude"] }] },
+	    openLocation: { "1.0.0": [{ object: ["latitude", "longitude", "scale", "name", "address"] }] },
+	    getBackgroundAudioPlayerState: { "1.0.0": [{ success: ["duration", "currentPosition", "status", "downloadPercent", "dataUrl"] }] },
+	    playBackgroundAudio: { "1.0.0": [{ object: ["dataUrl", "title", "coverImgUrl"] }] },
+	    pauseBackgroundAudio: { "1.0.0": [] },
+	    seekBackgroundAudio: { "1.0.0": [{ object: ["position"] }] },
+	    stopBackgroundAudio: { "1.0.0": [] },
+	    onBackgroundAudioPlay: { "1.0.0": [] },
+	    onBackgroundAudioPause: { "1.0.0": [] },
+	    onBackgroundAudioStop: { "1.0.0": [] },
+	    chooseImage: {
+	        "1.0.0": [{ object: ["count", "sizeType", "sourceType"] }, { success: ["tempFilePaths"] }],
+	        "1.2.0": [{ success: ["tempFiles"] }]
+	    },
+	    previewImage: { "1.0.0": [{ object: ["current", "urls"] }] },
+	    getImageInfo: { "1.0.0": [{ object: ["src"] }, { success: ["width", "height", "path"] }] },
+	    saveImageToPhotosAlbum: { "1.2.0": [{ object: ["filePath"] }] },
+	    startRecord: { "1.0.0": [{ success: ["tempFilePath"] }] },
+	    stopRecord: { "1.0.0": [] },
+	    chooseVideo: { "1.0.0": [{ object: ["sourceType", "maxDuration", "camera"] }, { success: ["tempFilePath", "duration", "size", "height", "width"] }] },
+	    saveVideoToPhotosAlbum: { "1.2.0": [{ object: ["filePath"] }] },
+	    playVoice: { "1.0.0": [{ object: ["filePath"] }] },
+	    pauseVoice: { "1.0.0": [] },
+	    stopVoice: { "1.0.0": [] },
+	    navigateBackMiniProgram: { "1.3.0": [{ object: ["extraData"] }] },
+	    navigateToMiniProgram: { "1.3.0": [{ object: ["appId", "path", "extraData", "envVersion"] }] },
+	    uploadFile: { "1.0.0": [{ object: ["url", "filePath", "name", "header", "formData"] }, { success: ["data", "statusCode"] }] },
+	    downloadFile: { "1.0.0": [{ object: ["url", "header"] }] },
+	    request: {
+	        "1.0.0": [{ object: ["url", "data", "header", { method: ["OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "CONNECT"] }, "dataType"] }, { success: ["data", "statusCode"] }],
+	        "1.2.0": [{ success: ["header"] }]
+	    },
+	    connectSocket: {
+	        "1.0.0": [{ object: ["url", "data", "header", { method: ["OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "CONNECT"] }] }],
+	        "1.4.0": [{ object: ["protocols"] }]
+	    },
+	    onSocketOpen: { "1.0.0": [] },
+	    onSocketError: { "1.0.0": [] },
+	    sendSocketMessage: { "1.0.0": [{ object: ["data"] }] },
+	    onSocketMessage: { "1.0.0": [{ callback: ["data"] }] },
+	    closeSocket: { "1.0.0": [], "1.4.0": [{ object: ["code", "reason"] }] },
+	    onSocketClose: { "1.0.0": [] },
+	    onUserCaptureScreen: { "1.4.0": [] },
+	    chooseContact: { "1.0.0": [{ success: ["phoneNumber", "displayName"] }] },
+	    getUserInfo: {
+	        "1.0.0": [{ success: ["userInfo", "rawData", "signature", "encryptedData", "iv"] }],
+	        "1.1.0": [{ object: ["withCredentials"] }],
+	        "1.4.0": [{ object: ["lang"] }]
+	    },
+	    addPhoneContact: { "1.2.0": [{ object: ["photoFilePath", "nickName", "lastName", "middleName", "firstName", "remark", "mobilePhoneNumber", "weChatNumber", "addressCountry", "addressState", "addressCity", "addressStreet", "addressPostalCode", "organization", "title", "workFaxNumber", "workPhoneNumber", "hostNumber", "email", "url", "workAddressCountry", "workAddressState", "workAddressCity", "workAddressStreet", "workAddressPostalCode", "homeFaxNumber", "homePhoneNumber", "homeAddressCountry", "homeAddressState", "homeAddressCity", "homeAddressStreet", "homeAddressPostalCode"] }] },
+	    makePhoneCall: { "1.0.0": [{ object: ["phoneNumber"] }] },
+	    stopPullDownRefresh: { "1.0.0": [] },
+	    scanCode: {
+	        "1.0.0": [{ success: ["result", "scanType", "charSet", "path"] }],
+	        "1.2.0": [{ object: ["onlyFromCamera"] }]
+	    },
+	    pageScrollTo: { "1.4.0": [{ object: ["scrollTop"] }] },
+	    setEnableDebug: { "1.4.0": [{ object: ["enableDebug"] }] },
+	    setKeepScreenOn: { "1.4.0": [{ object: ["keepScreenOn"] }] },
+	    setNavigationBarColor: { "1.4.0": [{ object: ["frontColor", "backgroundColor", "animation", "animation.duration", { "animation.timingFunc": ["linear", "easeIn", "easeOut", "easeInOut"] }] }] },
+	    openSetting: { "1.1.0": [{ success: ["authSetting"] }] },
+	    getSetting: { "1.2.0": [{ success: ["authSetting"] }] },
+	    showShareMenu: { "1.1.0": [{ object: ["withShareTicket"] }] },
+	    hideShareMenu: { "1.1.0": [] },
+	    updateShareMenu: { "1.2.0": [{ object: ["withShareTicket"] }], "1.4.0": [{ object: ["dynamic", "widget"] }] },
+	    getShareInfo: { "1.1.0": [{ object: ["shareTicket"] }, { callback: ["encryptedData", "iv"] }] },
+	    getSystemInfo: {
+	        "1.0.0": [{ success: ["model", "pixelRatio", "windowWidth", "windowHeight", "language", "version", "system", "platform"] }],
+	        "1.1.0": [{ success: ["screenWidth", "screenHeight", "SDKVersion"] }]
+	    },
+	    getSystemInfoSync: {
+	        "1.0.0": [{ return: ["model", "pixelRatio", "windowWidth", "windowHeight", "language", "version", "system", "platform"] }],
+	        "1.1.0": [{ return: ["screenWidth", "screenHeight", "SDKVersion"] }]
+	    },
+	    navigateTo: { "1.0.0": [{ object: ["url"] }] },
+	    redirectTo: { "1.0.0": [{ object: ["url"] }] },
+	    reLaunch: { "1.1.0": [{ object: ["url"] }] },
+	    switchTab: { "1.0.0": [{ object: ["url"] }] },
+	    navigateBack: { "1.0.0": [{ object: ["delta"] }] },
+	    setNavigationBarTitle: { "1.0.0": [{ object: ["title"] }] },
+	    showNavigationBarLoading: { "1.0.0": [] },
+	    hideNavigationBarLoading: { "1.0.0": [] },
+	    setTopBarText: { "1.4.2": [{ object: ["text"] }] },
+	    getWeRunData: { "1.2.0": [{ success: ["encryptedData", "iv"] }] },
+	    createSelectorQuery: { "1.4.0": [] },
+	    createCanvasContext: { "1.0.0": [] },
+	    canvasToTempFilePath: {
+	        "1.0.0": [{ object: ["canvasId"] }],
+	        "1.2.0": [{ object: ["x", "y", "width", "height", "destWidth", "destHeight"] }]
+	    },
+	    canvasContext: {
+	        "1.0.0": ["addColorStop", "arc", "beginPath", "bezierCurveTo", "clearActions", "clearRect", "closePath", "createCircularGradient", "createLinearGradient", "drawImage", "draw", "fillRect", "fillText", "fill", "lineTo", "moveTo", "quadraticCurveTo", "rect", "rotate", "save", "scale", "setFillStyle", "setFontSize", "setGlobalAlpha", "setLineCap", "setLineJoin", "setLineWidth", "setMiterLimit", "setShadow", "setStrokeStyle", "strokeRect", "stroke", "translate"],
+	        "1.1.0": ["setTextAlign"],
+	        "1.4.0": ["setTextBaseline"]
+	    },
+	    animation: { "1.0.0": ["opacity", "backgroundColor", "width", "height", "top", "left", "bottom", "right", "rotate", "rotateX", "rotateY", "rotateZ", "rotate3d", "scale", "scaleX", "scaleY", "scaleZ", "scale3d", "translate", "translateX", "translateY", "translateZ", "translate3d", "skew", "skewX", "skewY", "matrix", "matrix3d"] },
+	    audioContext: { "1.0.0": ["setSrc", "play", "pause", "seek"] },
+	    mapContext: {
+	        "1.0.0": ["getCenterLocation", "moveToLocation"],
+	        "1.2.0": ["translateMarker", "includePoints"],
+	        "1.4.0": ["getRegion", "getScale"]
+	    },
+	    videoContext: {
+	        "1.0.0": ["play", "pause", "seek", "sendDanmu"],
+	        "1.4.0": ["playbackRate", "requestFullScreen", "exitFullScreen"]
+	    },
+	    backgroundAudioManager: { "1.2.0": ["play", "pause", "stop", "seek", "onCanplay", "onPlay", "onPause", "onStop", "onEnded", "onTimeUpdate", "onPrev", "onNext", "onError", "onWaiting", "duration", "currentTime", "paused", "src", "startTime", "buffered", "title", "epname", "singer", "coverImgUrl", "webUrl"] },
+	    uploadTask: { "1.4.0": ["onProgressUpdate", "abort"] },
+	    downloadTask: { "1.4.0": ["onProgressUpdate", "abort"] },
+	    requestTask: { "1.4.0": ["abort"] },
+	    selectorQuery: { "1.4.0": ["select", "selectAll", "selectViewport", "exec"] },
+	    onBLEConnectionStateChanged: { "1.1.0": [{ callback: ["deviceId", "connected"] }] },
+	    notifyBLECharacteristicValueChanged: { "1.1.0": [{ object: ["deviceId", "serviceId", "characteristicId", "state"] }] },
+	    sendBizRedPacket: { "1.2.0": [{ object: ["timeStamp", "nonceStr", "package", "signType", "paySign"] }] }
+	};
+	//检测组件相关是否存在
+	function isComponentExist(params) {
+	    var name = params[0],
+	        //组件名
+	    attribute = params[1],
+	        //属性名
+	    option = params[2],
+	        //组件属性可选值
+	    component = Components[name];
+	    if (!attribute) {
+	        return true;
+	    } else {
+	        for (var key in component) {
+	            for (var i = 0; i < component[key].length; i++) {
+	                if ("string" == typeof component[key][i] && component[key][i] == attribute) {
+	                    return true;
+	                } else if (component[key][i][attribute]) {
+	                    if (!option) {
+	                        return true;
+	                    } else if (component[key][i][attribute].indexOf(option) > -1) {
+	                        return true;
+	                    }
+	                }
+	            }
+	        }
+	        return false;
+	    }
+	}
+
+	//检测API相关是否存在
+	function isAPIExist(params) {
+	    var name = params[0],
+	        //API名
+	    method = params[1],
+	        //调用方式：有效值为return, success, object, callback
+	    param = params[2],
+	        //组件属性可选值
+	    options = params[3],
+	        methods = ["return", "success", "object", "callback"],
+	        api = APIs[name];
+	    if (!method) {
+	        return true;
+	    } else if (methods.indexOf(method) < 0) {
+	        return false;
+	    } else {
+	        for (var key in api) {
+	            for (var i = 0; i < key.length; i++) {
+	                if ("object" == (0, _typeof3.default)(api[key][i]) && api[key][i][method]) {
+	                    if (!param) {
+	                        return true;
+	                    } else {
+	                        for (var j = 0; j < api[key][i][method].length; j++) {
+	                            if (typeof api[key][i][method][j] == "string" && api[key][i][method][j] == param) {
+	                                return true;
+	                            } else if ((0, _typeof3.default)(api[key][i][method][j]) == "object" && api[key][i][method][j][param]) {
+	                                if (!options) {
+	                                    return true;
+	                                } else if (api[key][i][method][j][param].indexOf(options) > -1) {
+	                                    return true;
+	                                }
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	        return false;
+	    }
+	}
+	function canIUse(params, version) {
+	    var name = params[0]; //API或组件名
+	    if (Components[name]) {
+	        return isComponentExist(params);
+	    } else if (APIs[name]) {
+	        return isAPIExist(params);
+	    } else {
+	        return false;
+	    }
+	}
+
+	function checkParam(e, t) {
+	    if (!(e instanceof t)) throw new TypeError("Cannot call a class as a function");
+	}
+
+	var config = function () {
+	    function e(e, t) {
+	        for (var n = 0; n < t.length; n++) {
+	            var obj = t[n];
+	            obj.enumerable = obj.enumerable || !1, obj.configurable = !0, "value" in obj && (obj.writable = !0), (0, _defineProperty2.default)(e, obj.key, obj);
+	        }
+	    }
+	    return function (t, n, obj) {
+	        return n && e(t.prototype, n), obj && e(t, obj), t;
+	    };
+	}();
+	var setSelect = function () {
+	    function e(t, n, r) {
+	        checkParam(this, e), this._selectorQuery = t, this._selector = n, this._single = r;
+	    }
+	    return config(e, [{
+	        key: "fields",
+	        value: function value(e, t) {
+	            return this._selectorQuery._push(this._selector, this._single, e, t), this._selectorQuery;
+	        }
+	    }, {
+	        key: "boundingClientRect",
+	        value: function value(e) {
+	            return this._selectorQuery._push(this._selector, this._single, {
+	                id: !0,
+	                dataset: !0,
+	                rect: !0,
+	                size: !0
+	            }, e), this._selectorQuery;
+	        }
+	    }, {
+	        key: "scrollOffset",
+	        value: function value(e) {
+	            return this._selectorQuery._push(this._selector, this._single, {
+	                id: !0,
+	                dataset: !0,
+	                scrollOffset: !0
+	            }, e), this._selectorQuery;
+	        }
+	    }]), e;
+	}();
+	var wxQuerySelector = function () {
+	    function init(t) {
+	        checkParam(this, init);
+	        this._webviewId = t;
+	        this._queue = [];
+	        this._queueCb = [];
+	    }
+	    return config(init, [{
+	        key: "select", value: function value(e) {
+	            return new setSelect(this, e, !0);
+	        }
+	    }, {
+	        key: "selectAll", value: function value(e) {
+	            return new setSelect(this, e, !1);
+	        }
+	    }, {
+	        key: "selectViewport", value: function value() {
+	            return new setSelect(this, "viewport", !0);
+	        }
+	    }, {
+	        key: "_push", value: function value(e, t, n, o) {
+	            this._queue.push({ selector: e, single: t, fields: n }), this._queueCb.push(o || null);
+	        }
+	    }, {
+	        key: "exec", value: function value(e) {
+	            var t = this;
+	            u(this._webviewId, this._queue, function (n) {
+	                var o = t._queueCb;
+	                n.forEach(function (e, n) {
+	                    "function" == typeof o[n] && o[n].call(t, e);
+	                }), "function" == typeof e && e.call(t, n);
+	            });
+	        }
+	    }]), init;
+	}();
+
 	exports.default = {
 	    surroundByTryCatchFactory: surroundByTryCatchFactory,
 	    getDataType: getDataType,
@@ -4646,11 +5242,182 @@ var wd =
 	    anyTypeToString: surroundByTryCatchFactory(anyTypeToString, "anyTypeToString"),
 	    stringToAnyType: surroundByTryCatchFactory(stringToAnyType, "stringToAnyType"),
 	    AppServiceSdkKnownError: AppServiceSdkKnownError,
-	    renameProperty: renameProperty
+	    renameProperty: renameProperty,
+	    defaultRunningStatus: "active",
+	    toArray: toArray,
+	    canIUse: canIUse,
+	    wxQuerySelector: wxQuerySelector
 	};
 
 /***/ }),
 /* 113 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(114), __esModule: true };
+
+/***/ }),
+/* 114 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	__webpack_require__(43);
+	__webpack_require__(115);
+	module.exports = __webpack_require__(3).Array.from;
+
+/***/ }),
+/* 115 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var ctx            = __webpack_require__(26)
+	  , $export        = __webpack_require__(25)
+	  , toObject       = __webpack_require__(7)
+	  , call           = __webpack_require__(116)
+	  , isArrayIter    = __webpack_require__(117)
+	  , toLength       = __webpack_require__(16)
+	  , createProperty = __webpack_require__(118)
+	  , getIterFn      = __webpack_require__(119);
+
+	$export($export.S + $export.F * !__webpack_require__(121)(function(iter){ Array.from(iter); }), 'Array', {
+	  // 22.1.2.1 Array.from(arrayLike, mapfn = undefined, thisArg = undefined)
+	  from: function from(arrayLike/*, mapfn = undefined, thisArg = undefined*/){
+	    var O       = toObject(arrayLike)
+	      , C       = typeof this == 'function' ? this : Array
+	      , aLen    = arguments.length
+	      , mapfn   = aLen > 1 ? arguments[1] : undefined
+	      , mapping = mapfn !== undefined
+	      , index   = 0
+	      , iterFn  = getIterFn(O)
+	      , length, result, step, iterator;
+	    if(mapping)mapfn = ctx(mapfn, aLen > 2 ? arguments[2] : undefined, 2);
+	    // if object isn't iterable or it's array with default iterator - use simple case
+	    if(iterFn != undefined && !(C == Array && isArrayIter(iterFn))){
+	      for(iterator = iterFn.call(O), result = new C; !(step = iterator.next()).done; index++){
+	        createProperty(result, index, mapping ? call(iterator, mapfn, [step.value, index], true) : step.value);
+	      }
+	    } else {
+	      length = toLength(O.length);
+	      for(result = new C(length); length > index; index++){
+	        createProperty(result, index, mapping ? mapfn(O[index], index) : O[index]);
+	      }
+	    }
+	    result.length = index;
+	    return result;
+	  }
+	});
+
+
+/***/ }),
+/* 116 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	// call something on iterator step with safe closing on error
+	var anObject = __webpack_require__(30);
+	module.exports = function(iterator, fn, value, entries){
+	  try {
+	    return entries ? fn(anObject(value)[0], value[1]) : fn(value);
+	  // 7.4.6 IteratorClose(iterator, completion)
+	  } catch(e){
+	    var ret = iterator['return'];
+	    if(ret !== undefined)anObject(ret.call(iterator));
+	    throw e;
+	  }
+	};
+
+/***/ }),
+/* 117 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	// check on default Array iterator
+	var Iterators  = __webpack_require__(48)
+	  , ITERATOR   = __webpack_require__(54)('iterator')
+	  , ArrayProto = Array.prototype;
+
+	module.exports = function(it){
+	  return it !== undefined && (Iterators.Array === it || ArrayProto[ITERATOR] === it);
+	};
+
+/***/ }),
+/* 118 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var $defineProperty = __webpack_require__(29)
+	  , createDesc      = __webpack_require__(37);
+
+	module.exports = function(object, index, value){
+	  if(index in object)$defineProperty.f(object, index, createDesc(0, value));
+	  else object[index] = value;
+	};
+
+/***/ }),
+/* 119 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var classof   = __webpack_require__(120)
+	  , ITERATOR  = __webpack_require__(54)('iterator')
+	  , Iterators = __webpack_require__(48);
+	module.exports = __webpack_require__(3).getIteratorMethod = function(it){
+	  if(it != undefined)return it[ITERATOR]
+	    || it['@@iterator']
+	    || Iterators[classof(it)];
+	};
+
+/***/ }),
+/* 120 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	// getting tag from 19.1.3.6 Object.prototype.toString()
+	var cof = __webpack_require__(14)
+	  , TAG = __webpack_require__(54)('toStringTag')
+	  // ES3 wrong here
+	  , ARG = cof(function(){ return arguments; }()) == 'Arguments';
+
+	// fallback for IE11 Script Access Denied error
+	var tryGet = function(it, key){
+	  try {
+	    return it[key];
+	  } catch(e){ /* empty */ }
+	};
+
+	module.exports = function(it){
+	  var O, T, B;
+	  return it === undefined ? 'Undefined' : it === null ? 'Null'
+	    // @@toStringTag case
+	    : typeof (T = tryGet(O = Object(it), TAG)) == 'string' ? T
+	    // builtinTag case
+	    : ARG ? cof(O)
+	    // ES3 arguments fallback
+	    : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
+	};
+
+/***/ }),
+/* 121 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var ITERATOR     = __webpack_require__(54)('iterator')
+	  , SAFE_CLOSING = false;
+
+	try {
+	  var riter = [7][ITERATOR]();
+	  riter['return'] = function(){ SAFE_CLOSING = true; };
+	  Array.from(riter, function(){ throw 2; });
+	} catch(e){ /* empty */ }
+
+	module.exports = function(exec, skipClosing){
+	  if(!skipClosing && !SAFE_CLOSING)return false;
+	  var safe = false;
+	  try {
+	    var arr  = [7]
+	      , iter = arr[ITERATOR]();
+	    iter.next = function(){ return {done: safe = true}; };
+	    arr[ITERATOR] = function(){ return iter; };
+	    exec(arr);
+	  } catch(e){ /* empty */ }
+	  return safe;
+	};
+
+/***/ }),
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4671,21 +5438,11 @@ var wd =
 
 	var _createClass3 = _interopRequireDefault(_createClass2);
 
-	var _from = __webpack_require__(114);
+	var _utils = __webpack_require__(112);
 
-	var _from2 = _interopRequireDefault(_from);
+	var _utils2 = _interopRequireDefault(_utils);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function toArray(arg) {
-	    // 把e转成array
-	    if (Array.isArray(arg)) {
-	        for (var t = 0, n = Array(arg.length); t < arg.length; t++) {
-	            n[t] = arg[t];
-	        }return n;
-	    }
-	    return (0, _from2.default)(arg);
-	}
 
 	var Animation = function () {
 	    function Animation() {
@@ -4723,7 +5480,7 @@ var wd =
 	            });
 	            this.actions.push({
 	                animates: (0, _keys2.default)(this.currentTransform).reduce(function (res, cur) {
-	                    return [].concat(toArray(res), [that.currentTransform[cur]]);
+	                    return [].concat(_utils2.default.toArray(res), [that.currentTransform[cur]]);
 	                }, []),
 	                option: {
 	                    transformOrigin: typeof params.transformOrigin !== 'undefined' ? params.transformOrigin : this.option.transformOrigin,
@@ -5056,173 +5813,6 @@ var wd =
 	}();
 
 	exports.default = Animation;
-
-/***/ }),
-/* 114 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	module.exports = { "default": __webpack_require__(115), __esModule: true };
-
-/***/ }),
-/* 115 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	__webpack_require__(43);
-	__webpack_require__(116);
-	module.exports = __webpack_require__(3).Array.from;
-
-/***/ }),
-/* 116 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	var ctx            = __webpack_require__(26)
-	  , $export        = __webpack_require__(25)
-	  , toObject       = __webpack_require__(7)
-	  , call           = __webpack_require__(117)
-	  , isArrayIter    = __webpack_require__(118)
-	  , toLength       = __webpack_require__(16)
-	  , createProperty = __webpack_require__(119)
-	  , getIterFn      = __webpack_require__(120);
-
-	$export($export.S + $export.F * !__webpack_require__(122)(function(iter){ Array.from(iter); }), 'Array', {
-	  // 22.1.2.1 Array.from(arrayLike, mapfn = undefined, thisArg = undefined)
-	  from: function from(arrayLike/*, mapfn = undefined, thisArg = undefined*/){
-	    var O       = toObject(arrayLike)
-	      , C       = typeof this == 'function' ? this : Array
-	      , aLen    = arguments.length
-	      , mapfn   = aLen > 1 ? arguments[1] : undefined
-	      , mapping = mapfn !== undefined
-	      , index   = 0
-	      , iterFn  = getIterFn(O)
-	      , length, result, step, iterator;
-	    if(mapping)mapfn = ctx(mapfn, aLen > 2 ? arguments[2] : undefined, 2);
-	    // if object isn't iterable or it's array with default iterator - use simple case
-	    if(iterFn != undefined && !(C == Array && isArrayIter(iterFn))){
-	      for(iterator = iterFn.call(O), result = new C; !(step = iterator.next()).done; index++){
-	        createProperty(result, index, mapping ? call(iterator, mapfn, [step.value, index], true) : step.value);
-	      }
-	    } else {
-	      length = toLength(O.length);
-	      for(result = new C(length); length > index; index++){
-	        createProperty(result, index, mapping ? mapfn(O[index], index) : O[index]);
-	      }
-	    }
-	    result.length = index;
-	    return result;
-	  }
-	});
-
-
-/***/ }),
-/* 117 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	// call something on iterator step with safe closing on error
-	var anObject = __webpack_require__(30);
-	module.exports = function(iterator, fn, value, entries){
-	  try {
-	    return entries ? fn(anObject(value)[0], value[1]) : fn(value);
-	  // 7.4.6 IteratorClose(iterator, completion)
-	  } catch(e){
-	    var ret = iterator['return'];
-	    if(ret !== undefined)anObject(ret.call(iterator));
-	    throw e;
-	  }
-	};
-
-/***/ }),
-/* 118 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	// check on default Array iterator
-	var Iterators  = __webpack_require__(48)
-	  , ITERATOR   = __webpack_require__(54)('iterator')
-	  , ArrayProto = Array.prototype;
-
-	module.exports = function(it){
-	  return it !== undefined && (Iterators.Array === it || ArrayProto[ITERATOR] === it);
-	};
-
-/***/ }),
-/* 119 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	var $defineProperty = __webpack_require__(29)
-	  , createDesc      = __webpack_require__(37);
-
-	module.exports = function(object, index, value){
-	  if(index in object)$defineProperty.f(object, index, createDesc(0, value));
-	  else object[index] = value;
-	};
-
-/***/ }),
-/* 120 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	var classof   = __webpack_require__(121)
-	  , ITERATOR  = __webpack_require__(54)('iterator')
-	  , Iterators = __webpack_require__(48);
-	module.exports = __webpack_require__(3).getIteratorMethod = function(it){
-	  if(it != undefined)return it[ITERATOR]
-	    || it['@@iterator']
-	    || Iterators[classof(it)];
-	};
-
-/***/ }),
-/* 121 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	// getting tag from 19.1.3.6 Object.prototype.toString()
-	var cof = __webpack_require__(14)
-	  , TAG = __webpack_require__(54)('toStringTag')
-	  // ES3 wrong here
-	  , ARG = cof(function(){ return arguments; }()) == 'Arguments';
-
-	// fallback for IE11 Script Access Denied error
-	var tryGet = function(it, key){
-	  try {
-	    return it[key];
-	  } catch(e){ /* empty */ }
-	};
-
-	module.exports = function(it){
-	  var O, T, B;
-	  return it === undefined ? 'Undefined' : it === null ? 'Null'
-	    // @@toStringTag case
-	    : typeof (T = tryGet(O = Object(it), TAG)) == 'string' ? T
-	    // builtinTag case
-	    : ARG ? cof(O)
-	    // ES3 arguments fallback
-	    : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
-	};
-
-/***/ }),
-/* 122 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	var ITERATOR     = __webpack_require__(54)('iterator')
-	  , SAFE_CLOSING = false;
-
-	try {
-	  var riter = [7][ITERATOR]();
-	  riter['return'] = function(){ SAFE_CLOSING = true; };
-	  Array.from(riter, function(){ throw 2; });
-	} catch(e){ /* empty */ }
-
-	module.exports = function(exec, skipClosing){
-	  if(!skipClosing && !SAFE_CLOSING)return false;
-	  var safe = false;
-	  try {
-	    var arr  = [7]
-	      , iter = arr[ITERATOR]();
-	    iter.next = function(){ return {done: safe = true}; };
-	    arr[ITERATOR] = function(){ return iter; };
-	    exec(arr);
-	  } catch(e){ /* empty */ }
-	  return safe;
-	};
 
 /***/ }),
 /* 123 */
@@ -6334,7 +6924,7 @@ var wd =
 	var LIBRARY            = __webpack_require__(46)
 	  , global             = __webpack_require__(21)
 	  , ctx                = __webpack_require__(26)
-	  , classof            = __webpack_require__(121)
+	  , classof            = __webpack_require__(120)
 	  , $export            = __webpack_require__(25)
 	  , isObject           = __webpack_require__(31)
 	  , aFunction          = __webpack_require__(27)
@@ -6585,7 +7175,7 @@ var wd =
 	    return capability.promise;
 	  }
 	});
-	$export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(122)(function(iter){
+	$export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(121)(function(iter){
 	  $Promise.all(iter)['catch'](empty);
 	})), PROMISE, {
 	  // 25.4.4.1 Promise.all(iterable)
@@ -6645,11 +7235,11 @@ var wd =
 /***/ (function(module, exports, __webpack_require__) {
 
 	var ctx         = __webpack_require__(26)
-	  , call        = __webpack_require__(117)
-	  , isArrayIter = __webpack_require__(118)
+	  , call        = __webpack_require__(116)
+	  , isArrayIter = __webpack_require__(117)
 	  , anObject    = __webpack_require__(30)
 	  , toLength    = __webpack_require__(16)
-	  , getIterFn   = __webpack_require__(120)
+	  , getIterFn   = __webpack_require__(119)
 	  , BREAK       = {}
 	  , RETURN      = {};
 	var exports = module.exports = function(iterable, entries, fn, that, ITERATOR){
@@ -7777,10 +8367,15 @@ var wd =
 
 	var _configFlags2 = _interopRequireDefault(_configFlags);
 
+	var _utils = __webpack_require__(112);
+
+	var _utils2 = _interopRequireDefault(_utils);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var eventEmitter = new _EventEmitter2.default(); //1-15 绑定AppEnterForeground与AppEnterBackground
+	//1-15 绑定AppEnterForeground与AppEnterBackground
 
+	var eventEmitter = new _EventEmitter2.default();
 	_bridge2.default.onMethod("onAppEnterForeground", function () {
 	  var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
 	  eventEmitter.emit("onAppEnterForeground", params);
@@ -7788,6 +8383,11 @@ var wd =
 	_bridge2.default.onMethod("onAppEnterBackground", function () {
 	  var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
 	  eventEmitter.emit("onAppEnterBackground", params);
+	});
+	_bridge2.default.onMethod("onAppRunningStatusChange", function () {
+	  var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
+	  _utils2.default.defaultRunningStatus = params.status;
+	  eventEmitter.emit("onAppRunningStatusChange", params);
 	});
 
 	var onAppEnterForeground = function onAppEnterForeground(fn) {
@@ -7806,10 +8406,16 @@ var wd =
 	    "hide" === params.mode ? self.appStatus = _configFlags2.default.AppStatus.LOCK : self.appStatus = _configFlags2.default.AppStatus.BACK_GROUND, "close" === params.mode ? self.hanged = !1 : "hang" === params.mode && (self.hanged = !0), "function" == typeof fn && fn(params);
 	  });
 	};
+	var onAppRunningStatusChange = function onAppRunningStatusChange(fn) {
+	  eventEmitter.on("onAppRunningStatusChange", function (params) {
+	    "function" == typeof fn && fn(params);
+	  });
+	};
 
 	exports.default = {
 	  onAppEnterForeground: onAppEnterForeground,
-	  onAppEnterBackground: onAppEnterBackground
+	  onAppEnterBackground: onAppEnterBackground,
+	  onAppRunningStatusChange: onAppRunningStatusChange
 	};
 
 /***/ }),
@@ -8702,6 +9308,9 @@ var __appServiceEngine__ =
 	            pageUnload(pageItem);
 	        }
 	        isExist || _utils2.default.error("Page route 错误(system error)", "navigateBack with an unexist webviewId " + pWebViewId);
+	    } else if ("reLaunch" === pApiKey) {
+	        currentPage && pageUnload(currentPage);
+	        pageStackObjs.hasOwnProperty(pWebViewId) ? _utils2.default.error("Page route 错误(system error)", "redirectTo with an already exist webviewId " + pWebViewId) : pageParse(routePath, pWebViewId, pageParams);
 	    } else if ("switchTab" === pApiKey) {
 	        for (var onlyOnePage = !0; pageStack.length > 1;) {
 	            pageUnload(pageStack[pageStack.length - 1]);

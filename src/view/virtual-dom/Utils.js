@@ -17,7 +17,7 @@ const isString = function (target) {
 }
 
 const isIphone = navigator.userAgent.match('iPhone')
-const screenWidth = window.screen.width || 375
+const screenWidth = window.screen && window.screen.width || 375
 const devicePixelRatio = window.devicePixelRatio || 2
 const SMALL_NUM = 1e-4
 const rpxToPxNum = function (rpxNum) {
