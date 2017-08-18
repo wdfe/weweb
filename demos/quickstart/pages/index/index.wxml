@@ -1,0 +1,16 @@
+<div wx:if="{{type === 'a'}}">a</div>
+<div wx:elif="{{type === 'b'}}">b</div>
+<div wx:elif="{{type === 'c'}}">c</div>
+<div wx:else>not a/b/c</div>
+
+<!-- wx: for -->
+<view wx:for="{{[1, 2, 3, 4, 5, 6, 7, 8, 9]}}" wx:for-item="i">
+  <view wx:for="{{[1, 2, 3, 4, 5, 6, 7, 8, 9]}}" wx:for-item="j">
+    <view wx:if="{{i <= j}}">
+      {{i}} * {{j}} = {{i * j}}
+    </view>
+  </view>
+</view>
+
+<!-- class -->
+<input class="weui-input a b c" bindinput="keychange"></input>
