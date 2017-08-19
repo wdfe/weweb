@@ -1,16 +1,18 @@
-<div wx:if="{{type === 'a'}}">a</div>
-<div wx:elif="{{type === 'b'}}">b</div>
-<div wx:elif="{{type === 'c'}}">c</div>
-<div wx:else>not a/b/c</div>
+<!-- index.wxml -->
+<include src="../logs/logs.wxml"/>
+<view> body </view>
+<block wx:for="{{[1, 2, 3]}}">
+  <include wx:if="{{item % 2 == 1}}" src="../logs/logs.wxml" />
+  <!-- <include wx:for="{{[1,2,3]}}" src="../logs/logs.wxml" /> -->
+</block>
 
-<!-- wx: for -->
-<view wx:for="{{[1, 2, 3, 4, 5, 6, 7, 8, 9]}}" wx:for-item="i">
-  <view wx:for="{{[1, 2, 3, 4, 5, 6, 7, 8, 9]}}" wx:for-item="j">
-    <view wx:if="{{i <= j}}">
-      {{i}} * {{j}} = {{i * j}}
-    </view>
-  </view>
-</view>
+<template name="odd">
+  <view> odd </view>
+</template>
+<template name="even">
+  <view> even </view>
+</template>
 
-<!-- class -->
-<input class="weui-input a b c" bindinput="keychange"></input>
+<block wx:for="{{[1, 2, 3, 4, 5]}}">
+    <template is="{{item % 2 == 0 ? 'even' : 'odd'}}"/>
+</block>
