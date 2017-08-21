@@ -1,3 +1,16 @@
+function _toArray (args) {
+    return Array.isArray(args) ? args : Array.from(args)
+}
+
+function _toCopyArray (args) {
+    if (Array.isArray(args)) {
+        for (var t = 0, res = new Array(args.length); t < args.length; t++) {
+            res[t] = args[t]
+        }
+        return res
+    }
+    return Array.from(args)
+}
 var touchEventNames = [
         'touchstart',
         'touchmove',

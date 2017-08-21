@@ -33,8 +33,8 @@ gulp.task('build', function (callback) {
       './tmp/bundle/view/wx.js',
       './tmp/bundle/view/exparser.js',
       './tmp/bundle/view/exparser-component.js',
-        './tmp/bundle/view/behaviors.js',
-        './tmp/bundle/view/components.js',
+//        './tmp/bundle/view/behaviors.js',
+//        './tmp/bundle/view/components.js',
       './tmp/bundle/view/virtual-dom.js',
       './tmp/bundle/view/common.js'
     ]
@@ -45,15 +45,15 @@ gulp.task('build', function (callback) {
       './tmp/bundle/service/__appServiceEngine__.js',
       './tmp/bundle/service/amdEngine.js'
     ]
-
+    /*
     gulp.src('./tmp/public/script/system.js').pipe(uglify()).pipe(gulp.dest(pubPath))
     gulp.src(services).pipe(concat('service.js')).pipe(uglify()).pipe(gulp.dest(pubPath))
     gulp.src(views).pipe(concat('view.js')).pipe(uglify()).pipe(gulp.dest(pubPath))
-    /*
+     */
      gulp.src('./tmp/public/script/system.js').pipe(gulp.dest(pubPath))
      gulp.src(services).pipe(concat('service.js')).pipe(gulp.dest(pubPath))
      gulp.src(views).pipe(concat('view.js')).pipe(gulp.dest(pubPath))
-     */
+
 
     console.log('end concat...')
   })
@@ -68,8 +68,8 @@ gulp.task('concat', function (callback) {
     './tmp/bundle/view/wx.js',
     './tmp/bundle/view/exparser.js',
     './tmp/bundle/view/exparser-component.js',
-      './tmp/bundle/view/behaviors.js',
-      './tmp/bundle/view/components.js',
+//      './tmp/bundle/view/behaviors.js',
+//      './tmp/bundle/view/components.js',
     // './tmp/bundle/old/view-exparser-ext.js',
     './tmp/bundle/view/virtual-dom.js',
     './tmp/bundle/view/common.js'

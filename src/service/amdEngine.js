@@ -12,7 +12,7 @@
 
   var getPathPrefix = function (pathname) {
     // 返回path
-    var res = pathname.match(/(.*)\/([^/]+)?$/)
+    var res = pathname.match(/(.*)\/([^\/]+)?$/)
     return res && res[1] ? res[1] : './'
   }
 

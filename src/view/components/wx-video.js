@@ -1,4 +1,22 @@
 // wx-video not on ios
+
+
+var _slicedToArray = (function () {
+    function sliceForIteratorObj (obj, length) {
+        var res = []
+        for (var val of obj) {
+            res.push(val)
+            if (length && res.length === length) break
+        }
+        return res
+    }
+
+    return function (obj, length) {
+        if (Array.isArray(obj)) return obj
+        if (Symbol.iterator in Object(obj)) return sliceForIteratorObj(obj, length)
+        throw new TypeError('Invalid attempt to destructure non-iterable instance')
+    }
+})()
 var Video;
 if (wx.getPlatform() !== 'ios') {
     Video = window.exparser.registerElement({

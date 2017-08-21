@@ -1,46 +1,3 @@
-function _toArray (args) {
-    return Array.isArray(args) ? args : Array.from(args)
-}
-
-function _toCopyArray (args) {
-    if (Array.isArray(args)) {
-        for (var t = 0, res = new Array(args.length); t < args.length; t++) {
-            res[t] = args[t]
-        }
-        return res
-    }
-    return Array.from(args)
-}
-
-function _defineProperty (obj, key, value) {
-    // 重写e[t]值为n
-    key in obj
-        ? Object.defineProperty(obj, key, {
-        value: value,
-        enumerable: !0,
-        configurable: !0,
-        writable: !0
-    })
-        : (obj[key] = value)
-    return obj
-}
-
-var _slicedToArray = (function () {
-    function sliceForIteratorObj (obj, length) {
-        var res = []
-        for (var val of obj) {
-            res.push(val)
-            if (length && res.length === length) break
-        }
-        return res
-    }
-
-    return function (obj, length) {
-        if (Array.isArray(obj)) return obj
-        if (Symbol.iterator in Object(obj)) return sliceForIteratorObj(obj, length)
-        throw new TypeError('Invalid attempt to destructure non-iterable instance')
-    }
-})()
 function exeWhenWXJSbridgeReady (fn) {
     window.__pageFrameEndTime__//首次generateFuncReady加载完毕
         ? fn()
@@ -250,7 +207,7 @@ function exeWhenWXJSbridgeReady (fn) {
 })(window),
 
 // touch events
-    function(win) {
+function(win) {
         var triggerEvent = function(event, name, params) {
                 exparser.triggerEvent(event.target, name, params, {
                     originalEvent: event,
@@ -466,3 +423,53 @@ function exeWhenWXJSbridgeReady (fn) {
             })
         })
     }(window)
+
+require('./behaviors/wx-base')
+require('./behaviors/wx-data-component')
+require('./behaviors/wx-disabled')
+require('./behaviors/wx-group')
+require('./behaviors/wx-hover')
+require('./behaviors/wx-input-base')
+require('./behaviors/wx-item')
+require('./behaviors/wx-label-target')
+require('./behaviors/wx-mask-Behavior')
+require('./behaviors/wx-native')
+require('./behaviors/wx-player')
+require('./behaviors/wx-touchtrack')
+
+require('./components/wx-action-sheet-cancel')
+require('./components/wx-action-sheet')
+require('./components/wx-action-sheet-item')
+require('./components/wx-audio')
+require('./components/wx-button')
+require('./components/wx-canvas')
+require('./components/wx-checkbox')
+require('./components/wx-checkbox-Group')
+require('./components/wx-form')
+require('./components/wx-icon')
+require('./components/wx-image')
+require('./components/wx-input')
+require('./components/wx-label')
+require('./components/wx-loading')
+require('./components/wx-map')
+require('./components/wx-mask')
+require('./components/wx-modal')
+require('./components/wx-navigator')
+require('./components/wx-picker')
+require('./components/wx-picker-view')
+require('./components/wx-picker-view-column')
+require('./components/wx-progress')
+require('./components/wx-radio')
+require('./components/wx-radio-group')
+require('./components/wx-scroll-view')
+require('./components/wx-slider')
+require('./components/wx-swiper')
+require('./components/wx-swiper-item')
+require('./components/wx-switch')
+require('./components/wx-text')
+require('./components/wx-textarea')
+require('./components/wx-toast')
+require('./components/wx-video')
+require('./components/wx-view')
+require('./components/wx-contact-button')
+//import ContactButton from './wx-contact-button'

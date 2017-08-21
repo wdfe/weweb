@@ -63,7 +63,7 @@ export default  window.exparser.registerElement({
                 return void wx.switchTab({
                     url: this.url
                 })
-          case"reLaunch":
+            case"reLaunch":
                 return void wx.reLaunch({
                     url: this.url
                 })
