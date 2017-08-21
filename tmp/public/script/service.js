@@ -1547,16 +1547,18 @@ var wd =
 	      webviewId: webViewId
 	    }),
 	        value = data.detail.value;
-	    if (ext && ext.setKeyboardValue) {} else if ("Object" === _utils2.default.getDataType(res)) {
-	      var params = {};
-	      value != res.value && (params.value = res.value + "");
-	      isNaN(parseInt(res.cursor)) || (params.cursor = parseInt(res.cursor));
-	      _bridge2.default.publish("setKeyboardValue", params, [webViewId]);
-	    } else {
-	      value != res && _bridge2.default.publish("setKeyboardValue", {
-	        value: res + "",
-	        cursor: -1
-	      }, [webViewId]);
+	    if (ext && ext.setKeyboardValue) {
+	      if (res === undefined) {} else if ("Object" === _utils2.default.getDataType(res)) {
+	        var params = {};
+	        value != res.value && (params.value = res.value + "");
+	        isNaN(parseInt(res.cursor)) || (params.cursor = parseInt(res.cursor));
+	        _bridge2.default.publish("setKeyboardValue", params, [webViewId]);
+	      } else {
+	        value != res && _bridge2.default.publish("setKeyboardValue", {
+	          value: res + "",
+	          cursor: -1
+	        }, [webViewId]);
+	      }
 	    }
 	  }
 	});
@@ -1727,11 +1729,10 @@ var wd =
 	  },
 	  getStorageSync: function getStorageSync(key) {
 	    if (paramCheck("getStorageSync", key, "")) {
-	      var rt,
-	          apiName = "ios" === _utils2.default.getPlatform() ? "getStorage" : "getStorageSync";
-	      _bridge2.default.invokeMethod(apiName, { key: key }, {
-	        beforeAll: function beforeAll() {
-	          var res = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
+	      var rt;
+	      _bridge2.default.invokeMethod('getStorageSync', { key: key }, {
+	        beforeAll: function beforeAll(res) {
+	          res = res || {};
 	          rt = _utils2.default.stringToAnyType(res.data, res.dataType);
 	        },
 	        afterFail: function afterFail() {
@@ -1765,14 +1766,13 @@ var wd =
 	      }
 	    }
 	  },
-	  setStorageSync: function setStorageSync(key) {
-	    var value = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : "";
-	    if (paramCheck("setStorage", key, "")) {
-	      var apiName = "ios" === _utils2.default.getPlatform() ? "setStorage" : "setStorageSync",
-	          dataObj = _utils2.default.anyTypeToString(value),
+	  setStorageSync: function setStorageSync(key, value) {
+	    value = value || "";
+	    if (paramCheck("setStorageSync", key, "")) {
+	      var dataObj = _utils2.default.anyTypeToString(value),
 	          data = dataObj.data,
 	          dataType = dataObj.dataType;
-	      _bridge2.default.invokeMethod(apiName, {
+	      _bridge2.default.invokeMethod("setStorageSync", {
 	        key: key,
 	        data: data,
 	        dataType: dataType
@@ -1783,19 +1783,16 @@ var wd =
 	    paramCheck("removeStorage", params, { key: "" }) && _bridge2.default.invokeMethod("removeStorage", params);
 	  },
 	  removeStorageSync: function removeStorageSync(key) {
-	    paramCheck("removeStorageSync", key, "") && _bridge2.default.invokeMethod("removeStorageSync", {
-	      key: key
-	    });
+	    paramCheck("removeStorageSync", key, "") && _bridge2.default.invokeMethod("removeStorageSync", { key: key });
 	  },
-	  clearStorage: function clearStorage(key) {
-	    _bridge2.default.invokeMethod("clearStorage", key);
+	  clearStorage: function clearStorage() {
+	    _bridge2.default.invokeMethod("clearStorage");
 	  },
 	  clearStorageSync: function clearStorageSync() {
-	    var apiName = "ios" === _utils2.default.getPlatform() ? "clearStorage" : "clearStorageSync";
-	    _bridge2.default.invokeMethod(apiName);
+	    _bridge2.default.invokeMethod("clearStorageSync");
 	  },
-	  getStorageInfo: function getStorageInfo(key) {
-	    _bridge2.default.invokeMethod("getStorageInfo", key);
+	  getStorageInfo: function getStorageInfo(params) {
+	    _bridge2.default.invokeMethod("getStorageInfo", params);
 	  },
 	  getStorageInfoSync: function getStorageInfoSync() {
 	    var rt = void 0;
@@ -2007,11 +2004,10 @@ var wd =
 	    var rt = {},
 	        platform = _utils2.default.getPlatform();
 	    _bridge2.default.invokeMethod("getSystemInfo", {}, {
-	      beforeSuccess: function beforeSuccess() {
-	        var res = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
-	        rt = res;
+	      beforeSuccess: function beforeSuccess(res) {
+	        rt = res || {};
 	        rt.platform = platform;
-	        delete res.errMsg;
+	        delete rt.errMsg;
 	      }
 	    });
 	    return rt;
@@ -2406,6 +2402,21 @@ var wd =
 	    var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
 	    paramCheck("getSavedFileInfo", params, { filePath: "" }) && _bridge2.default.invokeMethod("getSavedFileInfo", params);
 	  },
+	  getFileInfo: function getFileInfo() {
+	    var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
+	    if (_bridge2.default.beforeInvoke("getFileInfo", params, { filePath: "" })) {
+	      if (void 0 !== params.digestAlgorithm) {
+	        var res = _utils2.default.paramCheck(params, { digestAlgorithm: "" });
+	        if (res) {
+	          _bridge2.default.beforeInvokeFail("getFileInfo", params, "parameter error: " + res);
+	        }
+	        if (-1 === ["md5", "sha1"].indexOf(params.digestAlgorithm)) {
+	          _bridge2.default.beforeInvokeFail("getFileInfo", params, 'parameter error: invalid digestAlgorithm "' + params.digestAlgorithm + '"');
+	        }
+	      }
+	      _bridge2.default.invokeMethod("getFileInfo", params, {});
+	    }
+	  },
 	  removeSavedFile: function removeSavedFile() {
 	    var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
 	    paramCheck("removeSavedFile", params, { filePath: "" }) && _bridge2.default.invokeMethod("removeSavedFile", params);
@@ -2458,7 +2469,7 @@ var wd =
 	  Reporter.triggerErrorMessage(msg);
 	}), _bridge2.default.onMethod("onAppRoute", function (params) {
 	  var webviewId = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : 0;
-	  params.path = params.path.substring(0, params.path.length - 5);
+	  params.path = params.path.replace(/\.\w+(\?|$)/, "$1"); //.substring(0, params.path.length - 5);
 	  params.webviewId = params.webviewId ? params.webviewId : webviewId;
 	  currUrl = params.path;
 	  if ("appLaunch" !== params.openType) {
@@ -2477,7 +2488,7 @@ var wd =
 	  });
 	}), _bridge2.default.onMethod("onAppRouteDone", function (params) {
 	  var webviewId = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : 0;
-	  params.path = params.path.substring(0, params.path.length - 5);
+	  params.path = params.path.replace(/\.\w+(\?|$)/, "$1"); //params.path.substring(0, params.path.length - 5);
 	  params.webviewId = "undefined" != typeof params.webviewId ? params.webviewId : webviewId;
 	  currUrl = params.path;
 	  appRouteDoneCallback.forEach(function (fn) {
@@ -4465,10 +4476,30 @@ var wd =
 	        key: apiName
 	    });
 	}
-
+	function noop() {}
 	function onMethod(apiName, callback) {
 	    //onMethod
 	    on(apiName, _utils2.default.surroundByTryCatchFactory(callback, "at api " + apiName + " callback function"));
+	}
+	function beforeInvoke(apiName, params, paramTpl) {
+	    var res = _utils2.default.paramCheck(params, paramTpl);
+	    return !res || (beforeInvokeFail(apiName, params, "parameter error: " + res), !1);
+	}
+
+	function beforeInvokeFail(apiName) {
+	    var params = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {},
+	        errMsg = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : "",
+	        err = apiName + ":fail " + errMsg;
+	    console.error(err);
+	    var fail = Reporter.surroundThirdByTryCatch(params.fail || noop, "at api " + apiName + " fail callback function"),
+	        complete = Reporter.surroundThirdByTryCatch(params.complete || noop, "at api " + apiName + " complete callback function");
+	    fail({ errMsg: err });
+	    complete({ errMsg: err });
+	}
+
+	function checkUrlInConfig(apiName, url, params) {
+	    var path = url.replace(/\.html\?.*|\.html$/, "");
+	    return -1 !== __wxConfig.pages.indexOf(path) || (beforeInvokeFail(apiName, params, 'url "' + _utils2.default.removeHtmlSuffixFromUrl(url) + '" is not in app.json'), !1);
 	}
 
 	exports.default = {
@@ -4477,7 +4508,11 @@ var wd =
 	    publish: publish,
 	    subscribe: subscribe,
 	    invokeMethod: invokeMethod,
-	    onMethod: onMethod
+	    onMethod: onMethod,
+	    noop: noop,
+	    beforeInvoke: beforeInvoke,
+	    beforeInvokeFail: beforeInvokeFail,
+	    checkUrlInConfig: checkUrlInConfig
 	};
 
 /***/ }),
@@ -5222,6 +5257,16 @@ var wd =
 	    }]), init;
 	}();
 
+	function transWxmlToHtml(url) {
+	    if ("string" != typeof url) return url;
+	    var urlArr = url.split("?");
+	    return urlArr[0] += ".html", void 0 !== urlArr[1] ? urlArr[0] + "?" + urlArr[1] : urlArr[0];
+	}
+
+	function removeHtmlSuffixFromUrl(url) {
+	    return "string" == typeof url ? -1 !== url.indexOf("?") ? url.replace(/\.html\?/, "?") : url.replace(/\.html$/, "") : url;
+	}
+
 	exports.default = {
 	    surroundByTryCatchFactory: surroundByTryCatchFactory,
 	    getDataType: getDataType,
@@ -5234,6 +5279,8 @@ var wd =
 	    validateUrl: validateUrl,
 	    assign: assign,
 	    encodeUrlQuery: encodeUrlQuery,
+	    transWxmlToHtml: transWxmlToHtml,
+	    removeHtmlSuffixFromUrl: removeHtmlSuffixFromUrl,
 	    extend: extend,
 	    arrayBufferToBase64: arrayBufferToBase64,
 	    base64ToArrayBuffer: base64ToArrayBuffer,

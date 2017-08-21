@@ -696,6 +696,16 @@ var wxQuerySelector = function(){
     init
 }();
 
+function transWxmlToHtml(url) {
+    if ("string" != typeof url)return url;
+    var urlArr = url.split("?");
+    return urlArr[0] += ".html", void 0 !== urlArr[1] ? urlArr[0] + "?" + urlArr[1] : urlArr[0]
+}
+
+function removeHtmlSuffixFromUrl(url) {
+    return "string" == typeof url ? -1 !== url.indexOf("?") ? url.replace(/\.html\?/, "?") : url.replace(/\.html$/, "") : url
+}
+
 export default  {
     surroundByTryCatchFactory: surroundByTryCatchFactory,
     getDataType: getDataType,
@@ -708,6 +718,8 @@ export default  {
     validateUrl: validateUrl,
     assign: assign,
     encodeUrlQuery: encodeUrlQuery,
+    transWxmlToHtml: transWxmlToHtml,
+    removeHtmlSuffixFromUrl: removeHtmlSuffixFromUrl,
     extend: extend,
     arrayBufferToBase64: arrayBufferToBase64,
     base64ToArrayBuffer: base64ToArrayBuffer,

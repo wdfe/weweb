@@ -49,7 +49,6 @@ function checkUrl(apiName, params) { //判断当前页面是否在app.json里
 
 "function" == typeof logxx && logxx("sdk start");
 
-
 var emptyFn = function () {},
   pageData = {},
   currUrl = "",
@@ -78,16 +77,19 @@ bridge.subscribe("SPECIAL_PAGE_EVENT", function (params) {
       }),
       value = data.detail.value;
     if (ext && ext.setKeyboardValue){
-    }else if ("Object" ===  utils.getDataType(res)) {
-      var params = {};
-      value != res.value && (params.value = res.value + "")
-      isNaN(parseInt(res.cursor)) || (params.cursor = parseInt(res.cursor))
-      bridge.publish("setKeyboardValue", params, [webViewId])
-    } else {
-      value != res &&  bridge.publish("setKeyboardValue", {
-        value: res + "",
-        cursor: -1
-      },[webViewId])
+      if(res===undefined){
+
+      }else if ("Object" ===  utils.getDataType(res)) {
+          var params = {};
+          value != res.value && (params.value = res.value + "")
+          isNaN(parseInt(res.cursor)) || (params.cursor = parseInt(res.cursor))
+          bridge.publish("setKeyboardValue", params, [webViewId])
+      } else {
+          value != res &&  bridge.publish("setKeyboardValue", {
+              value: res + "",
+              cursor: -1
+          },[webViewId])
+      }
     }
   }
 });
@@ -269,10 +271,10 @@ var apiObj = {//wx对象
   },
   getStorageSync: function (key) {
     if (paramCheck("getStorageSync", key, "")) {
-      var rt,apiName = "ios" ===  utils.getPlatform() ? "getStorage" : "getStorageSync";
-      bridge.invokeMethod(apiName, {key: key},{
-        beforeAll: function () {
-          var res = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
+      var rt;
+      bridge.invokeMethod('getStorageSync', {key: key},{
+        beforeAll: function (res) {
+          res = res || {};
           rt = utils.stringToAnyType(res.data, res.dataType)
         },
         afterFail: function () {
@@ -307,14 +309,13 @@ var apiObj = {//wx对象
       }
     }
   },
-  setStorageSync: function (key) {
-    var value = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : "";
-    if (paramCheck("setStorage", key, "")) {
-      var apiName = "ios" ===  utils.getPlatform() ? "setStorage" : "setStorageSync",
-        dataObj =  utils.anyTypeToString(value),
+  setStorageSync: function (key,value) {
+    value = value || "";
+    if (paramCheck("setStorageSync", key, "")) {
+      var dataObj =  utils.anyTypeToString(value),
         data = dataObj.data,
         dataType = dataObj.dataType;
-      bridge.invokeMethod(apiName, {
+      bridge.invokeMethod("setStorageSync", {
         key: key,
         data: data,
         dataType: dataType
@@ -325,19 +326,16 @@ var apiObj = {//wx对象
     paramCheck("removeStorage", params, { key: "" }) &&  bridge.invokeMethod("removeStorage", params)
   },
   removeStorageSync: function (key) {
-    paramCheck("removeStorageSync", key, "") &&  bridge.invokeMethod("removeStorageSync", {
-      key: key
-    })
+    paramCheck("removeStorageSync", key, "") &&  bridge.invokeMethod("removeStorageSync", { key: key})
   },
-  clearStorage: function (key) {
-    bridge.invokeMethod("clearStorage", key)
+  clearStorage: function () {
+    bridge.invokeMethod("clearStorage")
   },
   clearStorageSync: function () {
-    var apiName = "ios" ===  utils.getPlatform() ? "clearStorage" : "clearStorageSync";
-    bridge.invokeMethod(apiName)
+    bridge.invokeMethod("clearStorageSync")
   },
-  getStorageInfo: function (key) {
-    bridge.invokeMethod("getStorageInfo", key)
+  getStorageInfo: function (params) {
+    bridge.invokeMethod("getStorageInfo", params)
   },
   getStorageInfoSync: function () {
     var rt = void 0;
@@ -566,11 +564,10 @@ var apiObj = {//wx对象
       platform =  utils.getPlatform();
     bridge.invokeMethod("getSystemInfo", {},
       {
-        beforeSuccess: function () {
-          var res = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
-          rt = res
+        beforeSuccess: function (res) {
+          rt = res || {}
           rt.platform = platform
-          delete res.errMsg
+          delete rt.errMsg
         }
       })
     return  rt
@@ -993,6 +990,21 @@ var apiObj = {//wx对象
     var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
     paramCheck("getSavedFileInfo", params, { filePath: ""}) && bridge.invokeMethod("getSavedFileInfo", params)
   },
+  getFileInfo: function () {
+      var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
+      if (bridge.beforeInvoke("getFileInfo", params, {filePath: ""})) {
+          if (void 0 !== params.digestAlgorithm) {
+              var res = utils.paramCheck(params, {digestAlgorithm: ""});
+              if (res){
+                bridge.beforeInvokeFail("getFileInfo", params, "parameter error: " + res);
+              }
+              if (-1 === ["md5", "sha1"].indexOf(params.digestAlgorithm)){
+                bridge.beforeInvokeFail("getFileInfo", params, 'parameter error: invalid digestAlgorithm "' + params.digestAlgorithm + '"')
+              }
+          }
+          bridge.invokeMethod("getFileInfo", params, {})
+      }
+  },
   removeSavedFile: function () {
     var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
     paramCheck("removeSavedFile", params, { filePath: ""}) && bridge.invokeMethod("removeSavedFile", params)
@@ -1050,7 +1062,7 @@ apiObj.onAppEnterBackground(),
   bridge.onMethod("onAppRoute",
     function (params) {
       var webviewId = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : 0;
-      params.path = params.path.substring(0, params.path.length - 5);
+      params.path = params.path.replace(/\.\w+(\?|$)/,"$1")//.substring(0, params.path.length - 5);
       params.webviewId = params.webviewId ? params.webviewId : webviewId;
       currUrl = params.path;
       if ("appLaunch" !== params.openType) {
@@ -1071,7 +1083,7 @@ apiObj.onAppEnterBackground(),
   bridge.onMethod("onAppRouteDone",
     function (params) {
       var webviewId = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : 0;
-      params.path = params.path.substring(0, params.path.length - 5);
+      params.path = params.path.replace(/\.\w+(\?|$)/,"$1");//params.path.substring(0, params.path.length - 5);
       params.webviewId = "undefined" != typeof params.webviewId ? params.webviewId : webviewId;
       currUrl = params.path;
       appRouteDoneCallback.forEach(function (fn) {

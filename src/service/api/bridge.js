@@ -86,9 +86,29 @@ function invokeMethod(apiName) {
         key: apiName
     })
 }
-
+function noop() {}
 function onMethod(apiName, callback) {//onMethod
     on(apiName,  utils.surroundByTryCatchFactory(callback, "at api " + apiName + " callback function"))
+}
+function beforeInvoke(apiName, params, paramTpl) {
+    var res = utils.paramCheck(params, paramTpl);
+    return !res || (beforeInvokeFail(apiName, params, "parameter error: " + res), !1)
+}
+
+function beforeInvokeFail(apiName) {
+    var params = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {},
+        errMsg = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : "", 
+        err = apiName + ":fail " + errMsg;
+    console.error(err);
+    var fail = Reporter.surroundThirdByTryCatch(params.fail || noop, "at api " + apiName + " fail callback function"),
+        complete = Reporter.surroundThirdByTryCatch(params.complete || noop, "at api " + apiName + " complete callback function");
+    fail({errMsg: err})
+    complete({errMsg: err})
+}
+
+function checkUrlInConfig(apiName, url, params) {
+    var path = url.replace(/\.html\?.*|\.html$/, "");
+    return -1 !== __wxConfig.pages.indexOf(path) || (beforeInvokeFail(apiName, params, 'url "' + utils.removeHtmlSuffixFromUrl(url) + '" is not in app.json'), !1)
 }
 
 
@@ -98,5 +118,9 @@ export default {
     publish: publish,
     subscribe: subscribe,
     invokeMethod: invokeMethod,
-    onMethod: onMethod
+    onMethod: onMethod,
+    noop: noop,
+    beforeInvoke: beforeInvoke,
+    beforeInvokeFail: beforeInvokeFail,
+    checkUrlInConfig: checkUrlInConfig
 }

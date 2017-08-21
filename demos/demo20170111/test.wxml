@@ -1,0 +1,2 @@
+<modal title="{{dialog.title}}" hidden="{{dialog.hidden}}" no-cancel bindconfirm="confirm">
+  {{dialog.content}}</modal>
