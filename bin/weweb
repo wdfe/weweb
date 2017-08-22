@@ -193,7 +193,7 @@ function bootWebServer(){
           borderStyle: 'round'
         })
       const endTime = new Date()
-      console.log(chalk.blue(`Time elapsed: ${(endTime - startTime)/1000}s`))
+      console.log(chalk.yellow(`Time elapsed: ${(endTime - startTime)/1000}s`))
       printLog(msg)
       if(program.open)open('http://localhost:' + port)
     })
