@@ -62,7 +62,8 @@ var emptyFn = function () {},
   accelerometerChangeFns = [],
   compassChangeFns = [],
   refreshSessionTimeHander = void 0,
-  curWebViewId = void 0;
+  curWebViewId = void 0,
+  currentClipBoardData = void 0;
 
 bridge.subscribe("SPECIAL_PAGE_EVENT", function (params) {
   var data = params.data,
@@ -1017,6 +1018,36 @@ var apiObj = {//wx对象
       "function" == typeof params.complete && params.complete(res)
     }, 0)
   },
+  getClipboardData: function (){
+    var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
+    bridge.invokeMethod("getClipboardData", params, {})
+    //bridge.invokeMethod("getClipboardData",params,{})
+ },
+  setClipboardData: function () {
+      var params = arguments.length >0 && void 0 !== arguments[0] ? arguments[0] : {};
+      paramCheck("setClipboardData", params, {data:""}) && bridge.invokeMethod("setClipboardData",params,{
+        beforeSuccess:function () {
+            currentClipBoardData = params.data
+            apiObj.reportClipBoardData(!0)
+
+        }
+      })
+  },
+  reportClipBoardData: function (param) {
+     if(currentClipBoardData !==""){
+       var t = getCurrentPages().find(function (e) {
+         return e.webviewId === curWebViewId
+       })||{},
+           value = [currentClipBoardData,t.route,param?1:0,Object.keys(t.options).map(function(e){
+             return encodeURIComponent(e) + "=" + encodeURIComponent(t.options[e])
+           }).join("&")].map(encodeURIComponent).join(",")
+       Reporter.reportKeyValue({
+             key: "Clipboard",
+             value: value,
+             force: !0
+       })
+     }
+  },
   getExtConfigSync: function () {
     if (!__wxConfig__.ext)return {};
     try {return JSON.parse(JSON.stringify(__wxConfig__.ext))} catch (e) {return {}}
@@ -1044,7 +1075,14 @@ var apiObj = {//wx对象
   }
 };
 
-apiObj.onAppEnterBackground(),
+apiObj.onAppEnterBackground(function () {
+  apiObj.getClipboardData({
+      success: function (e) {
+          e.data !== currentClipBoardData && 
+          (currentClipBoardData = e.data , apiObj.reportClipBoardData)(!1)
+      }
+  })
+}),
   apiObj.onAppEnterForeground(),
   apiObj.appStatus = configFlags.AppStatus.FORE_GROUND,
   apiObj.hanged = !1,

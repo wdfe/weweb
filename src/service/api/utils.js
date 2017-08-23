@@ -327,7 +327,7 @@ var Components = {
 };
 var APIs = {
     //APIS
-    onAccelerometerChange: {"1.0.0": [{callback: ["x", "y", "z"]}]},
+    onAccelerometerChange: {"1.2.1": [{callback: ["x", "y", "z"]}]},
     startAccelerometer: {"1.1.0": []},
     stopAccelerometer: {"1.1.0": []},
     chooseAddress: {"1.1.0": [{success: ["userName", "postalCode", "provinceName", "cityName", "countyName", "detailInfo", "nationalCode", "telNumber"]}]},
@@ -373,7 +373,7 @@ var APIs = {
     addCard: {"1.1.0": [{object: ["cardList"]}, {success: ["cardList"]}]},
     openCard: {"1.1.0": [{object: ["cardList"]}]},
     setClipboardData: {"1.1.0": [{object: ["data"]}]},
-    getClipboardData: {"1.1.0": [{success: ["data"]}]},
+    getClipboardData: {"1.1.9": [{success: ["data"]}]},
     onCompassChange: {"1.0.0": [{callback: ["direction"]}]},
     startCompass: {"1.1.0": []},
     stopCompass: {"1.1.0": []},
