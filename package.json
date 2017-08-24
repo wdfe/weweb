@@ -56,8 +56,8 @@
     "tunnel": "0.0.4",
     "update-notifier": "^1.0.2",
     "whatwg-fetch": "^2.0.3",
-    "wxml-transpiler": "0.0.3",
-    "wxss-transpiler": "^0.1.2"
+    "wxml-transpiler": "0.0.4",
+    "wxss-transpiler": "^0.1.3"
   },
   "devDependencies": {
     "actionsheet": "^0.1.2",
