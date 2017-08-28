@@ -97,11 +97,11 @@ const diffChildren = function (old, newEle, patches, patch, index) {
   return patch
 }
 //设置属性
-const diffProps = function (props, propKeys) {
+const diffProps = function (props, newProps) {
   let tempObj = {}
-  for (let key in propKeys) {
-    let propName = propKeys[key]
-    tempObj[propName] = props[propName]
+  for (let key in newProps) {
+    let newPropName = newProps[key]
+    tempObj[newPropName] = props[newPropName]
   }
   return Utils.isEmptyObject(tempObj) ? void 0 : tempObj
 }

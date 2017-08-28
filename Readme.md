@@ -1,7 +1,7 @@
 [![npm package](https://img.shields.io/npm/v/weweb-cli.svg)](https://www.npmjs.com/package/weweb-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-## weweb
+# weweb
 
 - [简介](#简介)
 - [转换效果演示](#转换效果演示)
@@ -36,6 +36,16 @@ gulp
 
 # 运行：
 ./bin/weweb ./demos/demo20170111/
+```
+
+开发用命令
+
+```sh
+# 自动执行rebuild
+npm run build:dev
+
+# 自动重启服务器
+npm run start:dev
 ```
 
 ## cli命令行工具安装
