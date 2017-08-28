@@ -13,6 +13,7 @@ var net = require('net')
 var boxen = require('boxen')
 const path = require('path')
 const co = require('co')
+const notify = require('node-notifier');
 
 program.version(json.version)
 .usage('[app root]')
@@ -194,6 +195,10 @@ function bootWebServer(){
         })
       const endTime = new Date()
       console.log(chalk.yellow(`Time elapsed: ${(endTime - startTime)/1000}s`))
+      notify.notify({
+        'title': 'Build Done',
+        'message': new Date()
+      });
       printLog(msg)
       if(program.open)open('http://localhost:' + port)
     })

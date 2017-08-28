@@ -9,7 +9,9 @@
   "scripts": {
     "start": "sh run.sh",
     "format": "prettier-standard './*.js' && prettier-standard 'src/**/*.js' && prettier-standard 'lib/**/*.js'",
-    "build": "gulp build"
+    "build": "gulp build",
+    "build:dev": "nodemon -w src -w lib -d 3 --exec 'npm run build'",
+    "start:dev": "nodemon -w demos -w tmp/public/script/ -d 3 -e js,json,wxss,wxml --exec 'npm run start'"
   },
   "repository": {
     "type": "git",
@@ -47,6 +49,7 @@
     "merge": "^1.2.0",
     "minimatch": "^3.0.4",
     "mkdir-p": "0.0.7",
+    "node-notifier": "^5.1.2",
     "node-parallel": "^0.1.6",
     "node-serial": "^0.1.1",
     "object-assign": "^4.1.0",
@@ -102,6 +105,7 @@
     "jr-qrcode": "^1.0.5",
     "json-loader": "^0.5.4",
     "koa-better-body": "^3.0.2",
+    "nodemon": "^1.11.0",
     "nprogress": "^0.2.0",
     "pinch-zoom": "^0.3.8",
     "prettier-standard": "^6.0.0",
