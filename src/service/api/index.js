@@ -1157,25 +1157,26 @@ apiObj.onAppEnterBackground(function () {
           } catch (e) {
             throw new utils.AppServiceSdkKnownError("bind key input error")
           }
-          if (data.setKeyboardValue) if (void 0 === peRes || null === peRes || peRes === !1);
-          else if ("Object" ===  utils.getDataType(peRes)) {
-            var opt = {
-              inputId: params.inputId
-            };
-            pValue != peRes.value && (opt.value = peRes.value + "")
-            isNaN(parseInt(peRes.cursor)) ||
-            (
-              opt.cursor = parseInt(peRes.cursor),
-              "undefined" == typeof opt.value && (opt.value = pValue),
-              opt.cursor > opt.value.length && (opt.cursor = -1)
-            )
-            bridge.invokeMethod("setKeyboardValue", opt)
-          } else
-            pValue != peRes &&  bridge.invokeMethod("setKeyboardValue", {
-              value: peRes + "",
-              cursor: -1,
-              inputId: params.inputId
-            })
+          if (data.setKeyboardValue)
+            if (void 0 === peRes || null === peRes || peRes === !1);
+            else if ("Object" ===  utils.getDataType(peRes)) {
+              var opt = {
+                inputId: params.inputId
+              };
+              pValue != peRes.value && (opt.value = peRes.value + "")
+              isNaN(parseInt(peRes.cursor)) ||
+              (
+                opt.cursor = parseInt(peRes.cursor),
+                "undefined" == typeof opt.value && (opt.value = pValue),
+                opt.cursor > opt.value.length && (opt.cursor = -1)
+              )
+              bridge.invokeMethod("setKeyboardValue", opt)
+            } else
+              pValue != peRes &&  bridge.invokeMethod("setKeyboardValue", {
+                value: peRes + "",
+                cursor: -1,
+                inputId: params.inputId
+              })
         }
       }
       bridge.publish("setKeyboardValue", {

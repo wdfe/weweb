@@ -83,12 +83,12 @@ var Tabbar = {
         var iDom = item.querySelector('.tabbar-label-indicator');
         var labelDom = item.querySelector('.tabbar-label');
         //fix tabbar no iconPath bug
-        if(!iconDom.getAttribute('src')){
+        if(iconDom && !iconDom.getAttribute('src')){
           iconDom.style.display='none';
         }
         if(active==idx){
           if(!top){
-            iconDom.src = iconDom.getAttribute('select-icon');
+            iconDom && (iconDom.src = iconDom.getAttribute('select-icon'));
           }else{
             iDom.style.color = tabBar.selectedColor;
             iDom.style.display = 'inline-block';
@@ -96,7 +96,7 @@ var Tabbar = {
           labelDom.style.color = tabBar.selectedColor;
         }else{
           if(!top){
-            iconDom.src = iconDom.getAttribute('icon');
+            iconDom && (iconDom.src = iconDom.getAttribute('icon'));
           }else{
             iDom.style.color = tabBar.color;
             iDom.style.display = 'none';
