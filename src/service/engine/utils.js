@@ -100,7 +100,7 @@ var pageEngine = {
   },
   warn:function(title, warn) {
     console.group(new Date + " " + title);
-    console.warn(warn);
+    console.error(warn);
     console.groupEnd();
   },
   info:function(msg) {
