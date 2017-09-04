@@ -202,7 +202,13 @@ export default !(function () {
             this._keyboardShow && this.$.input.blur()
         },
         _getType: function (type, isPswd) {
-            return isPswd || type == 'password' ? 'password' : 'text'
+            var typeTable = {
+                'digit': 'number',
+                'number': 'number',
+                'email': 'email',
+                'password': 'password'
+            }
+            return isPswd || typeTable[type] || 'text'
         },
         _showValueChange: function (value) {
             this.$.input.value = value
