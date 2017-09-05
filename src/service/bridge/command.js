@@ -1,14 +1,10 @@
 import Nprogress from 'nprogress'
 import filePicker from 'file-picker'
-import merge from 'merge'
 import Upload from 'upload'
-import Serial from 'node-serial'
-import Bus from './bus'
 import * as viewManage from './viewManage'
 import {onNavigate, onLaunch, onBack} from './service'
 import header from './header'
 import throttle from 'throttleit'
-import {toAppService} from './service'
 import record from './sdk/record'
 import Compass from './sdk/compass'
 import storage from './sdk/storage'
@@ -26,11 +22,32 @@ import confirm from './component/confirm'
 import Toast from './component/toast'
 import mask from './component/mask'
 import qrscan from './component/qrscan'
-import {getRedirectData, validPath, dataURItoBlob, toNumber} from './util'
-let appData = {} //eslint-disable-line
+import {getRedirectData, validPath, dataURItoBlob, toNumber,getBus} from '../lib/util'
+const Bus = getBus()
+
 let fileIndex = 0
 let fileStore = {}
 
+
+function toAppService(data) {
+  data.to = 'appservice'
+  let obj = Object.assign({
+    command: 'MSG_FROM_WEBVIEW',
+    webviewID: SERVICE_ID
+  }, data)
+  if (obj.msg && obj.command !== 'GET_ASSDK_RES') {
+    let view = currentView()
+    let id = view ? view.id : 0
+    obj.msg.webviewID = data.webviewID || id
+    obj.msg.options = obj.msg.options || {}
+    obj.msg.options.timestamp = Date.now()
+  }
+  if (obj.command == 'GET_ASSDK_RES'){
+    ServiceJSBridge.invokeCallbackHandler(obj.ext.callbackID, obj.msg);
+  }else if(obj.command == 'MSG_FROM_WEBVIEW'){
+    ServiceJSBridge.subscribeHandler(obj.msg.eventName,obj.msg.data || {},obj.msg.webviewID)
+  }
+}
 export function getPublicLibVersion() {
   //ignore
 }

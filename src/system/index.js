@@ -12,23 +12,6 @@ tabbar.init();
 
 Nprogress.start()
 
-Bus.on('back', () => {
-  let curr = currentView()
-  navigateBack()
-  if (!curr.external) onBack()
-})
-
-tabbar.on('active', pagePath => {
-  let curr = currentView()
-  if (curr && curr.url == pagePath) return
-  let {path, query} = util.parsePath(pagePath)
-  navigateTo(pagePath, true)
-  lifeSycleEvent(path, query, 'switchTab')
-})
-
-Bus.on('route', (n, curr) => {
-  tabbar.show(curr.url)
-})
 
 function sdk(data) {
   let msg = data.msg
