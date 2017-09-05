@@ -698,11 +698,16 @@ export function showPickerView(data, args) {
   picker.show()
   //picker.on('cancel', () => {})
   picker.on('select', n => {
-    publishPagEevent('bindPickerChange', {
-      type: 'change',
-      detail: {
-        value: n + ''
-      }
+    // publishPagEevent('bindPickerChange', {
+    //   type: 'change',
+    //   detail: {
+    //     value: n + ''
+    //   }
+    // })
+    // args.cb()
+    WeixinJSBridge.subscribeHandler('showPickerView', {
+      errMsg: 'showPickerView:ok',
+      index: n
     })
   })
 }
@@ -719,11 +724,15 @@ export function showDatePickerView(data, args) {
   }
   picker.show()
   picker.on('select', val => {
-    publishPagEevent(eventName, {
-      type: 'change',
-      detail: {
-        value: val
-      }
+    // publishPagEevent(eventName, {
+    //   type: 'change',
+    //   detail: {
+    //     value: val
+    //   }
+    // })
+    WeixinJSBridge.subscribeHandler('showDatePickerView', {
+      errMsg: 'showDatePickerView:ok',
+      value: val
     })
   })
 }
