@@ -1,6 +1,7 @@
 import Bus from './bus'
 import Emitter from 'emitter'
 import {uid, createFrame, parsePath} from './util'
+import {onLaunch,lifeSycleEvent} from './service'
 require('whatwg-fetch')
 function isMap(path) {
     return /^http(s)?:\/\/(apis\.map|3gimg\.qq\.com)/.test(path)
@@ -61,12 +62,13 @@ function bridgeReady (fn) {
 }
 
 export default class View extends Emitter {
-    constructor(path) {
+    constructor(path, isTabView) {
         if (!path) throw new Error('path required for view')
         super()
         let id = this.id = uid()
         let o = parsePath(path)
         this.url = path
+        this.isTabView = isTabView
         this.path = o.path
         this.query = o.query
         this.isMap = isMap(path)
@@ -234,40 +236,61 @@ export default class View extends Emitter {
             document.querySelector('head').appendChild(link);
         }
     }
-    loadWxml() {
+
+    loadWxml () {
         // load generateFn and notify view
-        //this.el.contentWindow.__gen()
+        // this.el.contentWindow.__gen()
         let self = this
-        let p = './src/'+this.path+'.js'
+        let p = './src/' + this.path + '.js'
         fetch(p)
-        .then(function(response) {
+          .then(function (response) {
             return response.text()
-        }).then(function(res) {
-          if(window.__curPage__.id!=self.id){
-            return;
-          }
-            let resArr = res.split('@css-body-start:')
-            var func = new Function(resArr[0] + '\n return $gwx("./' + self.path + '.wxml")')
-
-            self.__generateFunc__ = window.__generateFunc__ = func()
-            if(window.firstRender){//非首次加载
-                window.firstRender = 0
-                WeixinJSBridge.publish('DOMContentLoaded', {
-                    data: {},
-                    options: {
-                        timestamp: Date.now()
-                    }
-                })
-            }else{
-                bridgeReady(function () {
-                    document.dispatchEvent(new CustomEvent("generateFuncReady", {}));
-                    window.__pageFrameEndTime__ = Date.now()
-                })
+          })
+          .then(function (res) {
+            if (window.__curPage__.id != self.id) {
+              return
+            }
+            let resArr = res.split('@code-separator-line:')
+            try {
+                new Function(`${resArr[2]}`)() // define page service
+            } catch(e) {
+                console.log(e)
             }
 
-            if(resArr[1]){
-                self.inlineCss(resArr[1], widthScreen, ratio, self.path);
+            var func = new Function(
+              resArr[0] + '\n return $gwx("./' + self.path + '.wxml")'
+            )
+            try {
+                self.__generateFunc__ = window.__generateFunc__ = func()
+            } catch(e) {
+                console.log(e)
             }
-        });
+
+            if (window.firstRender) {
+              // rerender
+              window.firstRender = 0
+              if(self.isTabView) {
+                lifeSycleEvent(self.path, self.query, 'switchTab')
+              }
+              WeixinJSBridge.publish('DOMContentLoaded', {
+                data: {},
+                options: {
+                  timestamp: Date.now()
+                }
+              })
+
+            } else {
+              // first-time render
+              onLaunch(self.url)
+              bridgeReady(function () {
+                document.dispatchEvent(new CustomEvent('generateFuncReady', {}))
+                window.__pageFrameEndTime__ = Date.now()
+              })
+            }
+
+            if (resArr[1]) {
+              self.inlineCss(resArr[1], widthScreen, ratio, self.path)
+            }
+          })
     }
 }
