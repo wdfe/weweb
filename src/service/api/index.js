@@ -273,7 +273,7 @@ var apiObj = {//wx对象
   getStorageSync: function (key) {
     if (paramCheck("getStorageSync", key, "")) {
       var rt;
-      bridge.invokeMethod('getStorageSync', {key: key},{
+      bridge.invokeMethodSync('getStorageSync', {key: key},{
         beforeAll: function (res) {
           res = res || {};
           rt = utils.stringToAnyType(res.data, res.dataType)
@@ -316,7 +316,7 @@ var apiObj = {//wx对象
       var dataObj =  utils.anyTypeToString(value),
         data = dataObj.data,
         dataType = dataObj.dataType;
-      bridge.invokeMethod("setStorageSync", {
+      bridge.invokeMethodSync("setStorageSync", {
         key: key,
         data: data,
         dataType: dataType
@@ -327,20 +327,20 @@ var apiObj = {//wx对象
     paramCheck("removeStorage", params, { key: "" }) &&  bridge.invokeMethod("removeStorage", params)
   },
   removeStorageSync: function (key) {
-    paramCheck("removeStorageSync", key, "") &&  bridge.invokeMethod("removeStorageSync", { key: key})
+    paramCheck("removeStorageSync", key, "") &&  bridge.invokeMethodSync("removeStorageSync", { key: key})
   },
   clearStorage: function () {
     bridge.invokeMethod("clearStorage")
   },
   clearStorageSync: function () {
-    bridge.invokeMethod("clearStorageSync")
+    bridge.invokeMethodSync("clearStorageSync")
   },
   getStorageInfo: function (params) {
     bridge.invokeMethod("getStorageInfo", params)
   },
   getStorageInfoSync: function () {
     var rt = void 0;
-    bridge.invokeMethod("getStorageInfoSync", {},{
+    bridge.invokeMethodSync("getStorageInfoSync", {},{
       beforeAll: function (t) {
         rt = t
         delete t.errMsg
@@ -554,7 +554,7 @@ var apiObj = {//wx对象
   },
   getSystemInfo: function (params) {
     var platform =  utils.getPlatform();
-    bridge.invokeMethod("getSystemInfo", params, {
+    bridge.invokeMethodSync("getSystemInfo", params, {
       beforeSuccess: function (rt) {
         rt.platform = platform
       }
@@ -563,7 +563,7 @@ var apiObj = {//wx对象
   getSystemInfoSync: function (params) {
     var rt = {},
       platform =  utils.getPlatform();
-    bridge.invokeMethod("getSystemInfo", {},
+    bridge.invokeMethodSync("getSystemInfo", {},
       {
         beforeSuccess: function (res) {
           rt = res || {}
@@ -1078,7 +1078,7 @@ var apiObj = {//wx对象
 apiObj.onAppEnterBackground(function () {
   apiObj.getClipboardData({
       success: function (e) {
-          e.data !== currentClipBoardData && 
+          e.data !== currentClipBoardData &&
           (currentClipBoardData = e.data , apiObj.reportClipBoardData)(!1)
       }
   })
