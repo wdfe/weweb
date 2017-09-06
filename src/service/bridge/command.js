@@ -1,28 +1,22 @@
-import Nprogress from 'nprogress'
 import filePicker from 'file-picker'
 import Upload from 'upload'
-import * as viewManage from './viewManage'
-import {onNavigate, onLaunch, onBack} from './service'
-import header from './header'
+import router from '../router/index'
+import header from '../lib/header'
 import throttle from 'throttleit'
-import record from './sdk/record'
-import Compass from './sdk/compass'
-import storage from './sdk/storage'
-import Picker from './sdk/picker'
-import TimePicker from './sdk/timePicker'
-import DatePicker from './sdk/datePicker'
-import * as fileList from './sdk/fileList'
-import toast from './sdk/toast'
-import image from './sdk/image'
-import modal from './sdk/modal'
-import actionSheet from './sdk/actionsheet'
-import {once} from './event'
-import Preview from './component/preview'
-import confirm from './component/confirm'
-import Toast from './component/toast'
-import mask from './component/mask'
-import qrscan from './component/qrscan'
-import {getRedirectData, validPath, dataURItoBlob, toNumber,getBus} from '../lib/util'
+import record from '../lib/sdk/record'
+import Compass from '../lib/sdk/compass'
+import storage from '../lib/sdk/storage'
+import Picker from '../lib/sdk/picker'
+import TimePicker from '../lib/sdk/timePicker'
+import DatePicker from '../lib/sdk/datePicker'
+import * as fileList from '../lib/sdk/fileList'
+import toast from '../lib/sdk/toast'
+import image from '../lib/sdk/image'
+import modal from '../lib/sdk/modal'
+import actionSheet from '../lib/sdk/actionsheet'
+import Preview from '../lib/component/preview'
+import confirm from '../lib/component/confirm'
+import { dataURItoBlob, toNumber,getBus,once} from '../lib/util'
 const Bus = getBus()
 
 let fileIndex = 0
@@ -36,7 +30,7 @@ function toAppService(data) {
     webviewID: SERVICE_ID
   }, data)
   if (obj.msg && obj.command !== 'GET_ASSDK_RES') {
-    let view = currentView()
+    let view = router.currentView()
     let id = view ? view.id : 0
     obj.msg.webviewID = data.webviewID || id
     obj.msg.options = obj.msg.options || {}
@@ -48,33 +42,26 @@ function toAppService(data) {
     ServiceJSBridge.subscribeHandler(obj.msg.eventName,obj.msg.data || {},obj.msg.webviewID)
   }
 }
-export function getPublicLibVersion() {
-  //ignore
+export function onLaunch() {
+  router.onLaunch()
 }
-
-export function systemLog() {
-  //ignore
+export function redirectTo(data) {
+  router.redirectTo(data.args.url)
 }
-
-export function shareAppMessage(data) {
-  let {desc, imgUrl, path, title} = data.args
-  modal({
-    title,
-    imgUrl,
-    content: desc
-  }).then(confirm => {
-    onSuccess(data, { confirm })
-  })
+export function navigateTo(data) {
+  router.navigateTo(data.args.url)
 }
-
-export function requestPayment(data) {
-  confirm('确认支付吗？').then(() => {
-    onSuccess(data, {statusCode: 200})
-  }, () => {
-    onError(data)
-  })
+export function reLaunch(data) {
+  router.reLaunch(data.args.url)
 }
-
+export function switchTab(data) {
+  router.switchTab(data.args.url)
+}
+export function navigateBack(data) {
+  data.args = data.args || {}
+  let delta = data.args.delta ? Number(data.args.delta) : 1
+  router.navigateBack(delta)
+}
 export function previewImage(data) {
   let args = data.args
   let urls = args.urls
@@ -96,7 +83,7 @@ export function PULLDOWN_REFRESH(data) {
 }
 
 export function stopPullDownRefresh(data) {
-  let curr = viewManage.currentView()
+  let curr = router.currentView()
   if (curr) {
     curr.postMessage({
       command: "STOP_PULL_DOWN_REFRESH"
@@ -108,34 +95,19 @@ export function stopPullDownRefresh(data) {
 
 // publish event to views
 export function publish(data) {
-  let all_ids = viewManage.getViewIds()
+  let all_ids = router.getViewIds()
   let ids = toNumber(data.webviewIds) || all_ids
   data.act = 'sendMsgFromAppService'
   let obj = {
     msg: data,
     command: 'MSG_FROM_APPSERVICE'
   }
-  viewManage.eachView(view => {
+  router.eachView(view => {
     if (ids.indexOf(view.id) !== -1) {
       view.postMessage(obj)
     }
   })
 }
-
-export function scanCode(data) {
-  qrscan().then(val => {
-    onSuccess(data, {
-      result: val
-    })
-  }, () => {
-    onCancel(data)
-  })
-}
-
-export function WEBVIEW_READY (data) {
-  console.log(data)
-}
-
 
 //页面滚动API
 export function pageScrollTo (param) {
@@ -163,41 +135,6 @@ export function pageScrollTo (param) {
         scrollable.style.scrollTop = scrollTop;
     }
 }
-
-
-export function GET_APP_STORAGE(data) {
-  let res = storage.getAll()
-  window.postMessage({
-    to: data.comefrom,
-    msg: {
-      storage: res
-    },
-    command: 'SET_APP_STORAGE'
-  }, '*')
-}
-
-export function DELETE_APP_STORAGE(data) {
-  if (!data.data || !data.data.key) return console.error('key not found')
-  storage.remove(data.data.key)
-}
-
-export function SET_APP_STORAGE(data) {
-  let d = data.data
-  if (!d || !d.key || !d.type)  return console.error('wrong arguments')
-  storage.set(d.key, d.value, d.type)
-}
-
-storage.on('change', () => {
-  let res = storage.getAll()
-  window.postMessage({
-    to: 'devtools-storage',
-    msg: {
-      storage: res
-    },
-    command: 'SET_APP_STORAGE'
-  }, '*')
-})
-
 
 export function setNavigationBarTitle(data) {
   let title = data.args.title
@@ -292,7 +229,7 @@ export function enableCompass() {
       }
     })
   }, 200))
-  viewManage.currentView().on('destroy', () => {
+  router.currentView().on('destroy', () => {
     Compass.unwatch(id)
   })
 }
@@ -315,7 +252,7 @@ export function enableAccelerometer() {
       })
     }, 200)
     window.addEventListener("devicemotion", handler, false);
-    viewManage.currentView().on('destroy', () => {
+    router.currentView().on('destroy', () => {
       window.removeEventListener("devicemotion", handler, false);
     })
   } else {
@@ -349,8 +286,7 @@ export function getLocation(data) {
 export function openLocation(data) {
   let args = data.args
   let url = "http://apis.map.qq.com/tools/poimarker?type=0&marker=coord:" + args.latitude + "," + args.longitude + "&key=JMRBZ-R4HCD-X674O-PXLN4-B7CLH-42BSB&referer=wxdevtools"
-  viewManage.openExternal(url)
-  Nprogress.done()
+  router.openExternal(url)
   onSuccess(data, {
     latitude: args.latitude,
     longitude: args.longitude
@@ -359,8 +295,7 @@ export function openLocation(data) {
 
 export function chooseLocation(data) {
   let url = `https://3gimg.qq.com/lightmap/components/locationPicker2/index.html?search=1&type=1&coord=39.90403%2C116.407526&key=JMRBZ-R4HCD-X674O-PXLN4-B7CLH-42BSB&referer=wxdevtools`
-  viewManage.openExternal(url)
-  Nprogress.done()
+  router.openExternal(url)
   let called = false
   Bus.once('back',() => {
     if (!called) {

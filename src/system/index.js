@@ -63,11 +63,7 @@ const systemBridge = {
     data = data || {}
     const cmd = data.command
     const msg = data.msg
-    // location picker of map
-    if (data.module == 'locationPicker') {
-      currentView().setLocation(data)
-      return
-    }
+
     if (data.to != "backgroundjs") return
 
     if (data.command == 'EXEC_JSSDK') {//from view

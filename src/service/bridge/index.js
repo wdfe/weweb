@@ -1,4 +1,5 @@
 import proxyRequirst from './proxyRequirst';
+import * as command from './command'
 var callbacks = {},
   callbackIndex = 0,
   defaultEventHandlers = {},
@@ -18,13 +19,6 @@ function isLimitedApi(event) {
     return true;
   }
 }
-function isLockSDK(apiName) {
-  return "navigateTo" === apiName || "redirectTo" === apiName;
-}
-
-function isSyncSDK(apiName) {
-  return "getSystemInfo" === apiName || /Sync$/.test(apiName);
-};
 
 var callSystemCmd = function(sdkName, args, callbackID) {
   var config = {
@@ -32,19 +26,7 @@ var callSystemCmd = function(sdkName, args, callbackID) {
     args: args,
     callbackID: callbackID
   };
-  isSyncSDK(sdkName) ? doSyncCommand(config) : doCommand(config);
-};
-var doSyncCommand = function(config) {//通过prompt交互
-  config.command = "COMMAND_FROM_ASJS";
-  config.appid = appid;
-  config.appname = appname;
-  config.apphash = apphash;
-  config.webviewID = webviewID;
-  var res = systemBridge.doSyncCommand(config);
-  var //command = res.command,//GET_ASSDK_RES
-    msg = res.msg || {},
-    ext = res.ext || {};
-  invokeCallbackHandler(ext.callbackID, msg);
+  doCommand(config);
 };
 
 var doCommand = function(config) {//postMessage notice e
@@ -57,7 +39,12 @@ var doCommand = function(config) {//postMessage notice e
   config.webviewID = webviewID;
   config.__id = __id;
   __id++;
-  systemBridge.doCommand(config);
+  let sdkName = config.sdkName
+  if (command.hasOwnProperty(sdkName)) {
+    command[sdkName](config)
+  } else {
+    console.warn(`Method ${sdkName} not implemented for command!`)
+  }
 };
 var userApi = {
   login: function(event, temp, sendMsg) {
@@ -96,19 +83,13 @@ var invoke = function (eventName, params, callback) {
       userApi[eventName](eventName,params,callback);
       return;
     }else if (!isLimitedApi(eventName)) {
-      var lockSDK = isLockSDK(eventName),
-        time = +new Date;
-      if(!(lockSDK && time - tage < 200)){//非连续不到200ms切换页面及非受限接口
-        tage = lockSDK ? time : 0
+      if (proxyRequirst[eventName]) {
+        proxyRequirst[eventName].apply(this, arguments);
+      } else {
 
-        if (proxyRequirst[eventName]) {
-          proxyRequirst[eventName].apply(this, arguments);
-        } else {
-
-          var callbackId = ++callbackIndex;
-          callbacks[callbackId] = callback,
-            callSystemCmd(eventName, params, callbackId);//eventName->sdkName
-        }
+        var callbackId = ++callbackIndex;
+        callbacks[callbackId] = callback,
+          callSystemCmd(eventName, params, callbackId);//eventName->sdkName
       }
 
     }else if(!showWarning){
@@ -134,13 +115,7 @@ var invoke = function (eventName, params, callback) {
       delete callbacks[callbackId]
   },
   publish = function (eventName, data, webviewIds, flag) {
-/*
-    var filterEvent = ["appDataChange","pageInitData","__updateAppData"];
-    filterEvent.indexOf(eventName)=== -1 || flag || doCommand({
-      appData: __wxAppData,
-      sdkName: "send_app_data"
-    });
-*/
+
     doCommand({
       eventName: eventPrefix + eventName,//对应view subscribe
       data: data,

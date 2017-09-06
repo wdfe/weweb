@@ -105,7 +105,7 @@ function onNavigate(url, type = 'navigateTo') {
 }
 
 const router = {
-  onLaunch (data) { //eslint-disable-line
+  onLaunch () { //eslint-disable-line
     const routes = getRoutes()
     const first = routes.shift()
     let valid = util.validPath(first)
@@ -254,4 +254,23 @@ const router = {
   },
 
 }
+window.addEventListener("message", function (event) {//处理地图相关通讯
+  var data = event.data || {};
+  if ("object" === typeof(data) && ("geolocation" === data.module || "locationPicker" === data.module)) {
+    if("geolocation" == data.module){
+      data = {
+        module: "locationPicker",
+        latlng: {
+          lat: data.lat,
+          lng: data.lng
+        },
+        poiaddress: "" + data.province + data.city,
+        poiname: data.addr,
+        cityname: data.city
+      }
+    }
+    curr.setLocation(data)
+  }
+})
+
 export default router

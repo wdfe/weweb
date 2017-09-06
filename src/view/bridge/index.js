@@ -94,27 +94,7 @@ pullDownRefresh.register(function () {
   var msg = {}, ext = {};
   callSystemCmd("backgroundjs", msg, "PULLDOWN_REFRESH", ext)
 });
-window.addEventListener("message", function (event) {//处理地图相关通讯
-  var data = event.data;
-  if (data && "object" === typeof(data) && ("geolocation" === data.module || "locationPicker" === data.module)) {
-    if("geolocation" == data.module){
-      data = {
-        module: "locationPicker",
-        latlng: {
-          lat: data.lat,
-          lng: data.lng
-        },
-        poiaddress: "" + data.province + data.city,
-        poiname: data.addr,
-        cityname: data.city
-      }
-    }
-    if("locationPicker" == data.module){
-      systemBridge.doCommand(data);
-    }
-    //alert("map handle:" + JSON.stringify(data))
-  }
-})
+
 window.WeixinJSBridge = {
   pullDownRefresh,
   invoke: invoke,
