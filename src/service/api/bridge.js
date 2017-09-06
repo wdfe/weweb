@@ -1,4 +1,5 @@
 import  utils from './utils'
+import * as Native from './native'
 
 
 function invoke() {//ServiceJSBridge.invoke
@@ -43,23 +44,66 @@ function subscribe() {//ServiceJSBridge.subscribe
     ServiceJSBridge.subscribe.apply(ServiceJSBridge, args)
 }
 
-function invokeMethod(apiName) {
-    var options = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {},
-        innerFns = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : {},
-        params = {};
+function invokeMethodSync(apiName,options,innerFns) {
+    var params = {};
     for (var i in options){
-        "function" == typeof options[i] && (params[i] = Reporter.surroundThirdByTryCatch(options[i], "at api " + apiName + " " + i + " callback function"), delete options[i]);
+        "function" == typeof options[i] && (params[i] = Reporter.surroundThirdByTryCatch(options[i], "at api " + apiName + " " + i + " callback function"),delete options[i]);
     }
     var sysEventFns = {};
     for (var s in innerFns){
-        "function" == typeof innerFns[s] && (sysEventFns[s] =  utils.surroundByTryCatchFactory(innerFns[s], "at api " + apiName + " " + s + " callback function"));
+        "function" == typeof innerFns[s] && (sysEventFns[s] = utils.surroundByTryCatchFactory(innerFns[s], "at api " + apiName + " " + s + " callback function"));
+    }
+    const callback = function (res) {
+        res.errMsg = res.errMsg || apiName + ":ok";
+        var isOk = 0 === res.errMsg.indexOf(apiName + ":ok"),
+            isCancel = 0 === res.errMsg.indexOf(apiName + ":cancel"),
+            isFail = 0 === res.errMsg.indexOf(apiName + ":fail");
+        "function" == typeof sysEventFns.beforeAll && sysEventFns.beforeAll(res)
+        if (isOk){
+            "function" == typeof sysEventFns.beforeSuccess && sysEventFns.beforeSuccess(res),
+            "function" == typeof params.success && params.success(res),
+            "function" == typeof sysEventFns.afterSuccess && sysEventFns.afterSuccess(res);
+        }else if (isCancel) {
+            res.errMsg = res.errMsg.replace(apiName + ":cancel", apiName + ":fail cancel"),
+            "function" == typeof params.fail && params.fail(res),
+            "function" == typeof sysEventFns.beforeCancel && sysEventFns.beforeCancel(res),
+            "function" == typeof params.cancel && params.cancel(res),
+            "function" == typeof sysEventFns.afterCancel && sysEventFns.afterCancel(res);
+        }else if (isFail) {
+            "function" == typeof sysEventFns.beforeFail && sysEventFns.beforeFail(res),
+            "function" == typeof params.fail && params.fail(res);
+            var rt = !0;
+            "function" == typeof sysEventFns.afterFail && (rt = sysEventFns.afterFail(res)),
+            rt !== !1 && Reporter.reportIDKey({
+                key: apiName + "_fail"
+            })
+        }
+        "function" == typeof params.complete && params.complete(res),
+        "function" == typeof sysEventFns.afterAll && sysEventFns.afterAll(res)
+    }
+    const res = Native[apiName](options)
+    callback(res)
+
+    Reporter.reportIDKey({
+        key: apiName
+    })
+}
+function invokeMethod(apiName,options,innerFns) {
+    var params = {};
+    for (var i in options){
+        "function" == typeof options[i] && (params[i] = Reporter.surroundThirdByTryCatch(options[i], "at api " + apiName + " " + i + " callback function"),delete options[i]);
+    }
+    var sysEventFns = {};
+    for (var s in innerFns){
+        "function" == typeof innerFns[s] && (sysEventFns[s] = utils.surroundByTryCatchFactory(innerFns[s], "at api " + apiName + " " + s + " callback function"));
     }
     invoke(apiName, options, function (res) {
             res.errMsg = res.errMsg || apiName + ":ok";
             var isOk = 0 === res.errMsg.indexOf(apiName + ":ok"),
                 isCancel = 0 === res.errMsg.indexOf(apiName + ":cancel"),
                 isFail = 0 === res.errMsg.indexOf(apiName + ":fail");
-            if ("function" == typeof sysEventFns.beforeAll && sysEventFns.beforeAll(res), isOk){
+            "function" == typeof sysEventFns.beforeAll && sysEventFns.beforeAll(res)
+            if (isOk){
                 "function" == typeof sysEventFns.beforeSuccess && sysEventFns.beforeSuccess(res),
                 "function" == typeof params.success && params.success(res),
                 "function" == typeof sysEventFns.afterSuccess && sysEventFns.afterSuccess(res);
@@ -97,7 +141,7 @@ function beforeInvoke(apiName, params, paramTpl) {
 
 function beforeInvokeFail(apiName) {
     var params = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {},
-        errMsg = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : "", 
+        errMsg = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : "",
         err = apiName + ":fail " + errMsg;
     console.error(err);
     var fail = Reporter.surroundThirdByTryCatch(params.fail || noop, "at api " + apiName + " fail callback function"),
@@ -118,6 +162,7 @@ export default {
     publish: publish,
     subscribe: subscribe,
     invokeMethod: invokeMethod,
+    invokeMethodSync,
     onMethod: onMethod,
     noop: noop,
     beforeInvoke: beforeInvoke,
