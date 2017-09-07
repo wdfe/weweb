@@ -1,5 +1,5 @@
 import Emitter from 'emitter'
-import {uid, createFrame, parsePath, getBus} from './util'
+import {uid, createFrame, parsePath, getBus} from '../lib/util'
 require('whatwg-fetch')
 const Bus = getBus()
 function isMap(path) {
