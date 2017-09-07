@@ -5,17 +5,17 @@ import utils from './utils'
 import './init'
 
 function injectAttr(attrName) {
-  isInDevtools ?
-      wx[attrName] = apiObj[attrName]:
-      wx.__defineGetter__(attrName, function () {
-        return function () {
-          try {
-            return apiObj[attrName].apply(this, arguments)
-          } catch (e) {
-            errReport(e)
-          }
-        }
-      })
+  // isInDevtools ?
+  wx[attrName] = apiObj[attrName]
+      // wx.__defineGetter__(attrName, function () {
+      //   return function () {
+      //     try {
+      //       return apiObj[attrName].apply(this, arguments)
+      //     } catch (e) {
+      //       errReport(e)
+      //     }
+      //   }
+      // })
 }
 
 function errReport(obj, extend) {
@@ -34,12 +34,14 @@ function errReport(obj, extend) {
 var localImgDataIng = !1,
     imgData = [],
     wx = {},
-    isInDevtools = "devtools" === utils.getPlatform(),
+    // isInDevtools = "devtools" === utils.getPlatform(),
     defInvoke = function (name, args) {//publish
-      bridge.publish("INVOKE_METHOD", {
+      const data = {
         name: name,
         args: args
-      })
+      }
+      // bridge.publishSync("INVOKE_METHOD", data)
+      ServiceJSBridge.subscribeHandler('custom_event_INVOKE_METHOD', data)
     },
     apiObj = {
       invoke: bridge.invoke,
@@ -53,9 +55,9 @@ var localImgDataIng = !1,
       reportKeyValue: function (e, t) {
         console.warn("reportKeyValue has been removed from wx")
       },
-      initReady: function () {
-        bridge.invokeMethod("initReady")
-      },
+      // initReady: function () {
+      //   bridge.invokeMethod("initReady")
+      // },
       redirectTo: function (params) {
         defInvoke("redirectTo", params)
       },

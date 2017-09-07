@@ -195,10 +195,10 @@ function bootWebServer(){
         })
       const endTime = new Date()
       console.log(chalk.yellow(`Time elapsed: ${(endTime - startTime)/1000}s`))
-      notify.notify({
-        'title': 'Build Done',
-        'message': new Date()
-      });
+      // notify.notify({
+      //   'title': 'Build Done',
+      //   'message': new Date()
+      // });
       printLog(msg)
       if(program.open)open('http://localhost:' + port)
     })
