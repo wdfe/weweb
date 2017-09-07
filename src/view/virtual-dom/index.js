@@ -106,7 +106,7 @@ const firstTimeRender = function (event) {
     setTimeout(
         function () {
             wx.publishPageEvent(domReady, {})
-            wx.initReady()
+            // wx.initReady()
             TouchEvents.enablePullUpRefresh()
         },
         0
