@@ -42,6 +42,7 @@ function toAppService(data) {
     ServiceJSBridge.subscribeHandler(obj.msg.eventName,obj.msg.data || {},obj.msg.webviewID)
   }
 }
+
 export function onLaunch() {
   router.onLaunch()
 }
@@ -70,16 +71,6 @@ export function previewImage(data) {
   preview.show()
   preview.active(current)
   onSuccess(data)
-}
-
-export function PULLDOWN_REFRESH(data) {
-  toAppService({
-    msg: {
-      data: {},
-      eventName: "onPullDownRefresh",
-      webviewID: data.webviewID
-    }
-  })
 }
 
 export function stopPullDownRefresh(data) {
@@ -645,7 +636,7 @@ export function refreshSession(data) {
   onSuccess(data)
 }
 
-export function showPickerView(data, args) {
+export function showPickerView(args) {
   const picker = new Picker(args)
   picker.show()
   //picker.on('cancel', () => {})
@@ -659,7 +650,7 @@ export function showPickerView(data, args) {
   })
 }
 
-export function showDatePickerView(data, args) {
+export function showDatePickerView(args) {
   let picker
   let eventName
   if (args.mode == 'time') {

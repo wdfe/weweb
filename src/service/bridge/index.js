@@ -75,6 +75,27 @@ var userApi = {
     });
   }
 };
+
+function showSdk(msg) {
+  if (msg) {
+    let sdkName = msg.sdkName
+    if (sdkName == 'showPickerView') {
+      command.showPickerView(msg.args)
+    } else if (sdkName == 'showDatePickerView') {
+      command.showDatePickerView(msg.args)
+    } else if (sdkName == 'onKeyboardComplete'
+      || sdkName == 'getPublicLibVersion'
+      || sdkName == 'onKeyboardConfirm'
+      || sdkName == 'disableScrollBounce'
+      || sdkName == 'onTextAreaHeightChange'
+      || sdkName == 'onKeyboardShow') {
+      //do nothing
+    } else {
+      console.warn(`Ignored EXEC_JSSDK ${JSON.stringify(msg)}`)
+    }
+  }
+}
+
 var invoke = function (eventName, params, callback) {
     if(~['reportKeyValue','reportIDKey'].indexOf(eventName)){
       return;
@@ -151,6 +172,7 @@ window.DeviceOrientation = function(x, y, z) {
 };
 
 window.ServiceJSBridge = {
+  showSdk,
   doCommand,
   invoke: invoke,
   invokeCallbackHandler: invokeCallbackHandler,

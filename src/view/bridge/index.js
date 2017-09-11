@@ -1,7 +1,7 @@
 import pullDownRefresh from './pullDownRefresh'
 window.__WAWebviewStartTime__ = Date.now();
 var callbacks = {},
-  callbackIndex = 0,
+  curViewId = window.__wxConfig && window.__wxConfig.viewId || 0,
   defaultEventHandlers = {},
   eventPrefix = "custom_event_",
   handlers = {},
@@ -11,36 +11,12 @@ var callbacks = {},
   limitedApi = ['insertShareButton','updateShareButton','removeShareButton','insertContactButton','updateContactButton','removeContactButton','reportKeyValue','reportIDKey','systemLog'];
 
 
-function callSystemCmd(to, msg, command, ext) {//postmessage notice
-  var data = {
-    to: to,
-    msg: msg,
-    command: command,
-    ext: ext
-  };
-  data.comefrom = "webframe"
-  data.webviewID = window.__wxConfig && window.__wxConfig.viewId || 0
-  data = JSON.parse(JSON.stringify(data))
-  "backgroundjs" === to && (data.__id = _id, _id++)
-  systemBridge.doCommand(data);
-}
-
 function send(sdkName, args, isOn) {//send notice
-  args = args || {}
   var sdk = {
       sdkName: sdkName,
-      args: args
-    },
-    msg = {
-      isOn: isOn,
-      url: location.href,
-      title: document.title,
-      desc: document.title,
-      img_url: document.images.length ? document.images[0].src : "http://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRt8Qia4lv7k3M9J1SKqKCImxJCt7j9rHYicKDI45jRPBxdzdyREWnk0ia0N5TMnMfth7SdxtzMvVgXg/0",
-      link: void 0
-    };
-
-  callSystemCmd("backgroundjs", sdk, EXEC_JSSDK, msg)
+      args: args || {}
+  };
+  ServiceJSBridge.showSdk(sdk);
 }
 
 var invoke = function (event,args,callback) {
@@ -67,11 +43,12 @@ var invoke = function (event,args,callback) {
   },
   publish = function (eventName, params, isOn) {
     eventName = isOn ? eventName : eventPrefix + eventName;
-    var data = {
+    var msg = {
       eventName: eventName,
-      data: params
+      data: params,
+      webviewID: curViewId
     };
-    callSystemCmd("backgroundjs", data, TO_APP_SERVICE)//msg com
+    ServiceJSBridge.subscribeHandler(msg.eventName,msg.data || {},msg.webviewID)
   },
   on = function (eventName, handler) {
     defaultEventHandlers[eventName] = handler
@@ -91,8 +68,7 @@ var uiEvent = document.createEvent("UIEvent");
 uiEvent.initEvent("WeixinJSBridgeReady", !1, !1)
 document.dispatchEvent(uiEvent)
 pullDownRefresh.register(function () {
-  var msg = {}, ext = {};
-  callSystemCmd("backgroundjs", msg, "PULLDOWN_REFRESH", ext)
+  ServiceJSBridge.subscribeHandler('onPullDownRefresh',{},curViewId)
 });
 
 window.WeixinJSBridge = {
