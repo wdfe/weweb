@@ -132,7 +132,7 @@ const router = {
     let valid = util.validPath(first)
     // make sure root is valid page
     let root =  valid ? first : window.__root__
-    this.navigateTo(root)//页面切换，路由表更新
+    this.navigateTo(root,true)//页面切换，路由表更新
     let {path, query} = util.parsePath(root)
     lifeSycleEvent(path, query, 'appLaunch')
 
@@ -170,7 +170,7 @@ const router = {
     onRoute()
     onNavigate(path, 'redirectTo')
   },
-  navigateTo (path) {
+  navigateTo (path,isLaunch) {
     path = util.normalize(path)
     let exists = tabViews[path]
     if (curr) curr.hide()
@@ -186,7 +186,7 @@ const router = {
       if (isTabView) tabViews[path] = curr
     }
     onRoute()
-    onNavigate(path, 'navigateTo')
+    if(!isLaunch)onNavigate(path, 'navigateTo')
   },
   reLaunch (path) {
     sessionStorage.clear()
