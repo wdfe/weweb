@@ -9,19 +9,40 @@ const SERVICE_ID = 100000
 let curr = null
 let views = {}
 let tabViews = {}
-Object.defineProperty(window, '__wxConfig', {
-  get: function () {
-    return curr?curr.getConfig():__wxConfig__
-  }
-})
-Object.defineProperty(window, '__curPage__', {
-  get: function () {
-    return curr;
-  },
-  set: function (obj) {
-    curr[obj.name] = obj.value;
-  }
-})
+if(!window.__wxConfig){
+  Object.defineProperty(window, '__wxConfig', {
+    get: function () {
+      return curr?curr.getConfig():__wxConfig__
+    }
+  })
+  Object.defineProperty(window, '__curPage__', {
+    get: function () {
+      return curr;
+    },
+    set: function (obj) {
+      curr[obj.name] = obj.value;
+    }
+  })
+  window.addEventListener("message", function (event) {//处理地图相关通讯
+    var data = event.data || {};
+    if ("object" === typeof(data) && ("geolocation" === data.module || "locationPicker" === data.module)) {
+      if("geolocation" == data.module){
+        data = {
+          module: "locationPicker",
+          latlng: {
+            lat: data.lat,
+            lng: data.lng
+          },
+          poiaddress: "" + data.province + data.city,
+          poiname: data.addr,
+          cityname: data.city
+        }
+      }
+      curr.setLocation(data)
+    }
+  })
+
+}
 
 function lifeSycleEvent(path, query, openType) {
   toAppService({
@@ -254,23 +275,5 @@ const router = {
   },
 
 }
-window.addEventListener("message", function (event) {//处理地图相关通讯
-  var data = event.data || {};
-  if ("object" === typeof(data) && ("geolocation" === data.module || "locationPicker" === data.module)) {
-    if("geolocation" == data.module){
-      data = {
-        module: "locationPicker",
-        latlng: {
-          lat: data.lat,
-          lng: data.lng
-        },
-        poiaddress: "" + data.province + data.city,
-        poiname: data.addr,
-        cityname: data.city
-      }
-    }
-    curr.setLocation(data)
-  }
-})
 
 export default router

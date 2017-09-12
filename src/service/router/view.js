@@ -234,7 +234,7 @@ export default class View extends Emitter {
     //this.el.contentWindow.__gen()
     let self = this
     let p = './src/'+this.path+'.js'
-    if(window.__curPage__.id!=self.id){
+    if(window.__curPage__ && window.__curPage__.id!=self.id){
       return;
     }
     fetch(p)
