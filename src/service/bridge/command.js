@@ -2,6 +2,7 @@ import filePicker from 'file-picker'
 import Upload from 'upload'
 import router from '../router/index'
 import header from '../lib/header'
+import tabbar from '../lib/tabbar'
 import throttle from 'throttleit'
 import record from '../lib/sdk/record'
 import Compass from '../lib/sdk/compass'
@@ -21,7 +22,6 @@ const Bus = getBus()
 
 let fileIndex = 0
 let fileStore = {}
-
 
 function toAppService(data) {
   data.to = 'appservice'
@@ -44,6 +44,8 @@ function toAppService(data) {
 }
 
 export function onLaunch() {
+  header.init();
+  tabbar.init();
   router.onLaunch()
 }
 export function redirectTo(data) {

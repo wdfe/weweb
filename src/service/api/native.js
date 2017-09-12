@@ -1,5 +1,4 @@
 import storage from '../lib/sdk/storage'
-import merge from 'merge'
 
 function systemInfo() {
   return {

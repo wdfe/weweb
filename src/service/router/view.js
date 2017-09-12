@@ -54,11 +54,6 @@ function getNumber(e, width, ratio) {
   }
   return transformByDPR(g, width, ratio)
 }
-function bridgeReady (fn) {
-  typeof WeixinJSBridge !== 'undefined'
-    ? fn()
-    : document.addEventListener('WeixinJSBridgeReady', fn, !1)
-}
 
 export default class View extends Emitter {
   constructor(path) {
@@ -174,7 +169,7 @@ export default class View extends Emitter {
       }else if("GET_JSSDK_RES" == command || "INVOKE_SDK" == command || /^private_/.test(msg.sdkName)){
         WeixinJSBridge.subscribeHandler(msg.sdkName,msg.res,ext);//ext其实也没用 了
       }else if("STOP_PULL_DOWN_REFRESH" === command){
-        WeixinJSBridge.pullDownRefresh.reset()
+        WeixinJSBridge.pull.reset()
       }
     })
   }
