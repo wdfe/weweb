@@ -20,4 +20,4 @@
         version: 0
     }
 
-__WAWebviewEndTime__ = Date.now();
+window.__WAWebviewEndTime__ = Date.now();

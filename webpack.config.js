@@ -51,30 +51,32 @@ const varTypeModuleConfigView = Object.assign({}, commonConfig, {
     entry: {
         // "jsbridge": getPath('./lib/jsbridge.js')
         // "Reporter": getSourcePath('./lib/view-reporter.js'),
-        "wx": getSourcePath('view/api/'),
-        "exparser": getSourcePath('view/exparser/'),
+        // "wx": getSourcePath('view/api/'),
+        // "exparser": getSourcePath('view/exparser/'),
         // "exparser-ext": getPath('./lib/exparser-ext.js'),
         // "virtual-dom": getPath('./lib/virtual-dom.js')
+        "view": getSourcePath('view.js')
     },
     output: {
         filename: '[name].js',
         path: getPath(VIEW_BUNDLE_PATH),
-        libraryTarget: 'var',
-        library: '[name]'
+        // libraryTarget: 'var',
+        // library: '[name]'
     },
 });
 
 const varTypeModuleConfigService = Object.assign({}, commonConfig, {
     entry: {
-        "Reporter": getSourcePath('common/Reporter'),
-        "wd": getSourcePath('service/api'),
-        "__appServiceEngine__": getSourcePath('service/engine')
+        // "Reporter": getSourcePath('common/Reporter'),
+        // "wd": getSourcePath('service/api'),
+        // "__appServiceEngine__": getSourcePath('service/engine')
+        "service": getSourcePath('service.js')
     },
     output: {
         filename: '[name].js',
         path: getPath(SERVICE_BUNDLE_PATH),
-        libraryTarget: 'var',
-        library: '[name]'
+        // libraryTarget: 'var',
+        // library: '[name]'
     },
 });
 
@@ -156,8 +158,8 @@ const viewBuild = Object.assign({}, commonConfig, {
 module.exports = [
     varTypeModuleConfigView,
     varTypeModuleConfigService,
-    normalModuleConfig,
-    umdModuleConfig,
-    copyConfig,
-    viewBuild
+    // normalModuleConfig,
+    // umdModuleConfig,
+    // copyConfig,
+    // viewBuild
 ];

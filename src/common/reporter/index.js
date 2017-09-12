@@ -274,4 +274,5 @@ typeof window !== 'undefined' &&
         utils.submit()
     }
 )
+window.Reporter = defineObj
 module.exports = defineObj

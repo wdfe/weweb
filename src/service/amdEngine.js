@@ -1,9 +1,9 @@
-!(function () {
+
   var statusDefineFlag = 1
   var statusRequireFlag = 2
   var moduleArr = {}
 
-  define = function (path, fun) {
+const define = function (path, fun) {
     moduleArr[path] = {
       status: statusDefineFlag,
       factory: fun
@@ -52,7 +52,7 @@
       }
     }
   }
-  require = function (path) {
+const require = function (path) {
     // exports o
     if (typeof path !== 'string') {
       throw new Error('require args must be a string')
@@ -74,7 +74,10 @@
     }
     return moduleObj.exports
   }
-})()
+
+export {define, require}
+window.define = define
+window.require = require
 
 wd.version = {
   updateTime: '2017.1.13 16:51:56',

@@ -50,9 +50,11 @@ gulp.task('build', function (callback) {
     gulp.src(services).pipe(concat('service.js')).pipe(uglify()).pipe(gulp.dest(pubPath))
     gulp.src(views).pipe(concat('view.js')).pipe(uglify()).pipe(gulp.dest(pubPath))
      */
-     gulp.src('./tmp/public/script/system.js').pipe(gulp.dest(pubPath))
-     gulp.src(services).pipe(concat('service.js')).pipe(gulp.dest(pubPath))
-     gulp.src(views).pipe(concat('view.js')).pipe(gulp.dest(pubPath))
+    //  gulp.src('./tmp/public/script/system.js').pipe(gulp.dest(pubPath))
+    //  gulp.src(services).pipe(concat('service.js')).pipe(gulp.dest(pubPath))
+     gulp.src('./tmp/bundle/service/service.js').pipe(gulp.dest(pubPath))
+    //  gulp.src(views).pipe(concat('view.js')).pipe(gulp.dest(pubPath))
+     gulp.src('./tmp/bundle/view/view.js').pipe(gulp.dest(pubPath))
 
 
     console.log('end concat...')

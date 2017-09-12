@@ -1392,4 +1392,6 @@ var getTouchInfo = function (touchInfo, eventKey, eventInfo) {//返回touch信�
 for (var key in apiObj) addGetterForWX(key);
 
 
-module.exports = WX;
+// module.exports = WX;
+window.wd = WX
+export default WX

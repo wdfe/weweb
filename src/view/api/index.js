@@ -160,3 +160,4 @@ for (var key in apiObj) injectAttr(key);
 
 // export default wx
 module.exports = wx
+window.wx =wx
