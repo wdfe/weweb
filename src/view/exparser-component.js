@@ -1,7 +1,5 @@
 function exeWhenWXJSbridgeReady (fn) {
-    window.__pageFrameEndTime__//首次generateFuncReady加载完毕
-        ? fn()
-        : document.addEventListener('generateFuncReady', fn)
+  fn()
 }
 
 // 转发 window 上的 animation 和 transition 相关的动画事件到 exparser

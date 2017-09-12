@@ -14,16 +14,6 @@ window.firstRender = 0
 let domReady = '__DOMReady'
 let rootNode = void 0
 
-const STATE_FLAGS = {
-    funcReady: !1,
-    dataReady: !1
-}
-const dataChangeEventQueue = []
-let webViewInfo = {
-    webviewStartTime: Date.now(),
-    funcReady: 0
-}
-
 function speedReport (key, startTime, endTime, data) {
     Reporter.speedReport({
         key: key,
@@ -136,7 +126,6 @@ const renderOnDataChange = function (event) {
         )
     } else {
         let timeStamp = Date.now()
-        speedReport('firstGetData', webViewInfo.funcReady, Date.now())
         firstTimeRender(event)
         speedReport('firstRenderTime', timeStamp, Date.now())
         if (!(event.options && event.options.firstRender)) {
@@ -163,50 +152,10 @@ window.onerror = function (messageOrEvent, source, lineno, colno, error) {
 
 wx.onAppDataChange(
     ErrorCatcher.catchError(function (event) {
-        STATE_FLAGS.dataReady = !0
-        STATE_FLAGS.funcReady ? renderOnDataChange(event) : dataChangeEventQueue.push(event)
+        renderOnDataChange(event)
     })
 )
-document.addEventListener(
-    'generateFuncReady',
-    ErrorCatcher.catchError(function (event) {
-        console.log('generateFuncReady --- speedReports')
-        webViewInfo.funcReady = Date.now()
-        speedReport(
-            'funcReady',
-            webViewInfo.webviewStartTime,
-            webViewInfo.funcReady
-        )
-        window.__pageFrameStartTime__ &&
-        window.__pageFrameEndTime__ &&
-        speedReport(
-            'pageframe',
-            window.__pageFrameStartTime__,
-            window.__pageFrameEndTime__
-        )
-        window.__WAWebviewStartTime__ &&
-        window.__WAWebviewEndTime__ &&
-        speedReport(
-            'WAWebview',
-            window.__WAWebviewStartTime__,
-            window.__WAWebviewEndTime__
-        )
-        STATE_FLAGS.funcReady = !0
-        WeixinJSBridge.publish('DOMContentLoaded', {
-            data: {},
-            options: {
-                timestamp: Date.now()
-            }
-        })
 
-        if (STATE_FLAGS.dataReady) {
-            for (let eventName in dataChangeEventQueue) {
-                let event = dataChangeEventQueue[eventName]
-                renderOnDataChange(event)
-            }
-        }
-    })
-)
 
 export default {
     reset: function () {

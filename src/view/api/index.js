@@ -2,34 +2,6 @@ import bridge from './bridge'
 import contactButton from './contactButton'
 import onAppStateChange from './onAppStateChange'
 import utils from './utils'
-import './init'
-
-function injectAttr(attrName) {
-  // isInDevtools ?
-  wx[attrName] = apiObj[attrName]
-      // wx.__defineGetter__(attrName, function () {
-      //   return function () {
-      //     try {
-      //       return apiObj[attrName].apply(this, arguments)
-      //     } catch (e) {
-      //       errReport(e)
-      //     }
-      //   }
-      // })
-}
-
-function errReport(obj, extend) {
-  if ("[object Error]" === Object.prototype.toString.apply(obj)) {
-    if ("WebviewSdkKnownError" == obj.type) throw obj;
-    Reporter.errorReport({
-      key: "webviewSDKScriptError",
-      error: obj,
-      extend: extend
-    })
-  }
-}
-
-
 
 var localImgDataIng = !1,
     imgData = [],
@@ -167,8 +139,7 @@ var localImgDataIng = !1,
       animationToStyle: utils.animationToStyle
     };
 
-for (var key in apiObj) injectAttr(key);
 
 
 // export default wx
-module.exports = wx
+module.exports = apiObj

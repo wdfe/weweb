@@ -12,7 +12,6 @@ import appContextSwitch from './appContextSwitch'
 
 import './evalGeneratorFunction'
 import './funcRewrite'
-import './initConsole'
 
 function addGetterForWX(apiKey) {
   WX.__defineGetter__(apiKey,
