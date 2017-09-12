@@ -234,13 +234,13 @@ export default class View extends Emitter {
     //this.el.contentWindow.__gen()
     let self = this
     let p = './src/'+this.path+'.js'
-    if(window.__curPage__ && window.__curPage__.id!=self.id){
-      return;
-    }
     fetch(p)
     .then(function(response) {
       return response.text()
     }).then(function(res) {
+      if(window.__curPage__ && window.__curPage__.id!=self.id){//确保是当前页面
+        return;
+      }
       let resArr = res.split('@css-body-start:')
       var func = new Function(resArr[0] + '\n return $gwx("./' + self.path + '.wxml")')
 
