@@ -1,5 +1,5 @@
 import pull from './pull'
-var curViewId = window.__wxConfig && window.__wxConfig.viewId || 0,
+var curViewId = function(){return window.__wxConfig && window.__wxConfig.viewId || 0},
   defaultEventHandlers = {},
   eventPrefix = "custom_event_",
   handlers = {},
@@ -41,7 +41,7 @@ window.WeixinJSBridge = {
     var msg = {
       eventName: eventName,
       data: params,
-      webviewID: curViewId
+      webviewID: curViewId()
     };
     ServiceJSBridge.subscribeHandler(msg.eventName,msg.data || {},msg.webviewID)
   },
@@ -55,7 +55,7 @@ window.WeixinJSBridge = {
   }
 }
 pull.register(function () {
-  ServiceJSBridge.subscribeHandler('onPullDownRefresh',{},curViewId)
+  ServiceJSBridge.subscribeHandler('onPullDownRefresh',{},curViewId())
 });
 
 

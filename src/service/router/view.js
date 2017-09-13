@@ -246,11 +246,11 @@ export default class View extends Emitter {
 
       self.__generateFunc__ = window.__generateFunc__ = func()
       window.firstRender = 0//重置
-      Bus.emit('ready', self.id)
 
       if(resArr[1]){
         self.inlineCss(resArr[1], widthScreen, ratio, self.path);
       }
+      Bus.emit('ready', self.id)
     });
   }
 }

@@ -3,6 +3,7 @@
  */
 import * as util from '../lib/util'
 import View from './view'
+import mask from '../lib/component/mask'
 const Bus = util.getBus()
 const SERVICE_ID = 100000
 
