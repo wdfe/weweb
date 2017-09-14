@@ -96,7 +96,7 @@ class appClass{
 
 var tempObj ;
 
-var appHolder = utils.surroundByTryCatch(function(appObj) {
+var appHolder = Reporter.surroundThirdByTryCatch(function(appObj) {
     tempObj = new appClass(appObj);
 }, "create app instance");
 var getApp = function() {

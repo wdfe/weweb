@@ -14,17 +14,17 @@ window.firstRender = 0
 let domReady = '__DOMReady'
 let rootNode = void 0
 
-function speedReport (key, startTime, endTime, data) {
-    Reporter.speedReport({
-        key: key,
-        timeMark: {
-            startTime: startTime,
-            endTime: endTime
-        },
-        force: key !== 'reRenderTime',
-        data: data
-    })
-}
+// function speedReport (key, startTime, endTime, data) {
+//     Reporter.speedReport({
+//         key: key,
+//         timeMark: {
+//             startTime: startTime,
+//             endTime: endTime
+//         },
+//         force: key !== 'reRenderTime',
+//         data: data
+//     })
+// }
 function setGlobalPageAttr(name, value) {
     window[name] = value;
     window.__curPage__ = {
@@ -119,7 +119,7 @@ const renderOnDataChange = function (event) {
             function () {
                 let timeStamp = Date.now()
                 reRender(event)
-                speedReport('reRenderTime', timeStamp, Date.now())
+                // speedReport('reRenderTime', timeStamp, Date.now())
                 document.dispatchEvent(new CustomEvent('pageReRender', {}))
             },
             0
@@ -127,7 +127,7 @@ const renderOnDataChange = function (event) {
     } else {
         let timeStamp = Date.now()
         firstTimeRender(event)
-        speedReport('firstRenderTime', timeStamp, Date.now())
+        // speedReport('firstRenderTime', timeStamp, Date.now())
         if (!(event.options && event.options.firstRender)) {
             console.error('firstRender not the data from Page.data')
             Reporter.errorReport({

@@ -33,15 +33,15 @@ var app = {
     pageReadyTime: 0
 };
 
-var speedReport = function(key, startTime, endTime) {
-    Reporter.speedReport({
-        key: key,
-        timeMark: {
-            startTime: startTime,
-            endTime: endTime
-        }
-    });
-};
+// var speedReport = function(key, startTime, endTime) {
+//     Reporter.speedReport({
+//         key: key,
+//         timeMark: {
+//             startTime: startTime,
+//             endTime: endTime
+//         }
+//     });
+// };
 
 var pageStackObjs = {};
 var pageRegObjs = {};//key:pathname
@@ -74,7 +74,7 @@ pageHolder = function(pageObj) {//Page 接口
     utils.info("Register Page: " + pagePath);
     pageRegObjs[pagePath] = pageObj;
 };
-var pageInitData = utils.surroundByTryCatch(
+var pageInitData = Reporter.surroundThirdByTryCatch(
     function(pageObj, webviewId) {
         utils.info("Update view with init data");
         var ext = {};
@@ -122,7 +122,7 @@ var pageParse = function(routePath, webviewId, params) {//解析page e:pagepath 
         route: routePath
     };
     reportRealtimeAction.triggerAnalytics("enterPage", page);
-    speedReport("appRoute2newPage", app.appRouteTime, app.newPageTime);
+    // speedReport("appRoute2newPage", app.appRouteTime, app.newPageTime);
 };
 
 var pageHide = function(pageItem) {//执行page hide event
@@ -214,8 +214,7 @@ var doWebviewEvent = function(pWebviewId, pEvent, params) {//do dom ready
         (
             app.pageReadyTime = Date.now(),
             utils.info("Invoke event onReady in page: " + pageItem.route),
-            pageObj.onReady(),
-            void speedReport("newPage2pageReady", app.newPageTime, app.pageReadyTime)
+            pageObj.onReady()
         ) :
         (
             utils.info("Invoke event " + pEvent + " in page: " + pageItem.route),
@@ -256,7 +255,7 @@ var invokeShareAppMessage = function(params, pWebviewId) {//invoke event onShare
     }
     return shareParams;
 };
-wd.onAppRoute(utils.surroundByTryCatch(function(params) {
+wd.onAppRoute(Reporter.surroundThirdByTryCatch(function(params) {
     var path = params.path,
         webviewId = params.webviewId,
         query = params.query || {},
@@ -264,14 +263,14 @@ wd.onAppRoute(utils.surroundByTryCatch(function(params) {
     skipPage(path, webviewId, query, openType);
 }), "onAppRoute");
 
-wd.onWebviewEvent(utils.surroundByTryCatch(function(params) {
+wd.onWebviewEvent(Reporter.surroundThirdByTryCatch(function(params) {
     var webviewId = params.webviewId,
         eventName = params.eventName,
         data = params.data;
     return doWebviewEvent(webviewId, eventName, data);
 },"onWebviewEvent"));
 
-ServiceJSBridge.on("onPullDownRefresh", utils.surroundByTryCatch(function(e, pWebViewId) {
+ServiceJSBridge.on("onPullDownRefresh", Reporter.surroundThirdByTryCatch(function(e, pWebViewId) {
     pullDownRefresh(pWebViewId);
 },"onPullDownRefresh"));
 
@@ -288,7 +287,7 @@ var shareAppMessage = function(params, webviewId) {
     });
 };
 
-ServiceJSBridge.on("onShareAppMessage", utils.surroundByTryCatch(shareAppMessage, "onShareAppMessage"));
+ServiceJSBridge.on("onShareAppMessage", Reporter.surroundThirdByTryCatch(shareAppMessage, "onShareAppMessage"));
 reset = function() {
     currentPage = undefined;
     pageStackObjs = {};

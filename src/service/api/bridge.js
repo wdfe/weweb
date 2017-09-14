@@ -31,15 +31,15 @@ function subscribe() {//ServiceJSBridge.subscribe
             timestamp = options && options.timestamp || 0,
             curTime = Date.now();
         "function" == typeof callback && callback(data, viewId)
-        Reporter.speedReport({
-            key: "webview2AppService",
-            data: data || {},
-            timeMark: {
-                startTime: timestamp,
-                endTime: curTime,
-                nativeTime: timeMark.nativeTime || 0
-            }
-        })
+        // Reporter.speedReport({
+        //     key: "webview2AppService",
+        //     data: data || {},
+        //     timeMark: {
+        //         startTime: timestamp,
+        //         endTime: curTime,
+        //         nativeTime: timeMark.nativeTime || 0
+        //     }
+        // })
     }
     ServiceJSBridge.subscribe.apply(ServiceJSBridge, args)
 }
@@ -51,7 +51,7 @@ function invokeMethodSync(apiName,options,innerFns) {
     }
     var sysEventFns = {};
     for (var s in innerFns){
-        "function" == typeof innerFns[s] && (sysEventFns[s] = utils.surroundByTryCatchFactory(innerFns[s], "at api " + apiName + " " + s + " callback function"));
+        "function" == typeof innerFns[s] && (sysEventFns[s] = Reporter.surroundThirdByTryCatch(innerFns[s], "at api " + apiName + " " + s + " callback function"));
     }
     const callback = function (res) {
         res.errMsg = res.errMsg || apiName + ":ok";
@@ -95,7 +95,7 @@ function invokeMethod(apiName,options,innerFns) {
     }
     var sysEventFns = {};
     for (var s in innerFns){
-        "function" == typeof innerFns[s] && (sysEventFns[s] = utils.surroundByTryCatchFactory(innerFns[s], "at api " + apiName + " " + s + " callback function"));
+        "function" == typeof innerFns[s] && (sysEventFns[s] = Reporter.surroundThirdByTryCatch(innerFns[s], "at api " + apiName + " " + s + " callback function"));
     }
     invoke(apiName, options, function (res) {
             res.errMsg = res.errMsg || apiName + ":ok";
@@ -132,7 +132,7 @@ function invokeMethod(apiName,options,innerFns) {
 }
 function noop() {}
 function onMethod(apiName, callback) {//onMethod
-    on(apiName,  utils.surroundByTryCatchFactory(callback, "at api " + apiName + " callback function"))
+    on(apiName,  Reporter.surroundThirdByTryCatch(callback, "at api " + apiName + " callback function"))
 }
 function beforeInvoke(apiName, params, paramTpl) {
     var res = utils.paramCheck(params, paramTpl);
