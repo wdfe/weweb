@@ -64,7 +64,7 @@ pageHolder = function(pageObj) {//Page 接口
   utils.info("Register Page: " + pagePath);
   pageRegObjs[pagePath] = pageObj;
 };
-  var pageInitData = Reporter.surroundThirdByTryCatch(
+var pageInitData = Reporter.surroundThirdByTryCatch(
   function(pageObj, webviewId) {
     utils.info("Update view with init data");
     var ext = {};
@@ -246,7 +246,7 @@ var invokeShareAppMessage = function(params, pWebviewId) {//invoke event onShare
   return shareParams;
 };
 
-  wd.onAppRoute(Reporter.surroundThirdByTryCatch(function(params) {
+wd.onAppRoute(Reporter.surroundThirdByTryCatch(function(params) {
   var path = params.path,
     webviewId = params.webviewId,
     query = params.query || {},
