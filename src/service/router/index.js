@@ -145,7 +145,8 @@ const router = {
       mask.show()
       let cid = curr.id
       Bus.once('ready', id => {
-        if (id !== cid) return mask.hide()
+        mask.hide()
+        if (id !== cid) return
         for (let route of routes) {//为路由表中的页面注册ready事件
           // check if in pages
           valid = util.validPath(route)

@@ -19,7 +19,7 @@ import Preview from '../lib/component/preview'
 import confirm from '../lib/component/confirm'
 import { dataURItoBlob, toNumber,getBus,once} from '../lib/util'
 const Bus = getBus()
-
+const SERVICE_ID = 20000
 let fileIndex = 0
 let fileStore = {}
 
