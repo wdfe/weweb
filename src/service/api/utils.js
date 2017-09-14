@@ -1,19 +1,19 @@
-function surroundByTryCatchFactory(func, funcName) {//返回函数e
-    return function () {
-        try {
-            return func.apply(func, arguments)
-        } catch (e) {
-            if ("[object Error]" === Object.prototype.toString.apply(e)) {
-                if ("AppServiceSdkKnownError" == e.type) throw e;
-                Reporter.errorReport({
-                    key: "appServiceSDKScriptError",
-                    error: e,
-                    extend: funcName
-                })
-            }
-        }
-    }
-}
+// function surroundByTryCatchFactory(func, funcName) {//返回函数e
+//     return function () {
+//         try {
+//             return func.apply(func, arguments)
+//         } catch (e) {
+//             if ("[object Error]" === Object.prototype.toString.apply(e)) {
+//                 if ("AppServiceSdkKnownError" == e.type) throw e;
+//                 Reporter.errorReport({
+//                     key: "appServiceSDKScriptError",
+//                     error: e,
+//                     extend: funcName
+//                 })
+//             }
+//         }
+//     }
+// }
 
 function anyTypeToString(data) {//把e转成string并返回一个对象
     var dataType = Object.prototype.toString.call(data).split(" ")[1].split("]")[0];
@@ -707,7 +707,7 @@ function removeHtmlSuffixFromUrl(url) {
 }
 
 export default  {
-    surroundByTryCatchFactory: surroundByTryCatchFactory,
+    // surroundByTryCatchFactory: surroundByTryCatchFactory,
     getDataType: getDataType,
     isObject: isObject,
     paramCheck: paramCheck,
@@ -725,8 +725,8 @@ export default  {
     base64ToArrayBuffer: base64ToArrayBuffer,
     blobToArrayBuffer: blobToArrayBuffer,
     convertObjectValueToString: convertObjectValueToString,
-    anyTypeToString: surroundByTryCatchFactory(anyTypeToString, "anyTypeToString"),
-    stringToAnyType: surroundByTryCatchFactory(stringToAnyType, "stringToAnyType"),
+    anyTypeToString: Reporter.surroundThirdByTryCatch(anyTypeToString, "anyTypeToString"),
+    stringToAnyType: Reporter.surroundThirdByTryCatch(stringToAnyType, "stringToAnyType"),
     AppServiceSdkKnownError: AppServiceSdkKnownError,
     renameProperty: renameProperty,
     defaultRunningStatus : "active",

@@ -106,18 +106,18 @@ var pageEngine = {
   info:function(msg) {
     __wxConfig__ && __wxConfig__.debug && console.info(msg);
   },
-  surroundByTryCatch: function(fn, extend) {
-    var self = this;
-    return function() {
-      try {
-        return fn.apply(fn, arguments);
-      } catch(e) {
-        self.errorReport(e, extend);
-        return function() {};
+  // surroundByTryCatch: function(fn, extend) {
+  //   var self = this;
+  //   return function() {
+  //     try {
+  //       return fn.apply(fn, arguments);
+  //     } catch(e) {
+  //       self.errorReport(e, extend);
+  //       return function() {};
 
-      }
-    }
-  },
+  //     }
+  //   }
+  // },
   errorReport:function(err, extend) {//d
     if ("[object Error]" === Object.prototype.toString.apply(err)) {
       if ("AppServiceEngineKnownError" === err.type) {

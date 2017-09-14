@@ -16,7 +16,7 @@ import './funcRewrite'
 function addGetterForWX(apiKey) {
   WX.__defineGetter__(apiKey,
     function () {
-      return  utils.surroundByTryCatchFactory(apiObj[apiKey], "wd." + apiKey)
+      return  Reporter.surroundThirdByTryCatch(apiObj[apiKey], "wd." + apiKey)
     })
 }
 
