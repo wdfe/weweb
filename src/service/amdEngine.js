@@ -80,12 +80,7 @@ window.define = define
 window.require = require
 
 wd.version = {
-  updateTime: '2017.1.13 16:51:56',
+  updateTime: '2017.9.14 16:51:56',
   info: '',
   version: 32
 }
-window.Page = __appServiceEngine__.Page
-window.App = __appServiceEngine__.App
-window.getApp = __appServiceEngine__.getApp
-window.getCurrentPages = __appServiceEngine__.getCurrentPages
-window.__WAServiceEndTime__ = Date.now()
