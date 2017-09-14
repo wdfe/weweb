@@ -1,26 +1,59 @@
 const webpack = require('webpack')
 const path = require('path')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+  .BundleAnalyzerPlugin
 
 const DIST_PATH = './tmp/public/script'
+const isProd = process.env.NODE_ENV === 'production'
+const showAnalysis = process.env.ANA === 'true'
+const watch = process.env.WATCH === 'true'
+let plugins = []
+if (showAnalysis) {
+  plugins = plugins.concat([new BundleAnalyzerPlugin()])
+}
+if (isProd) {
+  plugins = plugins.concat([
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('production')
+      }
+    }),
+    new webpack.optimize.AggressiveMergingPlugin(),//Merge chunks
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false,
+        drop_debugger: true,
+        dead_code: true,
+        properties: true,
+        evaluate: true
+      },
+      output: {
+        comments: false
+      }
+    }),
+    new webpack.optimize.ModuleConcatenationPlugin(),
+  ])
+}
 
-const getPath = function (rPath) {
+function getPath(rPath) {
   return path.resolve(__dirname, rPath)
 }
 
-const getSourcePath = function (rPath) {
+function getSourcePath(rPath) {
   return getPath(`./src/${rPath}`)
 }
 
 module.exports = {
   entry: {
-    view: getSourcePath('view.js'),
-    service: getSourcePath('service.js')
+    // view: getSourcePath('view.js'),
+    // service: getSourcePath('service.js')
+    index: getSourcePath('index.js')
   },
   output: {
     filename: '[name].js',
     path: getPath(DIST_PATH)
   },
+  watch: watch,
   module: {
     loaders: [
       {
@@ -50,16 +83,5 @@ module.exports = {
     chunksSort: 'size',
     assetsSort: 'size'
   },
-  plugins: [
-    // new webpack.optimize.UglifyJsPlugin({
-    //   compress: {
-    //     warnings: false
-    //   },
-    //   output: {
-    //     comments: false
-    //   }
-    // }),
-    // new BundleAnalyzerPlugin(),
-    new webpack.optimize.ModuleConcatenationPlugin()
-  ]
+  plugins: plugins
 }

@@ -9,9 +9,9 @@
   "scripts": {
     "start": "sh run.sh",
     "format": "prettier-standard './*.js' && prettier-standard 'src/**/*.js' && prettier-standard 'lib/**/*.js'",
-    "build": "webpack --progress",
-    "build:dev": "nodemon -w src -w lib -d 3 --exec 'npm run build'",
-    "start:dev": "nodemon -w demos -w tmp/public/script/ -d 3 -e js,json,wxss,wxml --exec 'npm run start'"
+    "dev": "WATCH=true webpack --progress",
+    "build": "NODE_ENV=production webpack --progress",
+    "autostart": "nodemon -w demos -w tmp/public/script/ -d 1.5 -e js,json,wxss,wxml --exec 'npm run start'"
   },
   "repository": {
     "type": "git",
@@ -60,7 +60,6 @@
     "wxss-transpiler": "^0.1.3"
   },
   "devDependencies": {
-    "minimatch": "^3.0.4",
     "actionsheet": "^0.1.2",
     "autoscale-canvas": "0.0.3",
     "babel-core": "^6.26.0",
@@ -99,6 +98,7 @@
     "jr-qrcode": "^1.0.5",
     "json-loader": "^0.5.7",
     "koa-better-body": "^3.0.2",
+    "minimatch": "^3.0.4",
     "nodemon": "^1.12.0",
     "nprogress": "^0.2.0",
     "pinch-zoom": "^0.3.8",
