@@ -359,9 +359,33 @@ export function stopRecord() {
     })
 }
 
+function getAudioElement() {
+  const audioTagId = 'wx-audio-component-inside'
+  let audio = document.getElementById(audioTagId)
+  if(audio == null) {
+    const audioTag = document.createElement('audio')
+    document.body.appendChild(audioTag)
+    audioTag.outerHTML = `<audio id="${audioTagId}" type="audio/mp3" style="display:none;"></audio>`
+    audio = audioTag
+  }
+  return audio
+}
+
+function getBackgroundAudioElement() {
+  const audioTagId = 'wx-background-audio-component-inside'
+  let audio = document.getElementById(audioTagId)
+  if(audio == null) {
+    const audioTag = document.createElement('audio')
+    document.body.appendChild(audioTag)
+    audioTag.outerHTML = `<audio id="${audioTagId}" type="audio/mp3" style="display:none;"></audio>`
+    audio = audioTag
+  }
+  return audio
+}
+
 export function playVoice(data) {
   let url = data.args.filePath
-  let audio = document.getElementById("audio");
+  let audio = getAudioElement()
   if (audio.src == url && audio.paused && !audio.ended) {
     // resume
     audio.play()
@@ -379,19 +403,19 @@ export function playVoice(data) {
 }
 
 export function pauseVoice() {
-  let audio = document.getElementById("audio");
+  let audio = getAudioElement()
   audio.pause()
 }
 
 export function stopVoice() {
-  let audio = document.getElementById("audio");
+  let audio = getAudioElement()
   audio.pause()
   audio.currentTime = 0
   audio.src = ''
 }
 
 window.addEventListener('DOMContentLoaded', function () {
-  let audio = document.getElementById("background-audio");
+  let audio = getBackgroundAudioElement()
   audio.addEventListener('error', function () {
     toAppService({
       msg: {
@@ -403,7 +427,7 @@ window.addEventListener('DOMContentLoaded', function () {
 }, false)
 
 export function getMusicPlayerState(data) {
-  let a = document.getElementById("background-audio");
+  let a = getBackgroundAudioElement()
   let obj = {
     status: a.src ? a.paused ? 0 : 1 : 2,
     currentPosition: Math.floor(a.currentTime) || -1
@@ -421,7 +445,7 @@ export function getMusicPlayerState(data) {
 
 export function operateMusicPlayer(data) {
   let args = data.args
-  let a = document.getElementById("background-audio");
+  let a = getBackgroundAudioElement()
   switch (args.operationType) {
     case 'play':
       if (a.src == args.dataUrl && a.paused && !a.ended) {
