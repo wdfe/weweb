@@ -379,6 +379,14 @@ function getBackgroundAudioElement() {
     document.body.appendChild(audioTag)
     audioTag.outerHTML = `<audio id="${audioTagId}" type="audio/mp3" style="display:none;"></audio>`
     audio = audioTag
+    audio.addEventListener('error', function () {
+      toAppService({
+        msg: {
+          eventName: 'onMusicError',
+          type: 'ON_MUSIC_EVENT'
+        }
+      })
+    }, false)
   }
   return audio
 }
@@ -414,17 +422,17 @@ export function stopVoice() {
   audio.src = ''
 }
 
-window.addEventListener('DOMContentLoaded', function () {
-  let audio = getBackgroundAudioElement()
-  audio.addEventListener('error', function () {
-    toAppService({
-      msg: {
-        eventName: 'onMusicError',
-        type: 'ON_MUSIC_EVENT'
-      }
-    })
-  }, false)
-}, false)
+// window.addEventListener('DOMContentLoaded', function () {
+//   let audio = getBackgroundAudioElement()
+//   audio.addEventListener('error', function () {
+//     toAppService({
+//       msg: {
+//         eventName: 'onMusicError',
+//         type: 'ON_MUSIC_EVENT'
+//       }
+//     })
+//   }, false)
+// }, false)
 
 export function getMusicPlayerState(data) {
   let a = getBackgroundAudioElement()
