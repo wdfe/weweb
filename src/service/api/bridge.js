@@ -25,11 +25,11 @@ function subscribe() {//ServiceJSBridge.subscribe
     var args = Array.prototype.slice.call(arguments),
         callback = args[1];
     args[1] = function (params, viewId) {
-        var data = params.data,
+        var data = params.data/*,
             options = params.options,
             timeMark = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : {},
             timestamp = options && options.timestamp || 0,
-            curTime = Date.now();
+            curTime = Date.now()*/;
         "function" == typeof callback && callback(data, viewId)
         // Reporter.speedReport({
         //     key: "webview2AppService",

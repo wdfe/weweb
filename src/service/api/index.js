@@ -11,7 +11,6 @@ import canvas from './canvas'
 import appContextSwitch from './appContextSwitch'
 
 import './evalGeneratorFunction'
-import './funcRewrite'
 
 function addGetterForWX(apiKey) {
   WX.__defineGetter__(apiKey,
