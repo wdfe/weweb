@@ -2,7 +2,7 @@
 
 import pubsub from './bridge'
 import utils from './utils'
-import EventEmitter2 from './EventEmitter2'
+import emitter from 'emitter'
 
 function notifyWebviewIdtoMap(e) {
     webviewID = e
@@ -10,7 +10,7 @@ function notifyWebviewIdtoMap(e) {
 
 var mapIds = {},
     mapInfo = {},
-    EventEmitter = new EventEmitter2.EventEmitter2,
+    EventEmitter = new emitter,
     webviewID = 0,
     callbackIndex = 0;
 

@@ -67,8 +67,6 @@ function toAppService(data) {
   }, data)
   let id = curr ? curr.id : 0
   obj.msg.webviewID = data.webviewID || id
-  obj.msg.options = obj.msg.options || {}
-  obj.msg.options.timestamp = Date.now()
   const msg = obj.msg || {}
   ServiceJSBridge.subscribeHandler(msg.eventName,msg.data || {},msg.webviewID)
 }

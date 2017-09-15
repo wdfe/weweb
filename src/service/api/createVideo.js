@@ -1,6 +1,6 @@
 import pubsub from './bridge'
 import utils from './utils'
-import EventEmitter2 from './EventEmitter2'
+import emitter from 'emitter'
 import configFlags from './configFlags'
 
 
@@ -21,7 +21,7 @@ function createVideo(videoId, t) {
 
 var notIOS = "ios" !== utils.getPlatform(),
     videoPlayerIds = {},
-    EventEmitter = new EventEmitter2.EventEmitter2;
+    EventEmitter = new emitter;
 
 ServiceJSBridge.subscribe("videoPlayerInsert", function (params, t) {
     var domId = params.domId,

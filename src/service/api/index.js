@@ -10,8 +10,6 @@ import context from './context'
 import canvas from './canvas'
 import appContextSwitch from './appContextSwitch'
 
-import './evalGeneratorFunction'
-
 function addGetterForWX(apiKey) {
   WX.__defineGetter__(apiKey,
     function () {

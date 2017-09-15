@@ -1,12 +1,12 @@
 //1-15 绑定AppEnterForeground与AppEnterBackground
 
 import pubsub from './bridge'
-import EventEmitter2 from './EventEmitter2'
+import emitter from 'emitter'
 import configFlags from './configFlags'
 import utils from './utils'
 
 
-var eventEmitter = new EventEmitter2();
+var eventEmitter = new emitter;
 pubsub.onMethod("onAppEnterForeground",
   function () {
     var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};

@@ -1,7 +1,6 @@
 import pubsub from './bridge'
 import context from './context'
 import utils from './utils'
-import EventEmitter2 from './EventEmitter2'
 
 function canvasDesString(webviewID, canvasId) {
     return webviewID + "canvas" + canvasId
@@ -103,7 +102,7 @@ function canvasToTempFilePath(obj) {
 }
 
 
-var webviewID = (new EventEmitter2.EventEmitter2, 0),
+var webviewID = 0,
     canvasInfo = {},
     canvasIDs = {},
     canvasOptions = {};

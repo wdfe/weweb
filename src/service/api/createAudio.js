@@ -1,6 +1,6 @@
 import './bridge'
 import './utils'
-import EventEmitter2 from  './EventEmitter2'
+import emitter from 'emitter'
 import configFlags from './configFlags'
 
 
@@ -20,12 +20,12 @@ function createAudio(e, t) {
 }
 
 var audioFlags = {},
-    eventEmitter2 = new EventEmitter2.EventEmitter2;
+    eventBus = new emitter;
 
 ServiceJSBridge.subscribe("audioInsert", function (params, webviewId) {
     var audioId = params.audioId
     audioFlags[webviewId + "_" + audioId] = !0
-    eventEmitter2.emit("audioInsert_" + webviewId + "_" + audioId)
+    eventBus.emit("audioInsert_" + webviewId + "_" + audioId)
 });
 
 class Audio {
@@ -67,7 +67,7 @@ class Audio {
 
     _ready(fn) {
         audioFlags[this.webviewId + "_" + this.audioId] ?
-            fn() : eventEmitter2.on("audioInsert_" + this.webviewId + "_" + this.audioId, function () { fn() })
+            fn() : eventBus.on("audioInsert_" + this.webviewId + "_" + this.audioId, function () { fn() })
     }
 
 
