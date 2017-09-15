@@ -5,7 +5,6 @@ import * as util from '../lib/util'
 import View from './view'
 import mask from '../lib/component/mask'
 const Bus = util.getBus()
-const SERVICE_ID = 100000
 
 let curr = null
 let views = {}
@@ -49,7 +48,6 @@ function lifeSycleEvent(path, query, openType) {
   toAppService({
     msg: {
       eventName: 'onAppRoute',
-      type: 'ON_APPLIFECYCLE_EVENT',
       data: {
         path: `${path}.wxml`,
         query: query,
@@ -59,16 +57,10 @@ function lifeSycleEvent(path, query, openType) {
   })
 }
 
-function toAppService(data) {
-  data.to = 'appservice'
-  let obj = Object.assign({
-    command: 'MSG_FROM_WEBVIEW',
-    webviewID: SERVICE_ID
-  }, data)
-  let id = curr ? curr.id : 0
-  obj.msg.webviewID = data.webviewID || id
+function toAppService(obj) {
+  const id = curr ? curr.id : 0
   const msg = obj.msg || {}
-  ServiceJSBridge.subscribeHandler(msg.eventName,msg.data || {},msg.webviewID)
+  ServiceJSBridge.subscribeHandler(msg.eventName,msg.data || {},id)
 }
 
 function getRoutes () {
@@ -86,8 +78,13 @@ function getRoutes () {
   }
   return result
 }
+
 function onRoute() {
-  util.redirectTo(curr.url)//改变地址栏
+  //改变地址栏
+  let home = `${location.protocol}//${location.host}${location.pathname}`
+  if (typeof history.replaceState == 'function') {
+    history.replaceState({}, '', `${home}#!${curr.url}`)
+  }
   Bus.emit('route', router.getViewIds().length, curr)//tabbar状态变化
   let arr = []
   let view = curr
@@ -152,8 +149,19 @@ const router = {
             console.warn(`无法在 pages 配置中找到 ${route}，停止路由`)
             break;
           }
-          let data = util.getRedirectData(`/${route}`, curr.id)//获取到路由数据
-          toAppService(data)
+          toAppService({
+            msg: {
+              eventName: 'custom_event_INVOKE_METHOD',
+              data: {
+                data: {
+                  name: 'navigateTo',
+                  args: {
+                    url: `/${route}`
+                  }
+                }
+              }
+            },
+          })
         }
       })
     }

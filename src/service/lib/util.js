@@ -80,35 +80,6 @@ export function navigateHome() {
   }
 }
 
-export function redirectTo(url) {
-  let home = `${location.protocol}//${location.host}${location.pathname}`
-  if (typeof history.replaceState == 'function') {
-    history.replaceState({}, '', `${home}#!${url}`)
-  }
-}
-
-export function getRedirectData(url, webviewID) {
-  return {
-    to: 'backgroundjs',
-    msg: {
-      eventName: 'custom_event_INVOKE_METHOD',
-      data: {
-        data: {
-          name: 'navigateTo',
-          args: {
-            url: url
-          }
-        },
-        options: {
-          timestamp: Date.now()
-        }
-      }
-    },
-    comefrom: 'webframe',
-    webviewID: webviewID
-  }
-}
-
 export function dataURItoBlob(dataURI) {
   // convert base64 to raw binary data held in a string
   // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
