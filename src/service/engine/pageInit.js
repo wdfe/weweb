@@ -93,11 +93,6 @@ var pageParse = function(routePath, webviewId, params) {//解析page e:pagepath 
   }
   app.newPageTime = Date.now()
   var page = new parsePage(curPageObj, webviewId, routePath)
-  if(utils.isDevTools()){
-    __wxAppData[routePath] = page.data
-    __wxAppData[routePath].__webviewId__ = webviewId
-    utils.publish(eventDefine.UPDATE_APP_DATA)
-  }
   currentPage = {
     page: page,
     webviewId: webviewId,
@@ -121,7 +116,6 @@ var pageHide = function(pageItem) {//执行page hide event
 
 var pageUnload = function(pageItem) {//do page unload
   pageItem.page.onUnload();
-  utils.isDevTools() && (delete __wxAppData[pageItem.route], utils.publish(eventDefine.UPDATE_APP_DATA));
   delete pageStackObjs[pageItem.webviewId];
   pageStack = pageStack.slice(0, pageStack.length - 1);
   reportRealtimeAction.triggerAnalytics("leavePage", pageItem.page);

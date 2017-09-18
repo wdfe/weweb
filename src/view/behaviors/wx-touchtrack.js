@@ -27,7 +27,7 @@ export default exparser.registerBehavior({
             },
             originalEvent = null
         exparser.addListenerToElement(element, 'touchstart', function (event) {
-            if (event.touches.length === 1 && !originalEvent) {
+            if (event.touches && event.touches.length === 1 && !originalEvent) {
                 originalEvent = event
                 startX = dx = event.touches[0].pageX
                 startY = dy = event.touches[0].pageY
@@ -35,7 +35,7 @@ export default exparser.registerBehavior({
             }
         })
         exparser.addListenerToElement(element, 'touchmove', function (event) {
-            if (event.touches.length === 1 && originalEvent) {
+            if (event.touches && event.touches.length === 1 && originalEvent) {
                 var res = handleEvent(
                     event,
                     'move',
@@ -48,7 +48,7 @@ export default exparser.registerBehavior({
             }
         })
         exparser.addListenerToElement(element, 'touchend', function (event) {
-            if (event.touches.length === 0 && originalEvent) {
+            if (event.touches && event.touches.length === 0 && originalEvent) {
                 originalEvent = null
                 return handleEvent(
                     event,
@@ -59,7 +59,7 @@ export default exparser.registerBehavior({
             }
         })
         exparser.addListenerToElement(element, 'touchcancel', function (event) {
-            if (event.touches.length === 0 && originalEvent) {
+            if (event.touches && event.touches.length === 0 && originalEvent) {
                 var t = originalEvent
                 originalEvent = null
                 return handleEvent(event, 'end', t.touches[0].pageX, t.touches[0].pageY)
