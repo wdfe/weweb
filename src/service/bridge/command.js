@@ -19,33 +19,22 @@ import Preview from '../lib/component/preview'
 import confirm from '../lib/component/confirm'
 import { dataURItoBlob, toNumber,getBus,once} from '../lib/util'
 const Bus = getBus()
-const SERVICE_ID = 20000
 let fileIndex = 0
 let fileStore = {}
 
-function toAppService(data) {
-  data.to = 'appservice'
-  let obj = Object.assign({
-    command: 'MSG_FROM_WEBVIEW',
-    webviewID: SERVICE_ID
-  }, data)
-  if (obj.msg && obj.command !== 'GET_ASSDK_RES') {
-    let view = router.currentView()
-    let id = view ? view.id : 0
-    obj.msg.webviewID = data.webviewID || id
-    obj.msg.options = obj.msg.options || {}
-    obj.msg.options.timestamp = Date.now()
-  }
+function toAppService(obj) {
   if (obj.command == 'GET_ASSDK_RES'){
     ServiceJSBridge.invokeCallbackHandler(obj.ext.callbackID, obj.msg);
-  }else if(obj.command == 'MSG_FROM_WEBVIEW'){
-    ServiceJSBridge.subscribeHandler(obj.msg.eventName,obj.msg.data || {},obj.msg.webviewID)
+  }else{
+    let view = router.currentView()
+    let id = view ? view.id : 0
+    ServiceJSBridge.subscribeHandler(obj.msg.eventName,obj.msg.data || {},id)
   }
 }
 
 export function onLaunch() {
-  header.init();
-  tabbar.init();
+  header.init()
+  tabbar.init()
   router.onLaunch()
 }
 export function redirectTo(data) {
@@ -775,15 +764,4 @@ function getScrollHeight (){
     var e = 0, t = 0;
     var scrollable = document.querySelector(".scrollable");
     return scrollable && (e = scrollable.scrollHeight);
-}
-function checkScrollBottom(){
-    var t = o - window.scrollY <= 0;
-    return o = window.scrollY, !!(window.scrollY + n() + e >= i() && t)
-}
-var a = !1,
-    s =  !0;
-function triggerPullUpRefresh (){
-    s && !a && (wx.publishPageEvent("onReachBottom", {}), s = !1, setTimeout(function () {
-        s = !0
-    }, 350))
 }

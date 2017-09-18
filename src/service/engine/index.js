@@ -1,6 +1,6 @@
 import pageInit from './pageInit';
-import eventHandle from './initApp';
+import initApp from './initApp';
 window.Page = pageInit.pageHolder
-window.App = eventHandle.appHolder
-window.getApp = eventHandle.getApp
+window.App = initApp.appHolder
+window.getApp = initApp.getApp
 window.getCurrentPages = pageInit.getCurrentPages
