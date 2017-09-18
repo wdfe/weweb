@@ -215,7 +215,6 @@ export function enableCompass() {
     toAppService({
       msg: {
         eventName: 'onCompassChange',
-        type: 'ON_APPLIFECYCLE_EVENT',
         data: {
           direction: head
         }
@@ -239,7 +238,6 @@ export function enableAccelerometer() {
       toAppService({
         msg: {
           eventName: 'onAccelerometerChange',
-          type: 'ON_APPLIFECYCLE_EVENT',
           data: {x, y, z}
         }
       })
