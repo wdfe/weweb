@@ -123,8 +123,9 @@ class Context {
 }
 
 
-[].concat(transformAndOthersAPI, drawingAPI).forEach(
+;[].concat(transformAndOthersAPI, drawingAPI).forEach(
     function (apiName) {
+        let data
         "fill" == apiName || "stroke" == apiName ?
             Context.prototype[apiName] = function () {
                 this.actions.push({

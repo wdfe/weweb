@@ -27,12 +27,15 @@ var utils = {
     },
     thirdErrorReport: function (params) {
         var error = params.error, extend = params.extend
-        utils.errorReport
-        console.log({
-            key: 'thirdScriptError',
-            error: error,
-            extend: extend
-        })
+        // utils.errorReport
+        // console.log({
+        //     key: 'thirdScriptError',
+        //     error: error,
+        //     extend: extend
+        // })
+        console.group('thirdScriptError', extend)
+        console.error(error)
+        console.groupEnd()
     },
     errorReport: function (params) {
     },
