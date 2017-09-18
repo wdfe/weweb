@@ -407,15 +407,8 @@ var apiObj = {//wx对象
     bridge.invokeMethod("closeSocket", e)
   },
   sendSocketMessage: function (params) {
-    var paramType =  utils.getDataType(params.data);
-    "devtools" ===  utils.getPlatform() ?
-      bridge.invokeMethod("sendSocketMessage", params) :
-      "String" === paramType ?
-        bridge.invokeMethod("sendSocketMessage", params) :
-        "ArrayBuffer" === paramType &&  bridge.invokeMethod("sendSocketMessage",  utils.assign(params, {
-          data:  utils.arrayBufferToBase64(params.data),
-          isBuffer: !0
-        }))
+    var paramType =  utils.getDataType(params.data)
+    bridge.invokeMethod("sendSocketMessage", params)
   },
   onSocketOpen: function (callback) {
     paramCheck("onSocketOpen", callback, emptyFn) &&  bridge.onMethod("onSocketOpen", Reporter.surroundThirdByTryCatch(callback, "at onSocketOpen callback function"))
@@ -427,9 +420,8 @@ var apiObj = {//wx对象
     if (paramCheck("onSocketMessage", callback, emptyFn)) {
       callback = Reporter.surroundThirdByTryCatch(callback, "at onSocketMessage callback function");
       bridge.onMethod("onSocketMessage", function (params) {
-        "devtools" !==  utils.getPlatform() && params.isBuffer === !0 && (params.data =  utils.base64ToArrayBuffer(params.data))
         delete params.isBuffer
-        "devtools" ===  utils.getPlatform() && "Blob" ===  utils.getDataType(params.data)?
+        "Blob" ===  utils.getDataType(params.data)?
           utils.blobToArrayBuffer(params.data,function (data) { params.data = data, callback(params) }) : callback(params)
       })
     }
@@ -868,7 +860,7 @@ var apiObj = {//wx对象
     })
   },
   hideKeyboard: function (params) {
-    bridge.publish("hideKeyboard", {})//"devtools" ==  utils.getPlatform() ? bridge.publish("hideKeyboard", {}) :  bridge.invokeMethod("hideKeyboard", params)
+    bridge.publish("hideKeyboard", {})
   },
   getPublicLibVersion: function () {
     var rt;
