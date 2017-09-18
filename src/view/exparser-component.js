@@ -3,7 +3,7 @@ function exeWhenWXJSbridgeReady (fn) {
 }
 
 // 转发 window 上的 animation 和 transition 相关的动画事件到 exparser
-!(function (win) {
+;(function (win) {
   var getOpt = function (args) {
       return {
         animationName: args.animationName,
@@ -40,7 +40,7 @@ function exeWhenWXJSbridgeReady (fn) {
 })(window)
 
 // 订阅并转发 WeixinJSBridge 提供的全局事件到 exparser
-!(function (glob) {
+;(function (glob) {
   exeWhenWXJSbridgeReady(function () {
     WeixinJSBridge.subscribe('onAppRouteDone', function () {
       window.__onAppRouteDone = !0
@@ -136,7 +136,7 @@ function exeWhenWXJSbridgeReady (fn) {
 })(window)
 
 // 转发 window 上的 error 以及各种表单事件到 exparser
-!(function (window) {
+;(function (window) {
   exparser.globalOptions.renderingMode = 'native'
 
   window.addEventListener(
@@ -201,8 +201,10 @@ function exeWhenWXJSbridgeReady (fn) {
           func()
         }, 17)
     })
-})(window), // touch events
-(function (win) {
+})(window)
+
+;(function (win) {
+  // touch events
   var triggerEvent = function (event, name, params) {
       exparser.triggerEvent(event.target, name, params, {
         originalEvent: event,
@@ -245,7 +247,9 @@ function exeWhenWXJSbridgeReady (fn) {
         if (
           element.__wxScrolling &&
           Date.now() - element.__wxScrolling < wxScrollTimeLowestValue
-        ) { return !0 }
+        ) {
+          return !0
+        }
       }
       return !1
     },
@@ -492,42 +496,18 @@ require('./behaviors/wx-native')
 require('./behaviors/wx-player')
 require('./behaviors/wx-touchtrack')
 
-// require('./components/wx-action-sheet-cancel')
-// require('./components/wx-action-sheet')
-// require('./components/wx-action-sheet-item')
-// require('./components/wx-audio')
 require('./components/wx-button')
-// require('./components/wx-canvas')
 require('./components/wx-checkbox')
 require('./components/wx-checkbox-Group')
-// require('./components/wx-form')
 require('./components/wx-icon')
 require('./components/wx-image')
 require('./components/wx-input')
 require('./components/wx-label')
 require('./components/wx-loading')
-require('./components/wx-map') // !!!!!! map has to require ahead
 require('./components/wx-mask')
-// require('./components/wx-modal')
 require('./components/wx-navigator')
-// require('./components/wx-picker')
-// require('./components/wx-picker-view')
-// require('./components/wx-picker-view-column')
-// require('./components/wx-progress')
-// require('./components/wx-radio')
-// require('./components/wx-radio-group')
-// require('./components/wx-scroll-view')
-// require('./components/wx-slider')
-// require('./components/wx-swiper')
-// require('./components/wx-swiper-item')
-// require('./components/wx-switch')
 require('./components/wx-text')
-// require('./components/wx-textarea')
-// require('./components/wx-toast')
-// require('./components/wx-video')
 require('./components/wx-view')
-// require('./components/wx-contact-button')
-// import ContactButton from './wx-contact-button'
 
 window.exparser.registerAsyncComp = function (names, cb) {
   let len = names.length
@@ -551,6 +531,27 @@ window.exparser.registerAsyncComp = function (names, cb) {
   function requireAsync (name) {
     switch (name) {
       case 'wx-map':
+        ;(function () {
+          var script = document.createElement('script')
+          script.async = true
+          script.type = 'text/javascript'
+          script.src =
+            'https://map.qq.com/api/js?v=2.exp&callback=__map_jssdk_init'
+          document.body.appendChild(script)
+          window.__map_jssdk_id = 0
+          window.__map_jssdk_ready = !1
+          window.__map_jssdk_callback = []
+          window.__map_jssdk_init = function () {
+            for (
+              window.__map_jssdk_ready = !0;
+              window.__map_jssdk_callback.length;
+
+            ) {
+              var e = window.__map_jssdk_callback.pop()
+              e()
+            }
+          }
+        })()
         require.ensure([], function () {
           require('./components/wx-map')
           checkState()

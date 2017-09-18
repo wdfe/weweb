@@ -1,23 +1,23 @@
 // add map sdk
-export default  !(function () {
-    window.addEventListener('DOMContentLoaded', function () {
-        if (window.__wxConfig__.weweb && window.__wxConfig__.weweb.nomap) return
-        var script = document.createElement('script')
-        script.async = true
-        script.type = 'text/javascript'
-        script.src = 'https://map.qq.com/api/js?v=2.exp&callback=__map_jssdk_init'
-        document.body.appendChild(script)
-    })
-    window.__map_jssdk_id = 0
-    window.__map_jssdk_ready = !1
-    window.__map_jssdk_callback = []
-    window.__map_jssdk_init = function () {
-        for (__map_jssdk_ready = !0; __map_jssdk_callback.length;) {
-            var e = __map_jssdk_callback.pop()
-            e()
-        }
-    }
-})()
+// export default  !(function () {
+//     window.addEventListener('DOMContentLoaded', function () {
+//         if (window.__wxConfig__.weweb && window.__wxConfig__.weweb.nomap) return
+//         var script = document.createElement('script')
+//         script.async = true
+//         script.type = 'text/javascript'
+//         script.src = 'https://map.qq.com/api/js?v=2.exp&callback=__map_jssdk_init'
+//         document.body.appendChild(script)
+//     })
+//     window.__map_jssdk_id = 0
+//     window.__map_jssdk_ready = !1
+//     window.__map_jssdk_callback = []
+//     window.__map_jssdk_init = function () {
+//         for (__map_jssdk_ready = !0; __map_jssdk_callback.length;) {
+//             var e = __map_jssdk_callback.pop()
+//             e()
+//         }
+//     }
+// })()
 
 // wx-map
 window.exparser.registerElement({
@@ -767,9 +767,9 @@ window.exparser.registerElement({
                 ), void console.groupEnd())
                 : ((this._canInvokeNewFeature = !0), (this._box = this._getBox()), void (this._isMobile()
                     ? this._insertNativeMap()
-                    : __map_jssdk_ready
+                    : window.__map_jssdk_ready
                         ? this._insertIframeMap()
-                        : __map_jssdk_callback.push(
+                        : window.__map_jssdk_callback.push(
                             this._insertIframeMap.bind(this)
                         )))
     },
