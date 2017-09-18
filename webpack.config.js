@@ -51,6 +51,8 @@ module.exports = {
   },
   output: {
     filename: '[name].js',
+    publicPath: 'script/',
+    chunkFilename: '[name].chunk.js',
     path: getPath(DIST_PATH)
   },
   watch: watch,

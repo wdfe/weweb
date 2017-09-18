@@ -49,17 +49,17 @@ getCurrentPages = function() {
 };
 pageHolder = function(pageObj) {//Page 接口
   if (!__wxRouteBegin) {
-    throw utils.error("Page 注册错误", "Please do not register multiple Pages in " + __wxRoute + ".js");
-    new utils.AppServiceEngineKnownError("Please do not register multiple Pages in " + __wxRoute + ".js");
+      throw utils.error("Page 注册错误", "Please do not register multiple Pages in " + __wxRoute + ".js");
+      new utils.AppServiceEngineKnownError("Please do not register multiple Pages in " + __wxRoute + ".js");
   }
 
   __wxRouteBegin = !1;
   var pages = __wxConfig__.pages,
-    pagePath = pages[pageIndex];
+      pagePath = __wxRoute || pages[pageIndex];
   pageIndex++;
   if ("Object" !== utils.getDataType(pageObj)) {
-    throw utils.error("Page 注册错误", "Options is not object: " + JSON.stringify(pageObj) + " in " + __wxRoute + ".js")
-    new utils.AppServiceEngineKnownError("Options is not object: " + JSON.stringify(pageObj) + " in " + __wxRoute + ".js");
+      throw utils.error("Page 注册错误", "Options is not object: " + JSON.stringify(pageObj) + " in " + __wxRoute + ".js")
+      new utils.AppServiceEngineKnownError("Options is not object: " + JSON.stringify(pageObj) + " in " + __wxRoute + ".js");
   }
   utils.info("Register Page: " + pagePath);
   pageRegObjs[pagePath] = pageObj;

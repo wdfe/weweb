@@ -45,7 +45,7 @@ if(!window.__wxConfig){
 
 }
 
-function lifeSycleEvent(path, query, openType) {
+export function lifeSycleEvent(path, query, openType) {
   toAppService({
     msg: {
       eventName: 'onAppRoute',
@@ -133,7 +133,7 @@ const router = {
     let root =  valid ? first : window.__root__
     this.navigateTo(root,true)//页面切换，路由表更新
     let {path, query} = util.parsePath(root)
-    lifeSycleEvent(path, query, 'appLaunch')
+    // lifeSycleEvent(path, query, 'appLaunch')
 
     if (!valid){
       console.warn(`Invalid route: ${first}, redirect to root`)

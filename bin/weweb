@@ -12,20 +12,21 @@ var chalk = require('chalk')
 var net = require('net')
 var boxen = require('boxen')
 const path = require('path')
-const co = require('co')
-const notify = require('node-notifier');
+// const co = require('co')
+// const notify = require('node-notifier')
 
-program.version(json.version)
-.usage('[app root]')
-.option('-o, --open', '使用 Chrome 打开小程序，仅对 Mac 有效')
-.option('-l, --list', '使用默认浏览器打开更新历史')
-.option('-p, --port <n>', '指定服务端口，默认 3000', parseInt)
-.option('-d, --dist <p>', '指定生成的路径')
-.option('-t, --transform', '只转换小程序,不起web服务')
+program
+  .version(json.version)
+  .usage('[app root]')
+  .option('-o, --open', '使用 Chrome 打开小程序，仅对 Mac 有效')
+  .option('-l, --list', '使用默认浏览器打开更新历史')
+  .option('-p, --port <n>', '指定服务端口，默认 3000', parseInt)
+  .option('-d, --dist <p>', '指定生成的路径')
+  .option('-t, --transform', '只转换小程序,不起web服务')
 
 program.parse(process.argv)
 var printLog = function (msg, allow) {
-  if(!program.transform || allow){
+  if (!program.transform || allow) {
     console.log(msg)
   }
 }
@@ -34,9 +35,17 @@ var notifier = new UpdateNotifier({
   callback: function (err, result) {
     if (err) return
     if (result.current !== result.latest) {
-      var message = 'Update available ' + chalk.dim(result.current) + chalk.reset(' → ') +
-        chalk.green(result.latest) + ' \nRun ' + chalk.cyan('npm i -g ' + json.name) + ' to update'
-      var msg = '\n' + boxen(message, {
+      var message =
+        'Update available ' +
+        chalk.dim(result.current) +
+        chalk.reset(' → ') +
+        chalk.green(result.latest) +
+        ' \nRun ' +
+        chalk.cyan('npm i -g ' + json.name) +
+        ' to update'
+      var msg =
+        '\n' +
+        boxen(message, {
           padding: 1,
           margin: 1,
           align: 'center',
@@ -54,41 +63,47 @@ if (program.list) {
   open('https://github.com/wdfe/weweb/releases')
   process.exit()
 }
-var tmpFolderName,curPath = process.cwd()
+var tmpFolderName, curPath = process.cwd()
 var folder = program.args[0]
 
 if (folder) {
   var stats
   try {
     stats = fs.statSync(folder)
-  } catch(e) {}
+  } catch (e) {}
   if (!stats) {
     printLog('指定目录不存在或者不是目录，请检查')
     process.exit()
-  }else if(stats.isFile()){
-    if(folder.match(/\.zip$/i)){
-      tmpFolderName = '/tmp/__weapp'+Math.random().toString(16).substr(2)+(new Date()).getTime()
+  } else if (stats.isFile()) {
+    if (folder.match(/\.zip$/i)) {
+      tmpFolderName =
+        '/tmp/__weapp' +
+        Math.random().toString(16).substr(2) +
+        new Date().getTime()
       childProcess.execSync(`unzip ${folder} -d ${tmpFolderName}`)
       printLog(folder)
-      folder = childProcess.execSync(`find ${tmpFolderName} -name app.json -print`).toString().replace(/^\s+|(app\.json\s*$)/,'')
-      var tmpMatchValue = folder.match(/(^.*)\n/);
-      if(tmpMatchValue){
-        folder = tmpMatchValue[1].replace(/app\.json\s*$/,'')
+      folder = childProcess
+        .execSync(`find ${tmpFolderName} -name app.json -print`)
+        .toString()
+        .replace(/^\s+|(app\.json\s*$)/, '')
+      var tmpMatchValue = folder.match(/(^.*)\n/)
+      if (tmpMatchValue) {
+        folder = tmpMatchValue[1].replace(/app\.json\s*$/, '')
       }
-    }else{
+    } else {
       printLog('指定目录不存在或者不是目录，请检查')
       process.exit()
     }
-  }else if(!stats.isDirectory){
+  } else if (!stats.isDirectory) {
     printLog('指定目录不存在或者不是目录，请检查')
     process.exit()
   }
-  var chdirFail = true;
+  var chdirFail = true
   try {
     printLog(folder)
     chdirFail = false
     process.chdir(folder)
-  } catch(err) {
+  } catch (err) {
     chdirFail = true
     printLog('切换目录失败: ' + err)
   }
@@ -98,95 +113,134 @@ if (!fs.existsSync('./app.json')) {
   printLog(chalk.red('无法找到 app.json 文件，请检查'))
   process.exit()
 }
-//开始转换代码
+// 开始转换代码
 var core = require('../lib/core')
 var util = require('../lib/util')
-//const Parallel = require('node-parallel')
-var rootPath = path.resolve(__dirname, '../tmp');
-var distPath = path.resolve(curPath, program.dist || './tmp/dist');
+// const Parallel = require('node-parallel')
+var rootPath = path.resolve(__dirname, '../tmp')
+var distPath = path.resolve(curPath, program.dist || './tmp/dist')
 
-function doTransformFile(){
-  util.copyDir(rootPath+'/public', distPath, function () {
-    util.copyDir('./',distPath,{filename:['.git'],extname:['.js','.json','.wxss','.css','.git','.md','.wxml']})
-    core.getIndex.then(function(content){
-/*
+function doTransformFile () {
+  util.copyDir(rootPath + '/public', distPath, function () {
+    util.copyDir('./', distPath, {
+      filename: ['.git'],
+      extname: ['.js', '.json', '.wxss', '.css', '.git', '.md', '.wxml']
+    })
+    core.getIndex.then(function (content) {
+      /*
       if(program.transform){
         content = content.replace('var __wxConfig__ = {"weweb":{','var __wxConfig__ = {"weweb":{ "requestProxy":"/remoteProxy",')
       }
 */
-      util.createFile(distPath,'index.html',content,null,program.transform);
+      util.createFile(distPath, 'index.html', content, null, program.transform)
     })
 
-    core.getServiceJs.then(function(content){
-      util.createFile(distPath+'/script','app-service.js',content,null,program.transform);
+    core.getServiceJs.then(function (content) {
+      util.createFile(
+        distPath + '/script',
+        'app-service.js',
+        content,
+        null,
+        program.transform
+      )
     })
 
-    core.getAppWxss('./app').then(function(content){
-      util.createFile(distPath+'/css','app.css',content.replace(/\/\*#\s*sourceMappingURL=.*\*\/$/,''),null,program.transform);
+    core.getAppWxss('./app').then(function (content) {
+      util.createFile(
+        distPath + '/css',
+        'app.css',
+        content.replace(/\/\*#\s*sourceMappingURL=.*\*\/$/, ''),
+        null,
+        program.transform
+      )
     })
 
-    util.readFile('./app.json').then(function(config){
-      let appConfig = JSON.parse(config);
-      let tabBar = appConfig.tabBar;
-      let pages = appConfig.pages;
-      let count = 0;
-      pages.forEach(function(path){
-        let fullpath = path.replace(/^(\/|\.\/)/,'');
-        let paths = fullpath.split('/');
-        let file = paths.pop();
-        path = paths.join('/');
+    util.readFile('./app.json').then(function (config) {
+      let appConfig = JSON.parse(config)
+      let tabBar = appConfig.tabBar
+      let pages = appConfig.pages
+      let count = 0
+      pages.forEach(function (path) {
+        let fullpath = path.replace(/^(\/|\.\/)/, '')
+        let paths = fullpath.split('/')
+        let file = paths.pop()
+        path = paths.join('/')
 
-        core.getPage(fullpath).then(function(arr){
-          let content = arr[0]//.replace(/(src=[\"\']?)\/+/,"$1");//对以/开始的路径做处理
-          if(arr[1]){
-            arr[1] = arr[1].replace(/\/\*#\s*sourceMappingURL=.*\*\/$/,'').replace(/(position:\s*fixed\s*[^\}]*[^w]top:)\s*0\s*;/g,'$142px;');
-            if(tabBar && tabBar.list.findIndex(item => item.pagePath.replace(/^(\/|\.\/)/,'') === fullpath)!=-1){
-              if(tabBar.position!='top'){
-                arr[1] = arr[1].replace(/(position:\s*fixed\s*[^\}]*[^w]bottom:)\s*0\s*;/g,'$156px;');
+        core.getPage(fullpath).then(function (arr) {
+          // page generateFunc
+          let content = arr[0][0] // .replace(/(src=[\"\']?)\/+/,"$1");//对以/开始的路径做处理
+          if (arr[1]) {
+            arr[1] = arr[1]
+              .replace(/\/\*#\s*sourceMappingURL=.*\*\/$/, '')
+              .replace(
+                /(position:\s*fixed\s*[^\}]*[^w]top:)\s*0\s*;/g,
+                '$142px;'
+              )
+            if (
+              tabBar &&
+              tabBar.list.findIndex(
+                item => item.pagePath.replace(/^(\/|\.\/)/, '') === fullpath
+              ) != -1
+            ) {
+              if (tabBar.position != 'top') {
+                arr[1] = arr[1].replace(
+                  /(position:\s*fixed\s*[^\}]*[^w]bottom:)\s*0\s*;/g,
+                  '$156px;'
+                )
               }
             }
-            content += '@css-body-start:'+arr[1];
+          } else {
+            arr[1] = ''
           }
-          util.createFile(distPath+'/src/'+path,file+'.js',content,function(){
-            count++;
-            if(count == pages.length){
-              if(program.transform){
-                printLog('ok:'+distPath, true)
-                setTimeout(()=>{
-                  if(tmpFolderName){
-                    exec(`rm -rf ${tmpFolderName}`)
-                  }
-                  util.rmEmptyDirsSync(distPath)
-                  process.exit()
-                },12000)
-              }else{
-                bootWebServer();
-                setTimeout(()=>{
-                  util.rmEmptyDirsSync(distPath)
-
-                },12000)
+          content += '@code-separator-line:' + arr[1] // page css
+          if (!arr[2]) arr[2] = ''
+          content += '@code-separator-line:' + arr[2] // app-service
+          content += '@code-separator-line:' + JSON.stringify(arr[0][1]) // tags
+          util.createFile(
+            distPath + '/src/' + path,
+            file + '.js',
+            content,
+            function () {
+              count++
+              if (count === pages.length) {
+                if (program.transform) {
+                  printLog('ok:' + distPath, true)
+                  setTimeout(() => {
+                    if (tmpFolderName) {
+                      exec(`rm -rf ${tmpFolderName}`)
+                    }
+                    util.rmEmptyDirsSync(distPath)
+                    process.exit()
+                  }, 12000)
+                } else {
+                  bootWebServer()
+                  setTimeout(() => {
+                    util.rmEmptyDirsSync(distPath)
+                  }, 12000)
+                }
               }
-
-            }
-          },program.transform);
+            },
+            program.transform
+          )
         })
       })
     })
-
-  });
+  })
 }
-function bootWebServer(){
+function bootWebServer () {
   var server = require('../lib/server')(distPath)
   var startPort = 2000
 
   getPort(function (port) {
-    if (os.platform() == 'darwin' && program.open) {
-      exec('osascript chrome.scpt ' + port, {cwd: __dirname}, function () { })
+    if (os.platform() === 'darwin' && program.open) {
+      exec('osascript chrome.scpt ' + port, { cwd: __dirname }, function () {})
     }
     server.listen(port, function () {
       // printLog('listening on port ' + port)
       const openMsg = `Opening it on: http://localhost:${port}`
-      var msg = '\n' + boxen(openMsg, {
+      var msg =
+        '\n' +
+        boxen(openMsg, {
           padding: 1,
           margin: 1,
           align: 'center',
@@ -194,17 +248,19 @@ function bootWebServer(){
           borderStyle: 'round'
         })
       const endTime = new Date()
-      console.log(chalk.yellow(`Time elapsed: ${(endTime - startTime)/1000}s`))
+      console.log(
+        chalk.yellow(`Time elapsed: ${(endTime - startTime) / 1000}s`)
+      )
       // notify.notify({
       //   'title': 'Build Done',
       //   'message': new Date()
       // });
       printLog(msg)
-      if(program.open)open('http://localhost:' + port)
+      if (program.open) open('http://localhost:' + port)
     })
   })
 
-  function getPort(cb) {
+  function getPort (cb) {
     if (program.port) return cb(program.port)
     var port = startPort
 
@@ -220,16 +276,15 @@ function bootWebServer(){
       getPort(cb)
     })
   }
-
 }
 
-exec('rm -rf '+distPath+'/*',function(err,out) {
-  printLog(out);
-  err && printLog(err);
+exec('rm -rf ' + distPath + '/*', function (err, out) {
+  printLog(out)
+  err && printLog(err)
   util.mkdirsSync(distPath)
-  printLog('文件将生成到:\n'+distPath);
-  doTransformFile();
-});
+  printLog('文件将生成到:\n' + distPath)
+  doTransformFile()
+})
 
 process.on('uncaughtException', function (e) {
   printLog(chalk.red('发生了未知错误'))
