@@ -3,8 +3,6 @@ import parsePage from './parsePage';
 import * as eventDefine from './constants';
 import * as reportRealtimeAction from './logReport';
 
-
-
 var getRouteToPage;
 var getWebviewIdToPage;
 var setWxRouteBegin;

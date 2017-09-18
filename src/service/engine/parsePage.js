@@ -1,7 +1,6 @@
 
 import utils from './utils';
 import * as parsePath from './parsePath';
-import toAppView from './toAppView';
 import organize from './iteratorHandle';
 
 
@@ -113,7 +112,12 @@ class parsePage{
                     curKey = curValue.key;
                 curObj && (curObj[curKey] = organize(dataObj[key]));
             }
-            toAppView.emit(dataObj, this.__wxWebviewId__);
+            utils.publish("appDataChange", {
+              data: {
+                data: dataObj
+              }
+            },[this.__wxWebviewId__]);
+
         } catch(e) {
             utils.errorReport(e);
         }

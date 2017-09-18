@@ -109,7 +109,6 @@ const renderOnDataChange = function (event) {
       0
     )
   } else {
-    let timeStamp = Date.now()
     firstTimeRender(event)
     if (!(event.options && event.options.firstRender)) {
       console.error('firstRender not the data from Page.data')

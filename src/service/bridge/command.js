@@ -32,6 +32,111 @@ function toAppService(obj) {
   }
 }
 
+function getAudioElement() {
+  const audioTagId = 'wx-audio-component-inside'
+  let audio = document.getElementById(audioTagId)
+  if(audio == null) {
+    const audioTag = document.createElement('audio')
+    document.body.appendChild(audioTag)
+    audioTag.outerHTML = `<audio id="${audioTagId}" type="audio/mp3" style="display:none;"></audio>`
+    audio = audioTag
+  }
+  return audio
+}
+
+function getBackgroundAudioElement() {
+  const audioTagId = 'wx-background-audio-component-inside'
+  let audio = document.getElementById(audioTagId)
+  if(audio == null) {
+    const audioTag = document.createElement('audio')
+    document.body.appendChild(audioTag)
+    audioTag.outerHTML = `<audio id="${audioTagId}" type="audio/mp3" style="display:none;"></audio>`
+    audio = audioTag
+    audio.addEventListener('error', function () {
+      toAppService({
+        msg: {
+          eventName: 'onMusicError',
+          type: 'ON_MUSIC_EVENT'
+        }
+      })
+    }, false)
+  }
+  return audio
+}
+
+function requiredArgs(keys, data) {
+  let args = data.args
+  for (var i = 0, l = keys.length; i < l; i++) {
+    if (!args.hasOwnProperty(keys[i])) {
+      onError(data, `key ${keys[i]} required for ${data.sdkName}`)
+      return true
+    }
+  }
+  return false
+}
+
+function onError(data, message) {
+  let obj = {
+    command: "GET_ASSDK_RES",
+    ext: Object.assign({}, data),
+    msg: {
+      errMsg: `${data.sdkName}:fail`
+    }
+  }
+  if (message) obj.msg.message = message
+  toAppService(obj)
+}
+
+function onSuccess(data, extra = {}) {
+  if (!data.sdkName) throw new Error('sdkName not found')
+  let obj = {
+    command: "GET_ASSDK_RES",
+    ext: Object.assign({}, data),
+    msg: {
+      errMsg: `${data.sdkName}:ok`
+    }
+  }
+  obj.msg = Object.assign(obj.msg, extra)
+  toAppService(obj)
+}
+
+function onCancel(data, extra = {}) {
+  let obj = {
+    command: "GET_ASSDK_RES",
+    ext: Object.assign({}, data),
+    msg: {
+      errMsg: `${data.sdkName}:cancel`
+    }
+  }
+  obj.msg = Object.assign(obj.msg, extra)
+  toAppService(obj)
+}
+
+function publishPagEevent(eventName, extra) {
+  let obj = {
+    command: 'MSG_FROM_WEBVIEW',
+    msg: {
+      data: {
+        data: {
+          data: extra,
+          eventName
+        }
+      },
+      eventName: 'custom_event_PAGE_EVENT',
+    }
+  }
+  toAppService(obj)
+}
+
+function getWindowHeight () {
+  var scrollable = document.querySelector(".scrollable");
+  return  scrollable.clientHeight;
+}
+function getScrollHeight (){
+  var scrollable = document.querySelector(".scrollable");
+  return scrollable && scrollable.scrollHeight;
+}
+
 export function onLaunch() {
   header.init()
   tabbar.init()
@@ -346,38 +451,6 @@ export function stopRecord() {
     })
 }
 
-function getAudioElement() {
-  const audioTagId = 'wx-audio-component-inside'
-  let audio = document.getElementById(audioTagId)
-  if(audio == null) {
-    const audioTag = document.createElement('audio')
-    document.body.appendChild(audioTag)
-    audioTag.outerHTML = `<audio id="${audioTagId}" type="audio/mp3" style="display:none;"></audio>`
-    audio = audioTag
-  }
-  return audio
-}
-
-function getBackgroundAudioElement() {
-  const audioTagId = 'wx-background-audio-component-inside'
-  let audio = document.getElementById(audioTagId)
-  if(audio == null) {
-    const audioTag = document.createElement('audio')
-    document.body.appendChild(audioTag)
-    audioTag.outerHTML = `<audio id="${audioTagId}" type="audio/mp3" style="display:none;"></audio>`
-    audio = audioTag
-    audio.addEventListener('error', function () {
-      toAppService({
-        msg: {
-          eventName: 'onMusicError',
-          type: 'ON_MUSIC_EVENT'
-        }
-      })
-    }, false)
-  }
-  return audio
-}
-
 export function playVoice(data) {
   let url = data.args.filePath
   let audio = getAudioElement()
@@ -690,78 +763,4 @@ export function showDatePickerView(args) {
       }
     })
   })
-}
-
-function requiredArgs(keys, data) {
-  let args = data.args
-  for (var i = 0, l = keys.length; i < l; i++) {
-    if (!args.hasOwnProperty(keys[i])) {
-      onError(data, `key ${keys[i]} required for ${data.sdkName}`)
-      return true
-    }
-  }
-  return false
-}
-
-function onError(data, message) {
-  let obj = {
-    command: "GET_ASSDK_RES",
-    ext: Object.assign({}, data),
-    msg: {
-      errMsg: `${data.sdkName}:fail`
-    }
-  }
-  if (message) obj.msg.message = message
-  toAppService(obj)
-}
-
-function onSuccess(data, extra = {}) {
-  if (!data.sdkName) throw new Error('sdkName not found')
-  let obj = {
-    command: "GET_ASSDK_RES",
-    ext: Object.assign({}, data),
-    msg: {
-      errMsg: `${data.sdkName}:ok`
-    }
-  }
-  obj.msg = Object.assign(obj.msg, extra)
-  toAppService(obj)
-}
-
-function onCancel(data, extra = {}) {
-  let obj = {
-    command: "GET_ASSDK_RES",
-    ext: Object.assign({}, data),
-    msg: {
-      errMsg: `${data.sdkName}:cancel`
-    }
-  }
-  obj.msg = Object.assign(obj.msg, extra)
-  toAppService(obj)
-}
-
-function publishPagEevent(eventName, extra) {
-  let obj = {
-    command: 'MSG_FROM_WEBVIEW',
-    msg: {
-      data: {
-        data: {
-          data: extra,
-          eventName
-        }
-      },
-      eventName: 'custom_event_PAGE_EVENT',
-    }
-  }
-  toAppService(obj)
-}
-
-function getWindowHeight () {
-  var scrollable = document.querySelector(".scrollable");
-    return  scrollable.clientHeight;
-}
-function getScrollHeight (){
-    var e = 0, t = 0;
-    var scrollable = document.querySelector(".scrollable");
-    return scrollable && (e = scrollable.scrollHeight);
 }
