@@ -64,31 +64,24 @@ export default window.exparser.registerElement({
         length == 0 && resFn()
     },
     submitHandler: function (event) {
-        var self = this,
-            _target = {
-                id: event.target.__domElement.id,
-                dataset: event.target.dataset,
-                offsetTop: event.target.__domElement.offsetTop,
-                offsetLeft: event.target.__domElement.offsetLeft
-            }
+       var self = this,
+        _target = {
+            id: event.target.__domElement.id,
+            dataset: event.target.dataset,
+            offsetTop: event.target.__domElement.offsetTop,
+            offsetLeft: event.target.__domElement.offsetLeft
+        }
         this._data = Object.create(null)
-        return this.asyncDfs(this, function () {
+        this.asyncDfs(this, function () {
             self.reportSubmit
-                ? self._isDevTools()
-                ? self.triggerEvent('submit', {
-                    value: self._data,
-                    formId: 'the formId is subscribe mock one',
-                    target: _target
-                })
-                : WeixinJSBridge.invoke('reportSubmitForm', {}, function (e) {
-                    self.triggerEvent('submit', {
-                        value: self._data,
-                        formId: e.formId,
-                        target: _target
-                    })
-                })
-                : self.triggerEvent('submit', {value: self._data, target: _target})
-        }), !1
+            ? self.triggerEvent('submit', {
+                value: self._data,
+                formId: 'the formId is subscribe mock one',
+                target: _target
+            })
+            : self.triggerEvent('submit', { value: self._data, target: _target })
+        })
+        return !1
     },
     resetHandler: function (event) {
         var _target = {

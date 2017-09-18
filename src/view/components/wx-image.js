@@ -103,30 +103,30 @@ export default window.exparser.registerElement({
                     self._publishError(e)
                 }
             }//!/wechatdevtools/.test(ua)
-            false && /iphone/.test(ua)
-                ? /^(http|https):\/\//.test(filePath) ||
-            /^\s*data:image\//.test(filePath)
-                ? this._srcChanged(filePath)
-                : /^wdfile:\/\//.test(filePath)
-                    ? ((opts.filePath = filePath), wx.getLocalImgData(opts))
-                    : ((opts.path = filePath), wx.getLocalImgData(opts))
-                : false && /android/.test(ua)
-                ? /^wdfile:\/\//.test(filePath) ||
-                /^(http|https):\/\//.test(filePath) ||
-                /^\s*data:image\//.test(filePath)
-                    ? this._srcChanged(filePath)
-                    : wx.getCurrentRoute({
-                        success: function (t) {
-                            var n = wx.getRealRoute(t.route, filePath)
-                            self._srcChanged(n)
-                        }
-                    })
-                : this._srcChanged(
-                    filePath/*.replace(
-                     'wdfile://',
-                     'http://wxfile.open.weixin.qq.com/'
-                     )*/
-                )
+            // false && /iphone/.test(ua)
+            //     ? /^(http|https):\/\//.test(filePath) ||
+            // /^\s*data:image\//.test(filePath)
+            //     ? this._srcChanged(filePath)
+            //     : /^wdfile:\/\//.test(filePath)
+            //         ? ((opts.filePath = filePath), wx.getLocalImgData(opts))
+            //         : ((opts.path = filePath), wx.getLocalImgData(opts))
+            //     : false && /android/.test(ua)
+            //     ? /^wdfile:\/\//.test(filePath) ||
+            //     /^(http|https):\/\//.test(filePath) ||
+            //     /^\s*data:image\//.test(filePath)
+            //         ? this._srcChanged(filePath)
+            //         : wx.getCurrentRoute({
+            //             success: function (t) {
+            //                 var n = wx.getRealRoute(t.route, filePath)
+            //                 self._srcChanged(n)
+            //             }
+            //         })
+            //     : this._srcChanged(
+            //         filePath/*.replace(
+            //          'wdfile://',
+            //          'http://wxfile.open.weixin.qq.com/'
+            //          )*/
+            //     )
         }
     },
     _checkMode: function (styleKey) {

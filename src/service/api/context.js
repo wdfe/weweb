@@ -123,8 +123,9 @@ class Context {
 }
 
 
-[].concat(transformAndOthersAPI, drawingAPI).forEach(
+;[].concat(transformAndOthersAPI, drawingAPI).forEach(
     function (apiName) {
+        let data
         "fill" == apiName || "stroke" == apiName ?
             Context.prototype[apiName] = function () {
                 this.actions.push({
@@ -160,7 +161,6 @@ class Context {
                         } :
                         "drawImage" == apiName ?
                             Context.prototype[apiName] = function (t, n, o, r, a) {
-                                //"devtools" == utils.getPlatform() || /wdfile:\/\//.test(t) || (t = utils.getRealRoute(curUrl, t).replace(/.html$/, "")),
                                     isNum(r) && isNum(a) ? data = [t, n, o, r, a] : data = [t, n, o],
                                     this.actions.push({
                                         method: apiName,
