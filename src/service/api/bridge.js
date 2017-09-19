@@ -81,8 +81,11 @@ function invokeMethodSync(apiName,options,innerFns) {
         "function" == typeof params.complete && params.complete(res),
         "function" == typeof sysEventFns.afterAll && sysEventFns.afterAll(res)
     }
-    options.sdkName = apiName
-    const res = Native[apiName](options)
+    const opt = {}
+    opt.sdkName = apiName
+    opt.args = options
+
+    const res = Native[apiName](opt)
     callback(res.msg)
 
     Reporter.reportIDKey({
