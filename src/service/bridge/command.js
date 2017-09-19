@@ -184,7 +184,7 @@ export function stopPullDownRefresh(data) {
 export function publish(data) {
   let all_ids = router.getViewIds()
   let ids = toNumber(data.webviewIds) || all_ids
-  data.act = 'sendMsgFromAppService'
+
   let obj = {
     msg: data,
     command: 'MSG_FROM_APPSERVICE'
@@ -209,8 +209,8 @@ export function pageScrollTo (param) {
             scrollable.style.transform = "";
             scrollable.style.webkitTransform = "";
             scrollable.scrollTop = scrollTop;
-            scrollable.removeEventListener("transitionend", param);
-            scrollable.removeEventListener("webkitTransitionEnd", param);
+            scrollable.removeEventListener("transitionend", init);
+            scrollable.removeEventListener("webkitTransitionEnd", init);
         },
             l = "translateY(" + (scrollable.scrollTop - scrollTop) + "px) translateZ(0)";
         scrollable.style.transition = "transform .3s ease-out";

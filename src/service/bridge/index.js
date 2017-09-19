@@ -6,12 +6,7 @@ var callbacks = {},
   eventPrefix = "custom_event_",
   firstEnter = false,
   handlers = {},
-  showWarning = false,
-  apphash = __wxConfig__.apphash,
-  appid = __wxConfig__.appid,
-  appname = __wxConfig__.appname,
-  webviewID = 10000,
-  __id = 0;//指定固定值
+  showWarning = false;
 function isLimitedApi(event) {
   var limitedApi = ['openAddress','chooseContact'];
   if(~limitedApi.indexOf(event)){
@@ -28,16 +23,7 @@ var callSystemCmd = function(sdkName, args, callbackID) {
   doCommand(config);
 };
 
-var doCommand = function(config) {//postMessage notice e
-  config.to = "backgroundjs";
-  config.comefrom = "webframe";
-  config.command = "COMMAND_FROM_ASJS";
-  config.appid = apphash;
-  config.appname = appname;
-  config.apphash = apphash;
-  config.webviewID = webviewID;
-  config.__id = __id;
-  __id++;
+var doCommand = function(config) {//args webviewIds sdkName eventName res data
   let sdkName = config.sdkName
   if (command.hasOwnProperty(sdkName)) {
     command[sdkName](config)
