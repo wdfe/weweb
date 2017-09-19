@@ -11,9 +11,6 @@ export default window.exparser.registerBehavior({
             public: !0
         }
     },
-    _isDevTools: function () {
-        return true
-    },
     debounce: function (id, func, waitTime) {
         var _this = this
         this.__debouncers = this.__debouncers || {}

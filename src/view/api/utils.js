@@ -104,10 +104,15 @@ function animationToStyle(params) {
   }
 }
 
-function getPlatform() {
-  //var ua = window.navigator.userAgent.toLowerCase();
-  return "wechatdevtools"///wechatdevtools/.test(ua) ? "wechatdevtools" : /(iphone|ipad)/.test(ua) ? "ios" : /android/.test(ua) ? "android" : void 0
+function getPlatform () {
+  var ua = window.navigator.userAgent.toLowerCase()
+  return /(iphone|ipad)/.test(ua)
+    ? 'ios'
+    : /android/.test(ua)
+        ? 'android'
+        : /wechatdevtools/.test(ua) ? 'wechatdevtools' : void 0
 }
+
 
 function addPXSuffix(num) {
   return "number" == typeof num ? num + "px" : num

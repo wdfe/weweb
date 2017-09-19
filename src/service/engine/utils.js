@@ -1,7 +1,4 @@
 
-var isDevTools = function() {
-  return true
-};
 var addHtmlSuffixToUrl = function(url) {//给url增加.html后缀
   if ("string" != typeof url) {
     return url;
@@ -33,9 +30,14 @@ class AppServiceEngineKnownError extends Error {
   }
 }
 var pageEngine = {
-  getPlatform:function () {//get platform
-    return "devtools";
-  },
+  // getPlatform:function () {//get platform
+  //   var ua = window.navigator.userAgent.toLowerCase()
+  //   return /(iphone|ipad)/.test(ua)
+  //     ? 'ios'
+  //     : /android/.test(ua)
+  //         ? 'android'
+  //         : /wechatdevtools/.test(ua) ? 'wechatdevtools' : void 0
+  // },
   safeInvoke: function() {//do page method
     var res = void 0,
         args = Array.prototype.slice.call(arguments),
@@ -146,7 +148,6 @@ var pageEngine = {
 // export default Object.assi{},{},pageEngine,htmlSuffix);
 export default {
   ...pageEngine,
-  isDevTools,
   addHtmlSuffixToUrl,
   removeHtmlSuffixFromUrl
 }

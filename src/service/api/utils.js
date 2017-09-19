@@ -95,7 +95,12 @@ function getRealRoute(pathname, url) {
 }
 
 function getPlatform() {//return platform
-    return "devtools"
+    var ua = window.navigator.userAgent.toLowerCase()
+    return /(iphone|ipad)/.test(ua)
+      ? 'ios'
+      : /android/.test(ua)
+          ? 'android'
+          : /wechatdevtools/.test(ua) ? 'wechatdevtools' : void 0
 }
 
 function urlEncodeFormData(data) {//把对象生成queryString

@@ -49,20 +49,11 @@ class MapContext {
     }
 
     _invoke(methodName, params) {
-        var platform = utils.getPlatform();
-        if ("ios" === platform || "android" === platform) {
-            var curMapInfo = mapInfo[webviewID + "_" + params.mapId];
-            if ("moveToMapLocation" === methodName) {
-                return void(curMapInfo && curMapInfo.showLocation ? pubsub.invokeMethod(methodName, params) : console.error("only show-location set to true can invoke moveToLocation"));
-            }
-            pubsub.invokeMethod(methodName, params)
-        } else {
             params.method = methodName;
             var callbackId = "callback" + webviewID + "_" + params.mapId + "_" + callbackIndex++;
             this[callbackId] = params.success
             params.callbackId = callbackId
             pubsub.publish("doMapAction" + params.mapId, params, [webviewID])
-        }
     }
 
     _invokeMethod(name, params) {

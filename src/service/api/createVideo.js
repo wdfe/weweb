@@ -19,8 +19,7 @@ function createVideo(videoId, t) {
     return videoObj
 }
 
-var notIOS = "ios" !== utils.getPlatform(),
-    videoPlayerIds = {},
+var   videoPlayerIds = {},
     EventEmitter = new emitter;
 
 ServiceJSBridge.subscribe("videoPlayerInsert", function (params, t) {
@@ -63,11 +62,8 @@ class VideoControl {
 
     _invokeMethod(type, data) {
         function invoke() {
-            notIOS ? (this.action = { method: type, data: data}, this._sendAction()) : pubsub.invokeMethod("operateVideoPlayer", {
-                data: data,
-                videoPlayerId: videoPlayerIds[this.domId],
-                type: type
-            })
+           this.action = { method: type, data: data}
+            this._sendAction()
         }
 
         var self = this;
@@ -77,7 +73,7 @@ class VideoControl {
     }
 
     _sendAction() {
-        ServiceJSBridge.publish("video_" + this.domId + "_actionChanged", this.action)
+        ServiceJSBridge.publish("video_" + this.domId + "_actionChanged", this.action, [window.__wxConfig.viewId])
     }
 }
 
