@@ -30,17 +30,6 @@ export default window.exparser.registerBehavior({
             }
         }
     },
-    _isiOS: function () {//转成h5后，此处统一返回false 不走native的处理方式
-        //var ua = window.navigator.userAgent.toLowerCase()
-        return false ///iphone/.test(ua)
-    },
-    _isAndroid: function () {
-        //var ua = window.navigator.userAgent.toLowerCase()
-        return false ///android/.test(ua)
-    },
-    _isMobile: function () {
-        return this._isiOS() || this._isAndroid()
-    },
     _getBox: function () {
         var pos = this.$$.getBoundingClientRect(),
             res = {

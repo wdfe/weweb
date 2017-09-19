@@ -51,45 +51,16 @@ export default window.exparser.registerElement({
   ),
   attached: function () {
     var self = this
-    this._isMobile()
-    if (1) {
-      var url = void 0
-      url = buttonTypes[this.type]
-        ? buttonTypes[this.type]
-        : buttonTypes['default-dark']
-      this.$.wrapper.style.backgroundImage = "url('" + url + "')"
-      this.$.wrapper.addEventListener('click', function () {
-        self._isMobile()
-          ? wx.enterContact({
-            sessionFrom: self.sessionFrom,
-            complete: function (e) {
-              console.log(e)
-            }
-          })
-          : alert('进入客服会话，sessionFrom: ' + self.sessionFrom)
-      })
-    } else {
-      this._box = this._getBox()
-      console.log('insertContactButton', this._box)
-      wx.insertContactButton({
-        position: this._box,
-        buttonType: this.type,
-        sessionFrom: this.sessionFrom,
-        complete: function (res) {
-          console.log('insertContactButton complete', res)
-          self.contactButtonId = res.contactButtonId
-          document.addEventListener(
-            'pageReRender',
-            self._pageReRender.bind(self),
-            !1
-          )
-        }
-      })
-    }
+    var url = void 0
+    url = buttonTypes[this.type]
+      ? buttonTypes[this.type]
+      : buttonTypes['default-dark']
+    this.$.wrapper.style.backgroundImage = "url('" + url + "')"
+    this.$.wrapper.addEventListener('click', function () {
+      alert('进入客服会话，sessionFrom: ' + self.sessionFrom)
+    })
   },
-  detached: function () {
-    this._isMobile(), 1
-  },
+  detached: function () {},
   sizeChanged: function (e, t) {
     this._box = this._getBox()
     this.$.wrapper.style.width = this._box.width + 'px'
@@ -97,20 +68,13 @@ export default window.exparser.registerElement({
     this._updateContactButton()
   },
   typeChanged: function (e, t) {
-    this._isMobile()
-    if (1) {
-      var url = void 0
-      url = buttonTypes[this.type]
-        ? buttonTypes[this.type]
-        : buttonTypes['default-dark']
-      this.$.wrapper.style.backgroundImage = "url('" + url + "')"
-    } else {
-      this._updateContactButton()
-    }
+    var url = void 0
+    url = buttonTypes[this.type]
+      ? buttonTypes[this.type]
+      : buttonTypes['default-dark']
+    this.$.wrapper.style.backgroundImage = "url('" + url + "')"
   },
-  _updateContactButton: function () {
-    this._isMobile(), 1
-  },
+  _updateContactButton: function () {},
   _getBox: function () {
     var pos = this.$.wrapper.getBoundingClientRect(), size = this.size
     typeof size !== 'number' && (size = MIN_SIZE)

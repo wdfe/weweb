@@ -669,7 +669,6 @@ var apiObj = {//wx对象
           res.errMsg = res.errMsg.replace("operateWXData", "getUserInfo")
         },
         beforeSuccess: function (res) {
-          //"android" ===  utils.getPlatform() && (res.data = JSON.parse(res.data))
           res.rawData = res.data.data;
           try {
             res.userInfo = JSON.parse(res.data.data)
@@ -703,7 +702,6 @@ var apiObj = {//wx对象
           res.errMsg = res.errMsg.replace("operateWXData", "getFriends")
         },
         beforeSuccess: function (res) {
-          //"android" ===  utils.getPlatform() && (res.data = JSON.parse(res.data))
           res.rawData = res.data.data
           try {
             res.friends = JSON.parse(res.data.data)

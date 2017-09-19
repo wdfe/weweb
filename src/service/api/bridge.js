@@ -60,8 +60,8 @@ function invokeMethodSync(apiName,options,innerFns) {
             isFail = 0 === res.errMsg.indexOf(apiName + ":fail");
         "function" == typeof sysEventFns.beforeAll && sysEventFns.beforeAll(res)
         if (isOk){
-            "function" == typeof sysEventFns.beforeSuccess && sysEventFns.beforeSuccess(res),
-            "function" == typeof params.success && params.success(res),
+            "function" == typeof sysEventFns.beforeSuccess && sysEventFns.beforeSuccess(res);
+            "function" == typeof params.success && params.success(res);
             "function" == typeof sysEventFns.afterSuccess && sysEventFns.afterSuccess(res);
         }else if (isCancel) {
             res.errMsg = res.errMsg.replace(apiName + ":cancel", apiName + ":fail cancel"),
@@ -81,8 +81,9 @@ function invokeMethodSync(apiName,options,innerFns) {
         "function" == typeof params.complete && params.complete(res),
         "function" == typeof sysEventFns.afterAll && sysEventFns.afterAll(res)
     }
+    options.sdkName = apiName
     const res = Native[apiName](options)
-    callback(res)
+    callback(res.msg)
 
     Reporter.reportIDKey({
         key: apiName
