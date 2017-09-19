@@ -696,6 +696,7 @@ window.exparser.registerAsyncComp = function (names, cb) {
         })
         break
       case 'wx-template':
+      case 'wx-div':
       case 'wx-import':
       case 'wx-block':
         checkState()
@@ -703,6 +704,7 @@ window.exparser.registerAsyncComp = function (names, cb) {
       default:
         console.log(`Unknown Tag: ${name}`)
         checkState()
+        break
     }
   }
 }
