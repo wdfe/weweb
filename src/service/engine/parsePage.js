@@ -112,11 +112,18 @@ class parsePage{
                     curKey = curValue.key;
                 curObj && (curObj[curKey] = organize(dataObj[key]));
             }
+/*
             utils.publish("appDataChange", {
               data: {
                 data: dataObj
               }
             },[this.__wxWebviewId__]);
+*/
+            WeixinJSBridge.subscribeHandler("custom_event_appDataChange", {
+              data: {
+                data: dataObj
+              }
+            })
 
         } catch(e) {
             utils.errorReport(e);

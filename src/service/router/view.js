@@ -69,6 +69,7 @@ export default class View extends Emitter {
     let external = (this.external = /^http(s)?:\/\//.test(path))
     let root = document.querySelector('.scrollable')
     this.ready = false
+    window.__webviewId__ = this.id
     if (external) {
       this.el = createFrame(`view-${id}`, path, false, root)
       if (this.isMap) {

@@ -2,7 +2,6 @@ import WxVirtualNode from './WxVirtualNode'
 import Utils from './Utils'
 import WxVirtualText from './WxVirtualText'
 import AppData from './AppData'
-import ErrorCatcher from './ErrorCatcher'
 import TouchEvents from './TouchEvents'
 import Init from './Init'
 
@@ -72,8 +71,6 @@ const createBodyNode = function (data) {
 
 const firstTimeRender = function (event) {
   if (event.ext) {
-    typeof event.ext.webviewId !== 'undefined' &&
-    (window.__webviewId__ = event.ext.webviewId)
     event.ext.enablePullUpRefresh && (setGlobalPageAttr('__enablePullUpRefresh__',!0))
   }
   setRootNode(createBodyNode(event.data))
@@ -100,14 +97,8 @@ const reRender = function (event) {
 const renderOnDataChange = function (event) {
 
   if (window.firstRender) {
-    setTimeout(
-      function () {
-        let timeStamp = Date.now()
-        reRender(event)
-        document.dispatchEvent(new CustomEvent('pageReRender', {}))
-      },
-      0
-    )
+    reRender(event)
+    document.dispatchEvent(new CustomEvent('pageReRender', {}))
   } else {
     firstTimeRender(event)
     if (!(event.options && event.options.firstRender)) {
@@ -133,11 +124,19 @@ window.onerror = function (messageOrEvent, source, lineno, colno, error) {
 }
 
 wx.onAppDataChange(
-  ErrorCatcher.catchError(function (event) {
+  Reporter.surroundThirdByTryCatch(function (event) {
     renderOnDataChange(event)
   })
 )
 
+
+exparser.addGlobalErrorListener(function (error, errData) {
+  Reporter.errorReport({
+    key: 'webviewScriptError',
+    error: error,
+    extend: errData.message
+  })
+})
 
 export default {
   reset: function () {

@@ -120,7 +120,7 @@ var invoke = function (eventName, params, callback) {
     "function" == typeof callback && callback(params),
       delete callbacks[callbackId]
   },
-  publish = function (eventName, data, webviewIds, flag) {
+  publish = function (eventName, data, webviewIds) {
 
     doCommand({
       eventName: eventPrefix + eventName,//对应view subscribe
