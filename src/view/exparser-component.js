@@ -1,7 +1,3 @@
-function exeWhenWXJSbridgeReady (fn) {
-  fn()
-}
-
 // 转发 window 上的 animation 和 transition 相关的动画事件到 exparser
 ;(function (win) {
   var getOpt = function (args) {
@@ -41,97 +37,95 @@ function exeWhenWXJSbridgeReady (fn) {
 
 // 订阅并转发 WeixinJSBridge 提供的全局事件到 exparser
 ;(function (glob) {
-  exeWhenWXJSbridgeReady(function () {
-    WeixinJSBridge.subscribe('onAppRouteDone', function () {
-      window.__onAppRouteDone = !0
-      exparser.triggerEvent(
-        document,
-        'routeDone',
-        {},
-        {
-          bubbles: !0
-        }
-      )
-      document.dispatchEvent(new CustomEvent('pageReRender', {}))
-    })
-    WeixinJSBridge.subscribe('setKeyboardValue', function (event) {
-      event &&
-        event.data &&
-        exparser.triggerEvent(
-          document,
-          'setKeyboardValue',
-          {
-            value: event.data.value,
-            cursor: event.data.cursor,
-            inputId: event.data.inputId
-          },
-          {
-            bubbles: !0
-          }
-        )
-    })
-    WeixinJSBridge.subscribe('hideKeyboard', function (e) {
-      exparser.triggerEvent(
-        document,
-        'hideKeyboard',
-        {},
-        {
-          bubbles: !0
-        }
-      )
-    })
-    WeixinJSBridge.on('onKeyboardComplete', function (event) {
-      exparser.triggerEvent(
-        document,
-        'onKeyboardComplete',
-        {
-          value: event.value,
-          inputId: event.inputId
-        },
-        {
-          bubbles: !0
-        }
-      )
-    })
-    WeixinJSBridge.on('onKeyboardConfirm', function (event) {
-      exparser.triggerEvent(
-        document,
-        'onKeyboardConfirm',
-        {
-          value: event.value,
-          inputId: event.inputId
-        },
-        {
-          bubbles: !0
-        }
-      )
-    })
-    WeixinJSBridge.on('onTextAreaHeightChange', function (event) {
-      exparser.triggerEvent(
-        document,
-        'onTextAreaHeightChange',
-        {
-          height: event.height,
-          lineCount: event.lineCount,
-          inputId: event.inputId
-        },
-        {
-          bubbles: !0
-        }
-      )
-    })
-    WeixinJSBridge.on('onKeyboardShow', function (event) {
-      exparser.triggerEvent(
-        document,
-        'onKeyboardShow',
-        {
-          inputId: event.inputId
-        },
-        {
-          bubbles: !0
-        }
-      )
-    })
+  WeixinJSBridge.subscribe('onAppRouteDone', function () {
+    window.__onAppRouteDone = !0
+    exparser.triggerEvent(
+      document,
+      'routeDone',
+      {},
+      {
+        bubbles: !0
+      }
+    )
+    document.dispatchEvent(new CustomEvent('pageReRender', {}))
+  })
+  WeixinJSBridge.subscribe('setKeyboardValue', function (event) {
+    event &&
+    event.data &&
+    exparser.triggerEvent(
+      document,
+      'setKeyboardValue',
+      {
+        value: event.data.value,
+        cursor: event.data.cursor,
+        inputId: event.data.inputId
+      },
+      {
+        bubbles: !0
+      }
+    )
+  })
+  WeixinJSBridge.subscribe('hideKeyboard', function (e) {
+    exparser.triggerEvent(
+      document,
+      'hideKeyboard',
+      {},
+      {
+        bubbles: !0
+      }
+    )
+  })
+  WeixinJSBridge.on('onKeyboardComplete', function (event) {
+    exparser.triggerEvent(
+      document,
+      'onKeyboardComplete',
+      {
+        value: event.value,
+        inputId: event.inputId
+      },
+      {
+        bubbles: !0
+      }
+    )
+  })
+  WeixinJSBridge.on('onKeyboardConfirm', function (event) {
+    exparser.triggerEvent(
+      document,
+      'onKeyboardConfirm',
+      {
+        value: event.value,
+        inputId: event.inputId
+      },
+      {
+        bubbles: !0
+      }
+    )
+  })
+  WeixinJSBridge.on('onTextAreaHeightChange', function (event) {
+    exparser.triggerEvent(
+      document,
+      'onTextAreaHeightChange',
+      {
+        height: event.height,
+        lineCount: event.lineCount,
+        inputId: event.inputId
+      },
+      {
+        bubbles: !0
+      }
+    )
+  })
+  WeixinJSBridge.on('onKeyboardShow', function (event) {
+    exparser.triggerEvent(
+      document,
+      'onKeyboardShow',
+      {
+        inputId: event.inputId
+      },
+      {
+        bubbles: !0
+      }
+    )
   })
 })(window)
 
@@ -461,25 +455,21 @@ function exeWhenWXJSbridgeReady (fn) {
               document.body.querySelectorAll(curData.element),
               ele
             ))
-          exeWhenWXJSbridgeReady(function () {
-            WeixinJSBridge.publish('analyticsReport', {
-              data: data
-            })
+          WeixinJSBridge.publish('analyticsReport', {
+            data: data
           })
           break
         }
       }
     }
-  exeWhenWXJSbridgeReady(function () {
-    WeixinJSBridge.subscribe('analyticsConfig', function (params) {
-      if (Object.prototype.toString.call(params.data) === '[object Array]') {
-        analyticsConfig.data = params.data
-        analyticsConfig.selector = []
-        analyticsConfig.data.forEach(function (e) {
-          e.element && analyticsConfig.selector.push(e.element)
-        })
-      }
-    })
+  WeixinJSBridge.subscribe('analyticsConfig', function (params) {
+    if (Object.prototype.toString.call(params.data) === '[object Array]') {
+      analyticsConfig.data = params.data
+      analyticsConfig.selector = []
+      analyticsConfig.data.forEach(function (e) {
+        e.element && analyticsConfig.selector.push(e.element)
+      })
+    }
   })
 })(window)
 

@@ -1,5 +1,3 @@
-import pubsub from './bridge'
-import utils from './utils'
 import emitter from 'emitter'
 import configFlags from './configFlags'
 

@@ -1,4 +1,4 @@
-import utils from './utils';
+import utils from '../../common/utils'
 
 class Animation {
     constructor(...options) {

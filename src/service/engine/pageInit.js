@@ -1,4 +1,4 @@
-import utils from './utils';
+import utils from '../../common/utils'
 import parsePage from './parsePage';
 import * as eventDefine from './constants';
 import * as reportRealtimeAction from './logReport';
@@ -228,7 +228,7 @@ var invokeShareAppMessage = function(params, pWebviewId) {//invoke event onShare
     var shareObj = utils.safeInvoke.call(pageObj, eventName) || {};
     shareParams.title = shareObj.title || params.title
     shareParams.desc = shareObj.desc || params.desc
-    shareParams.path = shareObj.path ? utils.addHtmlSuffixToUrl(shareObj.path) : params.path
+    shareParams.path = shareObj.path ? utils.addHTMLSuffix(shareObj.path) : params.path
     shareParams.path.length > 0 && "/" === shareParams.path[0] && (shareParams.path = shareParams.path.substr(1))
     shareParams.success = shareObj.success
     shareParams.cancel = shareObj.cancel

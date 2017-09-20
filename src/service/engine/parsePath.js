@@ -1,4 +1,4 @@
-import utils from './utils';
+import utils from '../../common/utils'
 
 
 export function parsePath(pathStr) {//解析data path

@@ -1,7 +1,6 @@
 //1-8 map相关事件和方法
 
 import pubsub from './bridge'
-import utils from './utils'
 import emitter from 'emitter'
 
 function notifyWebviewIdtoMap(e) {

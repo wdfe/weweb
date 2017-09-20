@@ -1,5 +1,5 @@
 
-import utils from './utils';
+import utils from '../../common/utils'
 import * as parsePath from './parsePath';
 import organize from './iteratorHandle';
 
@@ -126,7 +126,11 @@ class parsePage{
             })
 
         } catch(e) {
-            utils.errorReport(e);
+          Reporter.errorReport({
+            key: "jsEnginScriptError",
+            error: e,
+            extend: 'setData err'
+          });
         }
     }
 }

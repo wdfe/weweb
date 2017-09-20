@@ -1,6 +1,6 @@
 import pubsub from './bridge'
 import context from './context'
-import utils from './utils'
+import utils from '../../common/utils'
 
 function canvasDesString(webviewID, canvasId) {
     return webviewID + "canvas" + canvasId

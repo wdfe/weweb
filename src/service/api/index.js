@@ -1,5 +1,5 @@
 import bridge from './bridge'
-import utils from './utils'
+import utils from '../../common/utils'
 import Animation from './Animation'
 import createAudio from './createAudio'
 import createVideo from './createVideo'
@@ -9,13 +9,6 @@ import configFlags from './configFlags'
 import context from './context'
 import canvas from './canvas'
 import appContextSwitch from './appContextSwitch'
-
-function addGetterForWX(apiKey) {
-  WX.__defineGetter__(apiKey,
-    function () {
-      return  Reporter.surroundThirdByTryCatch(apiObj[apiKey], "wd." + apiKey)
-    })
-}
 
 function paramCheck(apiName, params, paramTpl) {
   var res =  utils.paramCheck(params, paramTpl);
@@ -52,7 +45,7 @@ var emptyFn = function () {},
   appRouteCallbacks = [],
   appRouteDoneCallback = [],
   pageEventFn = void 0,
-  WX = {},
+  wd = {},
   hasInvokeEnableAccelerometer = !1,
   hasInvokeEnableCompass = !1,
   accelerometerChangeFns = [],
@@ -781,7 +774,7 @@ var apiObj = {//wx对象
       webviewIds = arguments[2];
     arguments[3];
     options.forceUpdate = "undefined" != typeof options.forceUpdate && options.forceUpdate
-    if (utils.isObject(data) === !1) throw new utils.AppServiceSdkKnownError("setAppData:data should be an object");
+    if (utils.isPlainObject(data) === !1) throw new utils.AppServiceSdkKnownError("setAppData:data should be an object");
     !function () {
       var hasUpdate = !1,
         tmpData = {},
@@ -880,7 +873,7 @@ var apiObj = {//wx对象
         confirmColor: "#3CC51F",
         cancelColor: "#000000"
       };
-    options =  utils.extend(options, params)
+    options =  Object.assign(options, params)
     if (paramCheck("showModal", options, {
         title: "",
         content: "",
@@ -906,7 +899,7 @@ var apiObj = {//wx对象
         icon: "success",
         mask: !1
       };
-    options =  utils.extend(options, params)
+    options =  Object.assign(options, params)
     delete options.image;
     ["success", "loading"].indexOf(options.icon) < 0 && (options.icon = "success")
     options.duration > 1e4 && (options.duration = 1e4)
@@ -922,7 +915,7 @@ var apiObj = {//wx对象
   showLoading: function () {
     var params = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {},
       defaultArgs = {title: "", icon: "loading", mask: !1, duration: 1e8};
-    defaultArgs = utils.extend(defaultArgs, params)
+    defaultArgs = Object.assign(defaultArgs, params)
     params.image && (defaultArgs.image = utils.getRealRoute(currUrl, params.image, !1))
     paramCheck("showLoading", defaultArgs, {
       duration: 1,
@@ -946,7 +939,7 @@ var apiObj = {//wx对象
         itemList: [],
         itemColor: "#000000"
       };
-    options =  utils.extend(options, params)
+    options =  Object.assign(options, params)
     options.cancelText = "取消"
     options.cancelColor = "#000000"
     if (paramCheck("showActionSheet", options, { itemList: ["1"], itemColor: ""})){
@@ -1057,7 +1050,7 @@ var apiObj = {//wx对象
         param2 = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : SDKVersion;
     if ("string" != typeof param1)throw new utils.AppServiceSdkKnownError("canIUse: schema should be an object");
     var params = param1.split(".");
-    return utils.canIUse(utils.toArray(params),param2);
+    return utils.canIUse(params,param2);
   }
 };
 
@@ -1376,9 +1369,7 @@ var getTouchInfo = function (touchInfo, eventKey, eventInfo) {//返回touch信�
         webviewId: webviewId
       })
     });
-for (var key in apiObj) addGetterForWX(key);
 
-
-// module.exports = WX;
-window.wd = WX
-export default WX
+utils.copyObj(wd,apiObj);
+window.wd = wd
+export default wd

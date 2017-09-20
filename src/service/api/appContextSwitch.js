@@ -3,7 +3,7 @@
 import pubsub from './bridge'
 import emitter from 'emitter'
 import configFlags from './configFlags'
-import utils from './utils'
+import utils from '../../common/utils'
 
 
 var eventEmitter = new emitter;

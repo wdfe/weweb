@@ -7,11 +7,6 @@ var utils = {
             try {
               res = fn.apply(fn, arguments)
             } catch (error) {
-                // console.error({
-                //     error: error,
-                //     extend: extend
-                // })
-                console.error(error)
                 var key = 'thirdScriptError'
                 var content = extend ? error.message + ';' + extend : error.message
                 utils.triggerErrorMessage(key + '\n' + content + '\n' + error.stack)
@@ -35,7 +30,7 @@ var utils = {
         //     extend: extend
         // })
         console.group('thirdScriptError', extend)
-        console.error(error)
+        console.log(error)
         console.groupEnd()
     },
     errorReport: function (params) {

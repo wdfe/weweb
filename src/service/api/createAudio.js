@@ -1,5 +1,4 @@
 import './bridge'
-import './utils'
 import emitter from 'emitter'
 import configFlags from './configFlags'
 

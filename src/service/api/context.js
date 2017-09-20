@@ -1,5 +1,4 @@
 // Canvas Context API
-import utils from './utils'
 import canvas from './canvas'
 import {predefinedColor} from './predefinedColor'
 

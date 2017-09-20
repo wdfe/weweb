@@ -1,5 +1,5 @@
 import bridge from './bridge'
-import utils from './utils'
+import utils from '../../common/utils'
 
 var localImgDataIng = !1,
   imgData = [],
@@ -143,19 +143,8 @@ bridge.subscribe("onAppEnterBackground", function (e) {
     fn(e)
   })
 });
-function injectAttr(attrName) {
-  wx.__defineGetter__(attrName, function () {
-    return function () {
-      if(apiObj[attrName]) {
-        return apiObj[attrName].apply(this, arguments)
-      } else {
-        console.log(attrName+' method no exist')
-      }
-    }
-  })
-}
 
-for (var key in apiObj) injectAttr(key);
+utils.copyObj(wx,apiObj);
 
 
 // export default wx
