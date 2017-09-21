@@ -5,19 +5,19 @@
 
 ## 简介
 
-weweb是一个兼容小程序语法的前端框架，通过它你可以将你的小程序运行在浏览器中，如果你熟悉vue的语法，也可以使用wepy编写程序，使用其内置的转换工具可以将wepy应用转换成小程序应用，再通过weweb转换后将其运行在web端。
+weweb是一个兼容小程序语法的前端框架，通过它你可以将你的小程序运行在浏览器中，如果你熟悉vue的语法，也可以使用wepy编写应用，使用其内置的转换工具将wepy应用转换成小程序应用，再通过weweb转换后将其运行在web端。
 
 该项目是基于[wept]进行的二次开发，在开发的过程中我们还原了核心库WAService.js以及WAWebview.js，在理解了其中的含义后，我们对其核心逻辑进行了大幅修改，使其能真正作为一个前端开发框架来使用：
 
-- 剔除了与Native交互的代码
-- 将原有中间层代码转移至Service层，精为Service和View两层
-- 页面逻辑、内置组件实现异步加载
+- 剔除了与Native交互的代码，专注web开发
+- 将原有中间层代码转移至Service层，精简为Service和View两层
+- 用户APP页面、系统内置的组件使用异步加载，提高首屏加载速度
 - 支持自定义登录页面，代替微信登录功能
 - 使用JavaScrtipt实现了wxml和wxss编译器
 
 ## 运行
 
-> 请先在系统中安装了[node](https://nodejs.org/zh-cn/)，官方的安装包会同时为您装上依赖管理工具[npm](https://www.npmjs.com/)
+> 请先在系统中安装[node](https://nodejs.org/zh-cn/)，官方的安装包会同时为您装上依赖管理工具[npm](https://www.npmjs.com/)
 
 ### 方法一：使用cli命令行工具
 
@@ -46,19 +46,19 @@ Options:
 ### 方法二：手动构建并运行：
 
 ```sh
-# 安装项目依赖
+# clone此项目后安装依赖
 npm i
 
-# 构建核心库：
+# 构建核心库：
 npm run build
 
-# 运行：
+# 运行示例：
 ./bin/weweb ./demos/demo20170111/
 
-# 使用环境变量 NODE_ENV=production 可以压缩app代码
+# 压缩app代码：使用环境变量 NODE_ENV=production 
 NODE_ENV=production ./bin/weweb demos/demo20170111
 
-# 当编译出错时使用环境变量 DFT_CMP=true 调用微信开发者工具自带的编译器
+# 替换编译器：当编译出错时使用环境变量 DFT_CMP=true 调用微信开发者工具自带的编译器
 DFT_CMP=true ./bin/weweb demos/demo20170111
 
 # 环境变量可以组合使用
@@ -77,24 +77,30 @@ npm run autostart
 
 ## 注意事项
 
-因转换成H5后，会存在跨域访问接口及脱离微信环境带来的一些api无法支持的问题，我们可以通过在小程序的`app.json`增加`weweb`配置项来解决一些常见问题：
+转换成H5后，会存在跨域访问接口及脱离微信环境带来的一些api无法支持的问题。我们可以通过在小程序的`app.json`文件中增加`weweb`配置项来解决一些常见的问题：
 
-- 小程序访问的后端接口不支持JSONP时，可以在"weweb"项增加requestProxy这个配置项来配置服务器端代理地址，以实现跨域请求，配置如下：
+- 登录：转换成H5后将不支持小程序原生的登录方式，可通过`loginUrl`项来设置调用`wx.login`时跳转到的登录页面
 
 ``` js
-// 此处/remoteProxy是weweb自带server实现的一个代理接口
-// 实际项目中请改成自己的真实代理地址。建议接口支持返回jsonp格式，则无需做此配置
+/**
+ * 此处的loginUrl地址必须是在app.json里注册了的小程序地址 
+ */
+
 "weweb":{
-  "requestProxy":"/remoteProxy"
+  "loginUrl":"/page/H5login"
 }
 ```
 
-- 转换成H5后将不支持小程序原生的登录方式，可以通过在"weweb"项增加loginUrl项来设置当调用wx.login时引导到设置好的H5登录页面，配置如下：
+- 跨域请求：当后端接口不支持JSONP时，可以增加requestProxy配置项来设置服务器端代理地址，以实现跨域请求
 
 ``` js
-// 此处的loginUrl地址必须是在app.json里注册了的小程序地址
+/**
+ * 此处/remoteProxy是weweb自带server实现的一个代理接口
+ * 实际项目中请改成自己的真实代理地址。如果接口支持返回jsonp格式，则无需做此配置
+ */
+ 
 "weweb":{
-  "loginUrl":"/page/H5login"
+  "requestProxy":"/remoteProxy"
 }
 ```
 
