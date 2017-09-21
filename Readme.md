@@ -4,65 +4,28 @@
 # weweb
 
 - [简介](#简介)
-- [转换效果演示](#转换效果演示)
-- [源码下载&运行](#源码下载&运行)
-- [cli命令行工具安装](#cli命令行工具安装)
+- [运行](#运行)
 - [转换效果说明](#转换效果说明)
 - [感谢](#感谢)
 - [License](#License)
 
 ## 简介
 
-weweb是在做一个尝试，尝试把小程序转换成H5，让同一份小程序代码，在浏览器里也能跑。在小程序大行其道的今天，这会是一件既现实又很有意义的事情，经过一段时间的努力，我们在这上面已经小有成绩，基本上实现了这一目标。当然，小程序目前发展迅速，新功能层出不穷，一些新api、新功能可能暂时还不支持。另外，由于时间关系，还有很多地方还没来得及优化。我们希望开源后，能和大家一起来完善它。
+weweb是一个兼容小程序语法的前端框架，通过它你可以将你的小程序运行在浏览器中，如果你熟悉vue的语法，你也可以使用wepy编写程序，使用其内置的转换工具可以将wepy项目转换成小程序的语法，再通过我们的weweb将其运行在web端。
 
-weweb的实现基于小程序开发者工具里包涵的WAService.js\WAWebview.js这两个库，这两个库官方做了混淆，我们花了大量的时间精力对它进行模块拆分整理，在理解了它的实现后做了相应的改造，在这过程中，我们参考了另一个开源项目wept, wept的作者写了几篇文章对小程序框架进行了深入的分析，让我们受益良多。在此特别感谢。
+该项目是基于wept进行的二次开发，在开发的过程中我们还原了核心库WAService.js以及WAWebview.js，在理解了其中的含义后，我们对其进行了大手笔的更改，使其能真正作为一个前端开发框架来使用：
 
-## 转换效果演示
-
->[小程序在线转换平台](http://shaomayou.com/weweb/)
-
-想一睹为快，可以到我们的转换平台上传小程序，一键将小程序转成H5页面，即时预览转换后的效果并可以下载转换后的代码。
+- 自定义登录页面
+- 剔除了与Native交互的代码
+- 将原有中间层代码转移至Service层，精简为Service和View两层，减少内部数据交换的流程
+- 页面逻辑、内置组件实现异步加载，提高首屏加载速度
+- 使用JS实现了Wxml和Wxss编译器，提高编译速度的同时使其能运行于Linux系统中
 
 ## 运行
 
-> 请先使用`npm i`或`yarn`命令安装依赖
+> 请先在系统中安装了[node](https://nodejs.org/zh-cn/)，官方的安装包会同时为您装上依赖管理工具[npm](https://www.npmjs.com/)
 
-使用脚本运行:
-
-``` sh
-sh run.sh
-```
-
-手动构建并运行：
-
-```sh
-# 构建：
-npm run build
-
-# 运行：
-./bin/weweb ./demos/demo20170111/
-
-# 使用环境变量 NODE_ENV=production 可以压缩app代码
-NODE_ENV=production ./bin/weweb demos/demo20170111
-
-# 当编译出错时使用环境变量 DFT_CMP=true 调用微信开发者工具自带的编译器
-DFT_CMP=true ./bin/weweb demos/demo20170111
-
-# 环境变量可以组合使用
-NODE_ENV=production DFT_CMP=true ./bin/weweb demos/demo20170111
-```
-
-开发用命令
-
-```sh
-# 自动执行rebuild
-npm run dev
-
-# 自动重启服务器
-npm run autostart
-```
-
-## cli命令行工具安装
+### 方法一：使用cli命令行工具
 
 安装：
 
@@ -85,6 +48,35 @@ Options:
 - -p, --port \<port>   指定服务端口，默认 2000
 - -d, --dist \<dir>   指定生成的路径
 - -t, --transform  只转换小程序,不起web服务
+
+### 方法二：手动构建并运行：
+
+```sh
+# 构建核心库：
+npm run build
+
+# 运行：
+./bin/weweb ./demos/demo20170111/
+
+# 使用环境变量 NODE_ENV=production 可以压缩app代码
+NODE_ENV=production ./bin/weweb demos/demo20170111
+
+# 当编译出错时使用环境变量 DFT_CMP=true 调用微信开发者工具自带的编译器
+DFT_CMP=true ./bin/weweb demos/demo20170111
+
+# 环境变量可以组合使用
+NODE_ENV=production DFT_CMP=true ./bin/weweb demos/demo20170111
+```
+
+### 开发用命令
+
+```sh
+# 自动执行rebuild
+npm run dev
+
+# 自动重启服务器
+npm run autostart
+```
 
 ## 注意事项
 
