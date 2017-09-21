@@ -46,7 +46,7 @@ function getSourcePath (rPath) {
 
 module.exports = {
   entry: {
-    index: getSourcePath('weweb.js')
+    weweb: getSourcePath('index.js')
   },
   output: {
     filename: '[name].js',
