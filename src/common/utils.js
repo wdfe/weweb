@@ -107,6 +107,7 @@ class AppServiceEngineKnownError extends Error {
   }
 }
 
+/*
 var Components = {
   //components
   audio: {"1.0.0": ["id", "src", "loop", "controls", "poster", "name", "author", "binderror", "bindplay", "bindpause", "bindtimeupdate", "bindended"]},
@@ -374,6 +375,7 @@ var APIs = {
   notifyBLECharacteristicValueChanged: {"1.1.0": [{object: ["deviceId", "serviceId", "characteristicId", "state"]}]},
   sendBizRedPacket: {"1.2.0": [{object: ["timeStamp", "nonceStr", "package", "signType", "paySign"]}]}
 };
+*/
 
 const utils = {
   copyObj(distObj, orgObj) {
@@ -665,7 +667,21 @@ const utils = {
     }
     return Array.from(arg)
   },
-  isComponentExist(params){
+  canIUse (params,version){
+    return true;
+/*
+    var name = params[0];//API或组件名
+    if(Components[name]){
+      return this.isComponentExist(params);
+    } else if(APIs[name]){
+      return this.isAPIExist(params);
+    } else{
+      return false;
+    }
+*/
+
+  },
+/*  isComponentExist(params){
     var name = params[0],//组件名
       attribute = params[1],//属性名
       option = params[2],//组件属性可选值
@@ -724,18 +740,7 @@ const utils = {
       }
       return false;
     }
-  },
-  canIUse (params,version){
-    var name = params[0];//API或组件名
-    if(Components[name]){
-      return this.isComponentExist(params);
-    } else if(APIs[name]){
-      return this.isAPIExist(params);
-    } else{
-      return false;
-    }
-
-  },
+  },*/
   transWxmlToHtml(url) {
     if ("string" != typeof url)return url;
     var urlArr = url.split("?");
