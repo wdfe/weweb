@@ -5,6 +5,9 @@ node_modules
 .idea/
 .vscode
 build/
-tmp/bundle
-tmp/dist
-tmp/public/script
+
+# dist files
+tmp/
+lib/template/assets/css/weweb.min.css
+lib/template/assets/images/loading.gif
+lib/template/assets/script
