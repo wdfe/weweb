@@ -1,7 +1,7 @@
+# weweb
+
 [![npm package](https://img.shields.io/npm/v/weweb-cli.svg)](https://www.npmjs.com/package/weweb-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-
-# weweb
 
 ## 简介
 
@@ -55,7 +55,7 @@ npm run build
 # 运行示例：
 ./bin/weweb ./demos/demo20170111/
 
-# 压缩app代码：使用环境变量 NODE_ENV=production 
+# 压缩app代码：使用环境变量 NODE_ENV=production
 NODE_ENV=production ./bin/weweb demos/demo20170111
 
 # 替换编译器：当编译出错时使用环境变量 DFT_CMP=true 调用微信开发者工具自带的编译器
@@ -83,7 +83,7 @@ npm run autostart
 
 ``` js
 /**
- * 此处的loginUrl地址必须是在app.json里注册了的小程序地址 
+ * 此处的loginUrl地址必须是在app.json里注册了的小程序地址
  */
 
 "weweb":{
@@ -98,7 +98,7 @@ npm run autostart
  * 此处/remoteProxy是weweb自带server实现的一个代理接口
  * 实际项目中请改成自己的真实代理地址。如果接口支持返回jsonp格式，则无需做此配置
  */
- 
+
 "weweb":{
   "requestProxy":"/remoteProxy"
 }
