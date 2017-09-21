@@ -7,3 +7,4 @@ node_modules
 build/
 tmp/bundle
 tmp/dist
+tmp/public/script

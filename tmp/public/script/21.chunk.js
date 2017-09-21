@@ -1,1 +1,0 @@
-webpackJsonp([21],{306:function(e,t,s){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default=window.exparser.registerElement({is:"wx-action-sheet-item",template:"\n    <slot></slot>\n  ",properties:{},behaviors:["wx-base"]})}});
