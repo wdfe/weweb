@@ -1,4 +1,4 @@
-import './css/index.css'
+import './assets/css/index.css'
 
 import './service/bridge'
 
