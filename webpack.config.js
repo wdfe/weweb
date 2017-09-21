@@ -2,12 +2,13 @@ const webpack = require('webpack')
 const path = require('path')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
-const DIST_PATH = './tmp/public/script'
+const DIST_PATH = './lib/template/assets/script'
 const isProd = process.env.NODE_ENV === 'production'
 const showAnalysis = process.env.ANA === 'true'
 const watch = process.env.WATCH === 'true'
-let plugins = []
+let plugins = [new ExtractTextPlugin('../css/weweb.min.css')]
 if (showAnalysis) {
   plugins = plugins.concat([new BundleAnalyzerPlugin()])
 }
@@ -18,7 +19,7 @@ if (isProd) {
         NODE_ENV: JSON.stringify('production')
       }
     }),
-    new webpack.optimize.AggressiveMergingPlugin(),//Merge chunks
+    new webpack.optimize.AggressiveMergingPlugin(), // Merge chunks
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false,
@@ -31,28 +32,26 @@ if (isProd) {
         comments: false
       }
     }),
-    new webpack.optimize.ModuleConcatenationPlugin(),
+    new webpack.optimize.ModuleConcatenationPlugin()
   ])
 }
 
-function getPath(rPath) {
+function getPath (rPath) {
   return path.resolve(__dirname, rPath)
 }
 
-function getSourcePath(rPath) {
+function getSourcePath (rPath) {
   return getPath(`./src/${rPath}`)
 }
 
 module.exports = {
   entry: {
-    // view: getSourcePath('view.js'),
-    // service: getSourcePath('service.js')
-    index: getSourcePath('index.js')
+    index: getSourcePath('weweb.js')
   },
   output: {
     filename: '[name].js',
     publicPath: 'script/',
-    chunkFilename: '[name].chunk.js',
+    chunkFilename: '[name].wd.chunk.js',
     path: getPath(DIST_PATH)
   },
   watch: watch,
@@ -69,6 +68,23 @@ module.exports = {
       {
         test: /\.html/,
         loader: 'html-loader'
+      },
+      {
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: {
+            loader: 'css-loader',
+            options: { minimize: true }
+          }
+        })
+      },
+      {
+        test: /\.(jpe?g|png|gif|svg)$/i,
+        loaders: [
+          'file-loader?name=[name].[ext]&publicPath=&outputPath=../images/'
+          // 'image-webpack-loader?bypassOnDebug&optimizationLevel=7&interlaced=false'
+        ]
       },
       {
         test: /\.et/,

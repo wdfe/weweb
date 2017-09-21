@@ -1,3 +1,5 @@
+import './css/index.css'
+
 import './service/bridge'
 
 import './common/reporter'
