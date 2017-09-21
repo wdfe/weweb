@@ -6,3 +6,5 @@ src
 gulpfile.js
 webpack.*.js
 run.sh
+.eslintrc
+tmp
