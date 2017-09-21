@@ -102,6 +102,7 @@ const renderOnDataChange = function (event) {
   } else {
     firstTimeRender(event)
     if (!(event.options && event.options.firstRender)) {
+      console.log(event);
       console.error('firstRender not the data from Page.data')
       Reporter.errorReport({
         key: 'webviewScriptError',

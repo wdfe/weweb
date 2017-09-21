@@ -16,7 +16,6 @@ import image from '../lib/sdk/image'
 import modal from '../lib/sdk/modal'
 import actionSheet from '../lib/sdk/actionsheet'
 import Preview from '../lib/component/preview'
-import confirm from '../lib/component/confirm'
 import { dataURItoBlob, toNumber,getBus,once} from '../lib/util'
 const Bus = getBus()
 let fileIndex = 0
@@ -661,10 +660,8 @@ export function getSavedFileInfo(data) {
 export function openDocument(data) {
   let args = data.args
   if (requiredArgs(['filePath'], data)) return
-  console.warn('没有判定文件格式，返回为模拟返回')
-  onSuccess(data)
-  confirm(`<div>openDocument</div> ${args.filePath}`, true).then(() => {
-  }, () => {
+  modal({title:'确认打开',content:`openDocument ${args.filePath}`}).then(confirm => {
+    onSuccess(data, { confirm })
   })
 }
 

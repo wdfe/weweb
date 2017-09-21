@@ -1,7 +1,7 @@
 import actionSheet from 'actionsheet'
 import router from '../router/index'
 import storage from './sdk/storage'
-import toast from './component/toast'
+import toast from './sdk/toast'
 import * as util from './util'
 const Bus = util.getBus()
 
@@ -110,7 +110,7 @@ let header = {
         callback: function () {
           if (window.localStorage != null) {
             storage.clear()
-            toast('数据缓存已清除', {type: 'success'})
+            toast.show({title: '数据缓存已清除',icon:'success'})
           }
         }
       },

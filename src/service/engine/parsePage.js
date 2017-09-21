@@ -112,18 +112,20 @@ class parsePage{
                     curKey = curValue.key;
                 curObj && (curObj[curKey] = organize(dataObj[key]));
             }
-/*
-            utils.publish("appDataChange", {
-              data: {
-                data: dataObj
-              }
-            },[this.__wxWebviewId__]);
-*/
-            WeixinJSBridge.subscribeHandler("custom_event_appDataChange", {
-              data: {
-                data: dataObj
-              }
-            })
+            if(window.firstRender){
+              WeixinJSBridge.subscribeHandler("custom_event_appDataChange", {
+                data: {
+                  data: dataObj
+                }
+              })
+
+            }else{//还没进行第一次渲染
+              utils.publish("appDataChange", {
+                data: {
+                  data: dataObj
+                }
+              },[this.__wxWebviewId__]);
+            }
 
         } catch(e) {
           Reporter.errorReport({
