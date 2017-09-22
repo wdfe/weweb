@@ -117,12 +117,10 @@ if (!fs.existsSync('./app.json')) {
 var core = require('../lib/core')
 var util = require('../lib/util')
 // const Parallel = require('node-parallel')
-var rootPath = path.resolve(__dirname, '../tmp')
 var distPath = path.resolve(curPath, program.dist || './tmp/dist')
 
 function doTransformFile () {
   util.copyDir(path.resolve(__dirname, '../lib/template/assets'), distPath, function () {
-    console.log(666, process.cwd())
     util.copyDir('./', distPath, {
       filename: ['.git'],
       extname: ['.js', '.json', '.wxss', '.css', '.git', '.md', '.wxml']
