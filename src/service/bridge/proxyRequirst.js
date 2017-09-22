@@ -67,6 +67,13 @@ var request = function(event, params, callback) {
             });
         };
         requestObj.setRequestHeader('X-Remote', params.url);
+        requestObj.setRequestHeader(
+            'Cache-Control',
+            'no-cache, no-store, must-revalidate'
+        )
+        requestObj.setRequestHeader('Pragma', 'no-cache')
+        requestObj.setRequestHeader('Expires', '0')
+
         var attrCount = 0;
         for (var attr in header) {
             "content-type" === attr.toLowerCase() && attrCount++;

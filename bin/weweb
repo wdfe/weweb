@@ -221,7 +221,7 @@ function doTransformFile () {
             },
             program.transform
           )
-        })
+        }).catch(err => console.error(err))
       })
     })
   })
@@ -288,4 +288,9 @@ exec('rm -rf ' + distPath + '/*', function (err, out) {
 process.on('uncaughtException', function (e) {
   printLog(chalk.red('发生了未知错误'))
   console.error(e.stack)
+})
+
+process.on('unhandledRejection', (reason, p) => {
+  console.log('Unhandled Rejection at:', p, 'reason:', reason)
+  // application specific logging, throwing an error, or other logic here
 })
