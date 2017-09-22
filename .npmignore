@@ -1,6 +1,7 @@
 demos
 docs
 src
+.idea
 .gitignore
 .babelrc
 gulpfile.js
