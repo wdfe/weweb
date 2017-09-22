@@ -376,6 +376,37 @@ var APIs = {
   sendBizRedPacket: {"1.2.0": [{object: ["timeStamp", "nonceStr", "package", "signType", "paySign"]}]}
 };
 */
+const BASE_DEVICE_WIDTH = 750
+const ua = window.navigator.userAgent.toLowerCase()
+const platform = /(iphone|ipad)/.test(ua) ? 'ios' : /android/.test(ua) ? 'android' : ''
+const screenWidth = platform && window.innerWidth || 375
+const devicePixelRatio = window.devicePixelRatio || 2
+const SMALL_NUM = 1e-4
+const rpxToPxNum = function (rpxNum) {
+  rpxNum = rpxNum / BASE_DEVICE_WIDTH * screenWidth
+  rpxNum = Math.floor(rpxNum + SMALL_NUM)
+  return rpxNum === 0 ? devicePixelRatio !== 1 && platform=='ios' ? 0.5 : 1 : rpxNum
+}
+const parseRpx = function (matches) {
+  let num = 0, decimalRadix = 1, isHandlingDecimal = !1, isNeg = !1, idx = 0
+  for (; idx < matches.length; ++idx) {
+    let ch = matches[idx]
+    if (ch >= '0' && ch <= '9') {
+      if (isHandlingDecimal) {
+        decimalRadix *= 0.1
+        num += (ch - '0') * decimalRadix
+      } else {
+        num = 10 * num + (ch - '0')
+      }
+    } else {
+      ch === '.' ? (isHandlingDecimal = !0) : ch === '-' && (isNeg = !0)
+    }
+  }
+  isNeg && (num = -num)
+  return rpxToPxNum(num)
+}
+const rpxInTemplate = /%%\?[+-]?\d+(\.\d+)?rpx\?%%/g
+const rpxInCSS = /(:|\s)[+-]?\d+(\.\d+)?rpx/g
 
 const utils = {
   copyObj(distObj, orgObj) {
@@ -386,6 +417,23 @@ const utils = {
         })
       })(attrName)
     }
+  },
+  getPlatform: function () {
+    return platform
+  },
+  transformRpx: function (propValue, isInCSS) {
+    if ("String" !== this.getDataType(propValue)) return propValue
+    let matches
+    matches = isInCSS
+      ? propValue.match(rpxInCSS)
+      : propValue.match(rpxInTemplate)
+    matches &&
+    matches.forEach(function (match) {
+      const pxNum = parseRpx(match)
+      const cssValue = (isInCSS ? match[0] : '') + pxNum + 'px'
+      propValue = propValue.replace(match, cssValue)
+    })
+    return propValue
   },
   getRealRoute(pathPrefix='',pathname='') {//格式化一个路径
     if (0 === pathname.indexOf("/")) return pathname.substr(1);
@@ -481,17 +529,9 @@ const utils = {
       transition: transition.duration + "ms " + transition.timingFunction + " " + transition.delay + "ms"
     }
   },
-  getPlatform () {
-    var ua = window.navigator.userAgent.toLowerCase()
-    return /(iphone|ipad)/.test(ua)
-      ? 'ios'
-      : /android/.test(ua)
-        ? 'android'
-        : /wechatdevtools/.test(ua) ? 'wechatdevtools' : void 0
-  },
   //service
   anyTypeToString(data) {//把e转成string并返回一个对象
-    var dataType = Object.prototype.toString.call(data).split(" ")[1].split("]")[0];
+    var dataType = this.getDataType(data);
     if ("Array" == dataType || "Object" == dataType){
       try {
         data = JSON.stringify(data)

@@ -1,6 +1,6 @@
-import Utils from './Utils'
 import Enums from './Enums'
 import PropNameConverter from './PropNameConverter'
+import utils from '../../common/utils'
 
 const dataPrefixReg = /^data-/
 
@@ -47,7 +47,7 @@ function applyProperties (ele, props) {
     } else {
       if (propExist) {
         if (Enums.INLINE_STYLE.indexOf(propName) !== -1) {
-          ele[propName] = Utils.transformRpx(propValue, !0)
+          ele[propName] = utils.transformRpx(propValue, !0)
         } else {
           ele[propName] = propValue
         }
@@ -111,7 +111,7 @@ function applyProperties (ele, props) {
 
                     ele.$$.setAttribute(
                       propName,
-                      Utils.transformRpx(propValue, !0) + refinedAttrs
+                      utils.transformRpx(propValue, !0) + refinedAttrs
                     )
                   })()
                 } else {
@@ -139,7 +139,7 @@ function applyProperties (ele, props) {
                         ele.$$.style.webkitTransform = transform
                         ele.$$.style.webkitTransformOrigin = transformOrigin
                         for (let idx in style) {
-                          ele.$$.style[idx] = Utils.transformRpx(' ' + style[idx], !0)
+                          ele.$$.style[idx] = utils.transformRpx(' ' + style[idx], !0)
                         }
 
                         ele.animationStyle = {

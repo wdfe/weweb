@@ -1,60 +1,13 @@
 import Emitter from 'emitter'
 import { uid, createFrame, parsePath, getBus } from '../lib/util'
 import { lifeSycleEvent } from './index'
+import utils from '../../common/utils'
 require('whatwg-fetch')
 const Bus = getBus()
 function isMap (path) {
   return /^http(s)?:\/\/(apis\.map|3gimg\.qq\.com)/.test(path)
 }
 let loadedApp = false
-
-var BASE_DEVICE_WIDTH = 750
-var EPS = 0.0001
-var RPXRE = /%%\?[+-]?\d+(\.\d+)?rpx\?%%/g
-var widthScreen = window.innerWidth // >375?375:window.innerWidth
-var ratio = window.devicePixelRatio
-function transformByDPR (a, width, dpr) {
-  a = a / BASE_DEVICE_WIDTH * width
-  a = Math.floor(a + EPS)
-  if (a === 0) {
-    if (dpr === 1) {
-      return 1
-    } else {
-      return 0.5
-    }
-  }
-  return a
-}
-
-function getNumber (e, width, ratio) {
-  var g = 0
-  var d = 1
-  var a = false
-  var f = false
-  for (var b = 0; b < e.length; ++b) {
-    var h = e[b]
-    if (h >= '0' && h <= '9') {
-      if (a) {
-        d *= 0.1
-        g += (h - '0') * d
-      } else {
-        g = g * 10 + (h - '0')
-      }
-    } else {
-      if (h === '.') {
-        a = true
-      } else {
-        if (h === '-') {
-          f = true
-        }
-      }
-    }
-  }
-  if (f) {
-    g = -g
-  }
-  return transformByDPR(g, width, ratio)
-}
 
 export default class View extends Emitter {
   constructor (path) {
@@ -180,14 +133,12 @@ export default class View extends Emitter {
   loadWxss (path) {
     let p = path || this.path
     let self = this
-    let width = widthScreen
-    let ratio = window.devicePixelRatio
     fetch(path)
       .then(function (response) {
         return response.text()
       })
       .then(function (cssBody) {
-        self.inlineCss(cssBody, width, ratio, p)
+        self.inlineCss(cssBody, p)
       })
   }
   resizeWxss () {}
@@ -204,16 +155,8 @@ export default class View extends Emitter {
     el.innerHTML = '<div id="view-body-' + id + '"></div>'
     return el
   }
-  inlineCss (content, width, ratio, path) {
-    var b, self = this
-    b = content.match(RPXRE)
-    if (b) {
-      b.forEach(function (c) {
-        var d = getNumber(c, width, ratio)
-        var e = d + 'px'
-        content = content.replace(c, e)
-      })
-    }
+  inlineCss (content, path) {
+    content = utils.transformRpx(content,false)
     if (!content) return
     /*
      content = content.split('\n').map(function(value){
@@ -265,7 +208,7 @@ export default class View extends Emitter {
         }
 
         if (resArr[1]) {
-          self.inlineCss(resArr[1], widthScreen, ratio, self.path)
+          self.inlineCss(resArr[1], self.path)
         }
 
         function componentLoaded () {

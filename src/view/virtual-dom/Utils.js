@@ -1,50 +1,6 @@
-import Enums from './Enums'
-
-const objAssign = Object.assign ||
-  function (originObj) {
-    for (let idx = 1; idx < arguments.length; idx++) {
-      let argObj = arguments[idx]
-      for (let arg in argObj) {
-        Object.prototype.hasOwnProperty.call(argObj, arg) &&
-          (originObj[arg] = argObj[arg])
-      }
-    }
-    return originObj
-  }
-
 const isString = function (target) {
   return Object.prototype.toString.call(target) === '[object String]'
 }
-
-const isIphone = navigator.userAgent.match('iPhone')
-const screenWidth = window.screen && window.screen.width || 375
-const devicePixelRatio = window.devicePixelRatio || 2
-const SMALL_NUM = 1e-4
-const rpxToPxNum = function (rpxNum) {
-  rpxNum = rpxNum / Enums.BASE_DEVICE_WIDTH * screenWidth
-  rpxNum = Math.floor(rpxNum + SMALL_NUM)
-  return rpxNum === 0 ? devicePixelRatio !== 1 && isIphone ? 0.5 : 1 : rpxNum
-}
-const parseRpx = function (matches) {
-  let num = 0, decimalRadix = 1, isHandlingDecimal = !1, isNeg = !1, idx = 0
-  for (; idx < matches.length; ++idx) {
-    let ch = matches[idx]
-    if (ch >= '0' && ch <= '9') {
-      if (isHandlingDecimal) {
-        decimalRadix *= 0.1
-        num += (ch - '0') * decimalRadix
-      } else {
-        num = 10 * num + (ch - '0')
-      }
-    } else {
-      ch === '.' ? (isHandlingDecimal = !0) : ch === '-' && (isNeg = !0)
-    }
-  }
-  isNeg && (num = -num)
-  return rpxToPxNum(num)
-}
-const rpxInTemplate = /%%\?[+-]?\d+(\.\d+)?rpx\?%%/g
-const rpxInCSS = /(:|\s)[+-]?\d+(\.\d+)?rpx/g
 
 export default {
   isString,
@@ -77,20 +33,6 @@ export default {
   },
   isUndefined: function (obj) {
     return Object.prototype.toString.call(obj) === '[object Undefined]'
-  },
-  transformRpx: function (propValue, isInCSS) {
-    if (!isString(propValue)) return propValue
-    let matches = void 0
-    matches = isInCSS
-      ? propValue.match(rpxInCSS)
-      : propValue.match(rpxInTemplate)
-    matches &&
-      matches.forEach(function (match) {
-        const pxNum = parseRpx(match)
-        const cssValue = (isInCSS ? match[0] : '') + pxNum + 'px'
-        propValue = propValue.replace(match, cssValue)
-      })
-    return propValue
   },
   uuid: function () {
     let uuidPart = function () {
@@ -129,7 +71,7 @@ export default {
         window.__wxConfig.page[window.__route__] &&
         window.__wxConfig.page[window.__route__].window &&
         (pageConfig = window.__wxConfig.page[window.__route__].window)
-      configs = objAssign({}, globConfig, pageConfig)
+      configs = Object.assign({}, globConfig, pageConfig)
     }
     return configs
   }

@@ -1,23 +1,16 @@
 import Enums from './Enums'
-import './Utils'
+import utils from '../../common/utils'
 
-const initFontSize = function () {
+const init = function () {
+  window.__webview_engine_version__ = 0.02
   document.addEventListener(
     'DOMContentLoaded',
     function () {
-      let screenWidth = window.innerWidth > 0
-        ? window.innerWidth
-        : screen.width
-      //screenWidth = screenWidth>375?375:screenWidth
+      let screenWidth = utils.getPlatform() && window.innerWidth || 375
       document.documentElement.style.fontSize = screenWidth / Enums.RPX_RATE + 'px'
     },
     1e3
   )
-}
-
-const init = function () {
-  window.__webview_engine_version__ = 0.02
-  initFontSize()
 }
 
 export default {init}
