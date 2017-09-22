@@ -208,7 +208,7 @@ export default !(function () {
                 'email': 'email',
                 'password': 'password'
             }
-            return isPswd || typeTable[type] || 'text'
+            return (isPswd && 'password') || typeTable[type] || 'text'
         },
         _showValueChange: function (value) {
             this.$.input.value = value
