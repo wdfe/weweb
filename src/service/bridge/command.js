@@ -16,25 +16,25 @@ import image from '../lib/sdk/image'
 import modal from '../lib/sdk/modal'
 import actionSheet from '../lib/sdk/actionsheet'
 import Preview from '../lib/component/preview'
-import { dataURItoBlob, toNumber,getBus,once} from '../lib/util'
+import { dataURItoBlob, toNumber, getBus, once } from '../lib/util'
 const Bus = getBus()
 let fileIndex = 0
 let fileStore = {}
 
-function toAppService(obj) {
-  if (obj.command == 'GET_ASSDK_RES'){
-    ServiceJSBridge.invokeCallbackHandler(obj.ext.callbackID, obj.msg);
-  }else{
+function toAppService (obj) {
+  if (obj.command == 'GET_ASSDK_RES') {
+    ServiceJSBridge.invokeCallbackHandler(obj.ext.callbackID, obj.msg)
+  } else {
     let view = router.currentView()
     let id = view ? view.id : 0
-    ServiceJSBridge.subscribeHandler(obj.msg.eventName,obj.msg.data || {},id)
+    ServiceJSBridge.subscribeHandler(obj.msg.eventName, obj.msg.data || {}, id)
   }
 }
 
-function getAudioElement() {
+function getAudioElement () {
   const audioTagId = 'wx-audio-component-inside'
   let audio = document.getElementById(audioTagId)
-  if(audio == null) {
+  if (audio == null) {
     const audioTag = document.createElement('audio')
     document.body.appendChild(audioTag)
     audioTag.outerHTML = `<audio id="${audioTagId}" type="audio/mp3" style="display:none;"></audio>`
@@ -43,27 +43,31 @@ function getAudioElement() {
   return audio
 }
 
-function getBackgroundAudioElement() {
+function getBackgroundAudioElement () {
   const audioTagId = 'wx-background-audio-component-inside'
   let audio = document.getElementById(audioTagId)
-  if(audio == null) {
+  if (audio == null) {
     const audioTag = document.createElement('audio')
     document.body.appendChild(audioTag)
     audioTag.outerHTML = `<audio id="${audioTagId}" type="audio/mp3" style="display:none;"></audio>`
     audio = audioTag
-    audio.addEventListener('error', function () {
-      toAppService({
-        msg: {
-          eventName: 'onMusicError',
-          type: 'ON_MUSIC_EVENT'
-        }
-      })
-    }, false)
+    audio.addEventListener(
+      'error',
+      function () {
+        toAppService({
+          msg: {
+            eventName: 'onMusicError',
+            type: 'ON_MUSIC_EVENT'
+          }
+        })
+      },
+      false
+    )
   }
   return audio
 }
 
-function requiredArgs(keys, data) {
+function requiredArgs (keys, data) {
   let args = data.args
   for (var i = 0, l = keys.length; i < l; i++) {
     if (!args.hasOwnProperty(keys[i])) {
@@ -74,9 +78,9 @@ function requiredArgs(keys, data) {
   return false
 }
 
-function onError(data, message) {
+function onError (data, message) {
   let obj = {
-    command: "GET_ASSDK_RES",
+    command: 'GET_ASSDK_RES',
     ext: Object.assign({}, data),
     msg: {
       errMsg: `${data.sdkName}:fail`
@@ -86,10 +90,10 @@ function onError(data, message) {
   toAppService(obj)
 }
 
-function onSuccess(data, extra = {}) {
+function onSuccess (data, extra = {}) {
   if (!data.sdkName) throw new Error('sdkName not found')
   let obj = {
-    command: "GET_ASSDK_RES",
+    command: 'GET_ASSDK_RES',
     ext: Object.assign({}, data),
     msg: {
       errMsg: `${data.sdkName}:ok`
@@ -99,9 +103,9 @@ function onSuccess(data, extra = {}) {
   toAppService(obj)
 }
 
-function onCancel(data, extra = {}) {
+function onCancel (data, extra = {}) {
   let obj = {
-    command: "GET_ASSDK_RES",
+    command: 'GET_ASSDK_RES',
     ext: Object.assign({}, data),
     msg: {
       errMsg: `${data.sdkName}:cancel`
@@ -111,7 +115,7 @@ function onCancel(data, extra = {}) {
   toAppService(obj)
 }
 
-function publishPagEevent(eventName, extra) {
+function publishPagEevent (eventName, extra) {
   let obj = {
     command: 'MSG_FROM_WEBVIEW',
     msg: {
@@ -121,44 +125,44 @@ function publishPagEevent(eventName, extra) {
           eventName
         }
       },
-      eventName: 'custom_event_PAGE_EVENT',
+      eventName: 'custom_event_PAGE_EVENT'
     }
   }
   toAppService(obj)
 }
 
 function getWindowHeight () {
-  var scrollable = document.querySelector(".scrollable");
-  return  scrollable.clientHeight;
+  var scrollable = document.querySelector('.scrollable')
+  return scrollable.clientHeight
 }
-function getScrollHeight (){
-  var scrollable = document.querySelector(".scrollable");
-  return scrollable && scrollable.scrollHeight;
+function getScrollHeight () {
+  var scrollable = document.querySelector('.scrollable')
+  return scrollable && scrollable.scrollHeight
 }
 
-export function onLaunch() {
+export function onLaunch () {
   header.init()
   tabbar.init()
   router.onLaunch()
 }
-export function redirectTo(data) {
+export function redirectTo (data) {
   router.redirectTo(data.args.url)
 }
-export function navigateTo(data) {
+export function navigateTo (data) {
   router.navigateTo(data.args.url)
 }
-export function reLaunch(data) {
+export function reLaunch (data) {
   router.reLaunch(data.args.url)
 }
-export function switchTab(data) {
+export function switchTab (data) {
   router.switchTab(data.args.url)
 }
-export function navigateBack(data) {
+export function navigateBack (data) {
   data.args = data.args || {}
   let delta = data.args.delta ? Number(data.args.delta) : 1
   router.navigateBack(delta)
 }
-export function previewImage(data) {
+export function previewImage (data) {
   let args = data.args
   let urls = args.urls
   let current = args.current
@@ -168,11 +172,11 @@ export function previewImage(data) {
   onSuccess(data)
 }
 
-export function stopPullDownRefresh(data) {
+export function stopPullDownRefresh (data) {
   let curr = router.currentView()
   if (curr) {
     curr.postMessage({
-      command: "STOP_PULL_DOWN_REFRESH"
+      command: 'STOP_PULL_DOWN_REFRESH'
     })
   }
   data.sdkName = 'stopPullDownRefresh'
@@ -180,7 +184,7 @@ export function stopPullDownRefresh(data) {
 }
 
 // publish event to views
-export function publish(data) {
+export function publish (data) {
   let all_ids = router.getViewIds()
   let ids = toNumber(data.webviewIds) || all_ids
 
@@ -195,58 +199,62 @@ export function publish(data) {
   })
 }
 
-//页面滚动API
+// 页面滚动API
 export function pageScrollTo (param) {
-    var scrollable = document.querySelector(".scrollable"), scrollTop = param.args.scrollTop;
-    if (void 0 !== scrollTop) {
-        scrollTop< 0 && (scrollTop = 0);
-        var clientHeight = getWindowHeight(), scrollHeight = getScrollHeight();
-        scrollTop > scrollHeight - clientHeight && (scrollTop = scrollHeight - clientHeight);
-        var init = function() {
-            scrollable.style.transition = "";
-            scrollable.style.webkitTransition = "";
-            scrollable.style.transform = "";
-            scrollable.style.webkitTransform = "";
-            scrollable.scrollTop = scrollTop;
-            scrollable.removeEventListener("transitionend", init);
-            scrollable.removeEventListener("webkitTransitionEnd", init);
-        },
-            l = "translateY(" + (scrollable.scrollTop - scrollTop) + "px) translateZ(0)";
-        scrollable.style.transition = "transform .3s ease-out";
-        scrollable.style.webkitTransition = "-webkit-transform .3s ease-out";
-        scrollable.addEventListener("transitionend", init);
-        scrollable.addEventListener("webkitTransitionEnd", init);
-        scrollable.style.transform = l;
-        scrollable.style.webkitTransform = l;
-        scrollable.style.scrollTop = scrollTop;
-    }
+  var scrollable = document.querySelector('.scrollable'),
+    scrollTop = param.args.scrollTop
+  if (void 0 !== scrollTop) {
+    scrollTop < 0 && (scrollTop = 0)
+    var clientHeight = getWindowHeight(),
+      scrollHeight = getScrollHeight()
+    scrollTop > scrollHeight - clientHeight &&
+      (scrollTop = scrollHeight - clientHeight)
+    var init = function () {
+        scrollable.style.transition = ''
+        scrollable.style.webkitTransition = ''
+        scrollable.style.transform = ''
+        scrollable.style.webkitTransform = ''
+        scrollable.scrollTop = scrollTop
+        scrollable.removeEventListener('transitionend', init)
+        scrollable.removeEventListener('webkitTransitionEnd', init)
+      },
+      l =
+        'translateY(' + (scrollable.scrollTop - scrollTop) + 'px) translateZ(0)'
+    scrollable.style.transition = 'transform .3s ease-out'
+    scrollable.style.webkitTransition = '-webkit-transform .3s ease-out'
+    scrollable.addEventListener('transitionend', init)
+    scrollable.addEventListener('webkitTransitionEnd', init)
+    scrollable.style.transform = l
+    scrollable.style.webkitTransform = l
+    scrollable.style.scrollTop = scrollTop
+  }
 }
 
-export function setNavigationBarTitle(data) {
+export function setNavigationBarTitle (data) {
   let title = data.args.title
   if (title) header.setTitle(title)
 }
 
-export function setStatusBarStyle(data) {
+export function setStatusBarStyle (data) {
   let color = data.args.color
-  if (color) header.setState({color: color})
+  if (color) header.setState({ color: color })
 }
 
-export function setNavigationBarColor(data) {
+export function setNavigationBarColor (data) {
   let styles = data.args
   if (styles) header.setNavigationBarColor(styles)
 }
 
-export function showNavigationBarLoading() {
+export function showNavigationBarLoading () {
   header.showLoading()
 }
 
-export function hideNavigationBarLoading() {
+export function hideNavigationBarLoading () {
   header.hideLoading()
 }
 
-export function chooseImage(data) {
-  let URL = (window.URL || window.webkitURL)
+export function chooseImage (data) {
+  let URL = window.URL || window.webkitURL
   filePicker({ multiple: true, accept: 'image/*' }, files => {
     files = [].slice.call(files)
     let paths = files.map(file => {
@@ -258,9 +266,9 @@ export function chooseImage(data) {
   })
 }
 
-export function chooseVideo(data) {
-  let URL = (window.URL || window.webkitURL)
-  filePicker({accept: 'video/*' }, files => {
+export function chooseVideo (data) {
+  let URL = window.URL || window.webkitURL
+  filePicker({ accept: 'video/*' }, files => {
     let path = URL.createObjectURL(files[0])
     fileStore[path] = files[0]
     let video = document.createElement('video')
@@ -276,11 +284,11 @@ export function chooseVideo(data) {
         tempFilePath: path
       })
     }
-    video.src =  path
+    video.src = path
   })
 }
 
-export function saveFile(data) {
+export function saveFile (data) {
   let blob = data.args.tempFilePath
   if (!blob) return onError(data, 'file path required')
   let file = fileStore[blob]
@@ -288,7 +296,7 @@ export function saveFile(data) {
   let upload = new Upload(file)
   upload.to('/upload')
   upload.on('end', xhr => {
-    if (xhr.status / 100 | 0 == 2) {
+    if ((xhr.status / 100) | (0 === 2)) {
       let result = JSON.parse(xhr.responseText)
       onSuccess(data, {
         statusCode: xhr.status,
@@ -303,26 +311,28 @@ export function saveFile(data) {
   })
 }
 
-export function enableCompass() {
-  let id = Compass.watch(throttle(head => {
-    toAppService({
-      msg: {
-        eventName: 'onCompassChange',
-        data: {
-          direction: head
+export function enableCompass () {
+  let id = Compass.watch(
+    throttle(head => {
+      toAppService({
+        msg: {
+          eventName: 'onCompassChange',
+          data: {
+            direction: head
+          }
         }
-      }
-    })
-  }, 200))
+      })
+    }, 200)
+  )
   router.currentView().on('destroy', () => {
     Compass.unwatch(id)
   })
 }
 
-export function enableAccelerometer() {
-  if(window.DeviceMotionEvent){
+export function enableAccelerometer () {
+  if (window.DeviceMotionEvent) {
     let handler = throttle(event => {
-      let {x, y, z} = {
+      let { x, y, z } = {
         x: event.accelerationIncludingGravity.x,
         y: event.accelerationIncludingGravity.y,
         z: event.accelerationIncludingGravity.z
@@ -331,28 +341,28 @@ export function enableAccelerometer() {
       toAppService({
         msg: {
           eventName: 'onAccelerometerChange',
-          data: {x, y, z}
+          data: { x, y, z }
         }
       })
     }, 200)
-    window.addEventListener("devicemotion", handler, false);
+    window.addEventListener('devicemotion', handler, false)
     router.currentView().on('destroy', () => {
-      window.removeEventListener("devicemotion", handler, false);
+      window.removeEventListener('devicemotion', handler, false)
     })
   } else {
-    console.warn("DeviceMotionEvent is not supported");
+    console.warn('DeviceMotionEvent is not supported')
   }
 }
 
-export function getNetworkType(data) {
+export function getNetworkType (data) {
   let type = navigator.connection == null ? 'WIFI' : navigator.connection.type
   onSuccess(data, {
     networkType: type
   })
 }
 
-export function getLocation(data) {
-  if ("geolocation" in navigator) {
+export function getLocation (data) {
+  if ('geolocation' in navigator) {
     navigator.geolocation.getCurrentPosition(position => {
       let coords = position.coords
       onSuccess(data, {
@@ -367,9 +377,14 @@ export function getLocation(data) {
   }
 }
 
-export function openLocation(data) {
+export function openLocation (data) {
   let args = data.args
-  let url = "http://apis.map.qq.com/tools/poimarker?type=0&marker=coord:" + args.latitude + "," + args.longitude + "&key=JMRBZ-R4HCD-X674O-PXLN4-B7CLH-42BSB&referer=wxdevtools"
+  let url =
+    'http://apis.map.qq.com/tools/poimarker?type=0&marker=coord:' +
+    args.latitude +
+    ',' +
+    args.longitude +
+    '&key=JMRBZ-R4HCD-X674O-PXLN4-B7CLH-42BSB&referer=wxdevtools'
   router.openExternal(url)
   onSuccess(data, {
     latitude: args.latitude,
@@ -377,11 +392,11 @@ export function openLocation(data) {
   })
 }
 
-export function chooseLocation(data) {
+export function chooseLocation (data) {
   let url = `https://3gimg.qq.com/lightmap/components/locationPicker2/index.html?search=1&type=1&coord=39.90403%2C116.407526&key=JMRBZ-R4HCD-X674O-PXLN4-B7CLH-42BSB&referer=wxdevtools`
   router.openExternal(url)
   let called = false
-  Bus.once('back',() => {
+  Bus.once('back', () => {
     if (!called) {
       called = true
       onCancel(data)
@@ -399,7 +414,7 @@ export function chooseLocation(data) {
   })
 }
 
-export function setStorage(data) {
+export function setStorage (data) {
   let args = data.args
   storage.set(args.key, args.data, args.dataType)
   if (args.key == null || args.key == '') {
@@ -408,7 +423,7 @@ export function setStorage(data) {
   onSuccess(data)
 }
 
-export function getStorage(data) {
+export function getStorage (data) {
   let args = data.args
   if (args.key == null || args.key == '') {
     return onError(data, 'key required')
@@ -420,37 +435,41 @@ export function getStorage(data) {
   })
 }
 
-export function clearStorage(data) {
+export function clearStorage (data) {
   storage.clear()
   onSuccess(data)
 }
 
-export function startRecord(data) {
-  record.startRecord({
-    success: url => {
-      onSuccess(data, {
-        tempFilePath: url
-      })
-    },
-    fail: err => {
-      return onError(data, err.message)
-    }
-  }).catch((e) => {
-    console.warn(`Audio record failed: ${e.message}`)
-  })
-}
-
-export function stopRecord() {
-
-    record.stopRecord().then(blob => {
-        let filename = `audio${fileIndex}`
-        fileIndex++
-        let file = new File([blob], filename, {type: 'audio/x-wav', lastModified: Date.now()});
-        fileStore[blob] = file
+export function startRecord (data) {
+  record
+    .startRecord({
+      success: url => {
+        onSuccess(data, {
+          tempFilePath: url
+        })
+      },
+      fail: err => {
+        return onError(data, err.message)
+      }
+    })
+    .catch(e => {
+      console.warn(`Audio record failed: ${e.message}`)
     })
 }
 
-export function playVoice(data) {
+export function stopRecord () {
+  record.stopRecord().then(blob => {
+    let filename = `audio${fileIndex}`
+    fileIndex++
+    let file = new File([blob], filename, {
+      type: 'audio/x-wav',
+      lastModified: Date.now()
+    })
+    fileStore[blob] = file
+  })
+}
+
+export function playVoice (data) {
   let url = data.args.filePath
   let audio = getAudioElement()
   if (audio.src == url && audio.paused && !audio.ended) {
@@ -469,12 +488,12 @@ export function playVoice(data) {
   }
 }
 
-export function pauseVoice() {
+export function pauseVoice () {
   let audio = getAudioElement()
   audio.pause()
 }
 
-export function stopVoice() {
+export function stopVoice () {
   let audio = getAudioElement()
   audio.pause()
   audio.currentTime = 0
@@ -493,24 +512,23 @@ export function stopVoice() {
 //   }, false)
 // }, false)
 
-export function getMusicPlayerState(data) {
+export function getMusicPlayerState (data) {
   let a = getBackgroundAudioElement()
   let obj = {
-    status: a.src ? a.paused ? 0 : 1 : 2,
+    status: a.src ? (a.paused ? 0 : 1) : 2,
     currentPosition: Math.floor(a.currentTime) || -1
   }
   if (a.src && !a.paused) {
     obj.duration = a.duration || 0
     try {
-      obj.downloadPercent = Math.round(100*a.buffered.end(0)/a.duration)
-    } catch(e) {
-    }
+      obj.downloadPercent = Math.round(100 * a.buffered.end(0) / a.duration)
+    } catch (e) {}
     obj.dataUrl = a.currentSrc
   }
   onSuccess(data, obj)
 }
 
-export function operateMusicPlayer(data) {
+export function operateMusicPlayer (data) {
   let args = data.args
   let a = getBackgroundAudioElement()
   switch (args.operationType) {
@@ -557,7 +575,7 @@ export function operateMusicPlayer(data) {
   onSuccess(data)
 }
 
-export function uploadFile(data) {
+export function uploadFile (data) {
   let args = data.args
   if (!args.filePath || !args.url || !args.name) {
     return onError(data, 'filePath, url and name required')
@@ -571,11 +589,16 @@ export function uploadFile(data) {
   }
   let formData = args.formData || {}
   let xhr = new XMLHttpRequest()
-  let reqUrl = args.url.indexOf('http')===0 && args.url.indexOf(location.host)===-1 && __wxConfig__.weweb && (__wxConfig__.weweb.requestProxy || '/remoteProxy') || args.url
+  let reqUrl =
+    (args.url.indexOf('http') === 0 &&
+      args.url.indexOf(location.host) === -1 &&
+      __wxConfig__.weweb &&
+      (__wxConfig__.weweb.requestProxy || '/remoteProxy')) ||
+    args.url
   xhr.open('POST', reqUrl)
   xhr.onload = function () {
-    if (xhr.status / 100 | 0 == 2) {
-      onSuccess(data, {statusCode: xhr.status, data: xhr.responseText})
+    if ((xhr.status / 100) | (0 === 2)) {
+      onSuccess(data, { statusCode: xhr.status, data: xhr.responseText })
     } else {
       onError(data, `request error ${xhr.status}`)
     }
@@ -585,10 +608,10 @@ export function uploadFile(data) {
   }
   let key
   for (key in headers) {
-    xhr.setRequestHeader(key, headers[key]);
+    xhr.setRequestHeader(key, headers[key])
   }
-  xhr.setRequestHeader('X-Remote', args.url);
-  let body = new FormData
+  xhr.setRequestHeader('X-Remote', args.url)
+  let body = new FormData()
   body.append(args.name, file)
   for (key in formData) {
     body.append(key, formData[key])
@@ -596,8 +619,8 @@ export function uploadFile(data) {
   xhr.send(body)
 }
 
-export function downloadFile(data) {
-  let URL = (window.URL || window.webkitURL)
+export function downloadFile (data) {
+  let URL = window.URL || window.webkitURL
   let args = data.args
   if (!args.url) return onError(data, 'url required')
   let xhr = new XMLHttpRequest()
@@ -605,8 +628,10 @@ export function downloadFile(data) {
   let headers = args.header || {}
   xhr.open('GET', '/remoteProxy?' + encodeURIComponent(args.url), true)
   xhr.onload = function () {
-    if (xhr.status / 100 | 0 == 2 || xhr.status == 304) {
-      let b = new Blob([xhr.response], {type: xhr.getResponseHeader("Content-Type")});
+    if ((xhr.status / 100) | (0 === 2) || xhr.status == 304) {
+      let b = new Blob([xhr.response], {
+        type: xhr.getResponseHeader('Content-Type')
+      })
       let blob = URL.createObjectURL(b)
       fileStore[blob] = b
       onSuccess(data, {
@@ -622,101 +647,116 @@ export function downloadFile(data) {
   }
   let key
   for (key in headers) {
-    xhr.setRequestHeader(key, headers[key]);
+    xhr.setRequestHeader(key, headers[key])
   }
-  xhr.setRequestHeader('X-Remote', args.url);
+  xhr.setRequestHeader('X-Remote', args.url)
   xhr.send(null)
 }
 
-export function getSavedFileList(data) {
-  fileList.getFileList().then(list => {
-    onSuccess(data, {
-      fileList: list
-    })
-  }, err => {
-    onError(data, err.message)
-  })
+export function getSavedFileList (data) {
+  fileList.getFileList().then(
+    list => {
+      onSuccess(data, {
+        fileList: list
+      })
+    },
+    err => {
+      onError(data, err.message)
+    }
+  )
 }
 
-export function removeSavedFile(data) {
+export function removeSavedFile (data) {
   let args = data.args
   if (requiredArgs(['filePath'], data)) return
-  fileList.removeFile(args.filePath).then(() => {
-    onSuccess(data, {})
-  }, err => {
-    onError(data, err.message)
-  })
+  fileList.removeFile(args.filePath).then(
+    () => {
+      onSuccess(data, {})
+    },
+    err => {
+      onError(data, err.message)
+    }
+  )
 }
 
-export function getSavedFileInfo(data) {
+export function getSavedFileInfo (data) {
   let args = data.args
   if (requiredArgs(['filePath'], data)) return
-  fileList.getFileInfo(args.filePath).then(info => {
-    onSuccess(data, info)
-  }, err => {
-    onError(data, err.message)
-  })
+  fileList.getFileInfo(args.filePath).then(
+    info => {
+      onSuccess(data, info)
+    },
+    err => {
+      onError(data, err.message)
+    }
+  )
 }
 
-export function openDocument(data) {
+export function openDocument (data) {
   let args = data.args
   if (requiredArgs(['filePath'], data)) return
-  modal({title:'确认打开',content:`openDocument ${args.filePath}`}).then(confirm => {
+  modal({
+    title: '确认打开',
+    content: `openDocument ${args.filePath}`
+  }).then(confirm => {
     onSuccess(data, { confirm })
   })
 }
 
-export function getStorageInfo(data) {
+export function getStorageInfo (data) {
   let info = storage.info()
   onSuccess(data, info)
 }
 
-export function removeStorage(data) {
+export function removeStorage (data) {
   let args = data.args
   if (requiredArgs(['key'], data)) return
 
   let o = storage.remove(args.key)
-  onSuccess(data, {data: o})
+  onSuccess(data, { data: o })
 }
 
-export function showToast(data) {
+export function showToast (data) {
   if (requiredArgs(['title'], data)) return
   toast.show(data.args)
   onSuccess(data)
 }
 
-export function hideToast(data) {
+export function hideToast (data) {
   toast.hide()
   onSuccess(data)
 }
 
-export function showModal(data) {
+export function showModal (data) {
   if (requiredArgs(['title', 'content'], data)) return
   modal(data.args).then(confirm => {
     onSuccess(data, { confirm })
   })
 }
 
-export function showActionSheet(data) {
+export function showActionSheet (data) {
   let args = data.args
   if (requiredArgs(['itemList'], data)) return
-  if (!Array.isArray(args.itemList)) return onError(data, 'itemList must be Array')
+  if (!Array.isArray(args.itemList)) { return onError(data, 'itemList must be Array') }
   args.itemList = args.itemList.slice(0, 6)
   actionSheet(args).then(res => {
     onSuccess(data, res)
   })
 }
 
-export function getImageInfo(data) {
+export function getImageInfo (data) {
   if (requiredArgs(['src'], data)) return
-  image(data.args.src).then(res => {
-    onSuccess(data, res)
-  }, err => {
-    onError(data, err.message)
-  })
+  image(data.args.src).then(
+    res => {
+      onSuccess(data, res)
+    },
+    err => {
+      onError(data, err.message)
+    }
+  )
 }
 
-export function base64ToTempFilePath(data) {
+export function base64ToTempFilePath (data) {
   let uri = data.args.base64Data
   // args.canvasId
   onSuccess(data, {
@@ -724,14 +764,14 @@ export function base64ToTempFilePath(data) {
   })
 }
 
-export function refreshSession(data) {
+export function refreshSession (data) {
   onSuccess(data)
 }
 
-export function showPickerView(args) {
+export function showPickerView (args) {
   const picker = new Picker(args)
   picker.show()
-  //picker.on('cancel', () => {})
+  // picker.on('cancel', () => {})
   picker.on('select', n => {
     publishPagEevent('bindPickerChange', {
       type: 'change',
@@ -742,7 +782,7 @@ export function showPickerView(args) {
   })
 }
 
-export function showDatePickerView(args) {
+export function showDatePickerView (args) {
   let picker
   let eventName
   if (args.mode == 'time') {

@@ -20,4 +20,4 @@ exparser.addGlobalErrorListener(function (error, errData) {
   })
 })
 
-export default {catchError}
+export default { catchError }

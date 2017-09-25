@@ -29,7 +29,7 @@ function removeProperty (ele, props) {
     }
   }
 }
-//设置ele属性
+// 设置ele属性
 function applyProperties (ele, props) {
   ele.dataset = ele.dataset || {}
   for (let propName in props) {
@@ -61,11 +61,13 @@ function applyProperties (ele, props) {
             if (propName.slice(0, 2) === 'on') {
               addEventHandler(ele, propName.slice(2), propValue)
             } else {
-              const isElementAttribute = Enums.ATTRIBUTE_NAME.indexOf(propName) !== -1 || dataPrefixReg.test(propName)
+              const isElementAttribute =
+                Enums.ATTRIBUTE_NAME.indexOf(propName) !== -1 ||
+                dataPrefixReg.test(propName)
               if (isElementAttribute) {
                 if (propName === 'style') {
                   !(function () {
-                    let animationStyle = ele.animationStyle || {},//动画执行结果样式
+                    let animationStyle = ele.animationStyle || {}, // 动画执行结果样式
                       transition = animationStyle.transition,
                       transform = animationStyle.transform,
                       transitionProperty = animationStyle.transitionProperty,
@@ -76,35 +78,31 @@ function applyProperties (ele, props) {
                         transitionProperty: transitionProperty,
                         transformOrigin: transformOrigin
                       }
-                    cssAttributes[
-                      '-webkit-transition'
-                    ] = cssAttributes.transition
-                    cssAttributes[
-                      '-webkit-transform'
-                    ] = cssAttributes.transform
-                    cssAttributes[
-                      '-webkit-transition-property'
-                    ] = cssAttributes.transitionProperty
-                    cssAttributes[
-                      '-webkit-transform-origin'
-                    ] = cssAttributes.transformOrigin
+                    cssAttributes['-webkit-transition'] =
+                      cssAttributes.transition
+                    cssAttributes['-webkit-transform'] = cssAttributes.transform
+                    cssAttributes['-webkit-transition-property'] =
+                      cssAttributes.transitionProperty
+                    cssAttributes['-webkit-transform-origin'] =
+                      cssAttributes.transformOrigin
 
                     const refinedAttrs = Object.keys(cssAttributes)
                       .filter(function (attribute) {
                         return !(
-                          (/transform|transition/i.test(attribute) && cssAttributes[attribute] === '') ||
+                          (/transform|transition/i.test(attribute) &&
+                            cssAttributes[attribute] === '') ||
                           attribute.trim() === '' ||
                           void 0 === cssAttributes[attribute] ||
                           cssAttributes[attribute] === '' ||
-                          !isNaN(parseInt(attribute)))
+                          !isNaN(parseInt(attribute))
+                        )
                       })
                       .map(function (attr) {
-                        let dashedProp = attr.replace(
-                          /([A-Z]{1})/g,
-                          function (str) {
-                            return '-' + str.toLowerCase()
-                          }
-                        )
+                        let dashedProp = attr.replace(/([A-Z]{1})/g, function (
+                          str
+                        ) {
+                          return '-' + str.toLowerCase()
+                        })
                         return dashedProp + ':' + cssAttributes[attr]
                       })
                       .join(';')
@@ -118,8 +116,10 @@ function applyProperties (ele, props) {
                   ele.$$.setAttribute(propName, propValue)
                 }
               } else {
-                const isAnimationProp = propName === 'animation' && typeof(propValue) === 'object'
-                const isPropHasActions = propValue.actions && propValue.actions.length > 0
+                const isAnimationProp =
+                  propName === 'animation' && typeof propValue === 'object'
+                const isPropHasActions =
+                  propValue.actions && propValue.actions.length > 0
                 if (isAnimationProp && isPropHasActions) {
                   !(function () {
                     const execAnimationAction = function () {
@@ -139,7 +139,10 @@ function applyProperties (ele, props) {
                         ele.$$.style.webkitTransform = transform
                         ele.$$.style.webkitTransformOrigin = transformOrigin
                         for (let idx in style) {
-                          ele.$$.style[idx] = utils.transformRpx(' ' + style[idx], !0)
+                          ele.$$.style[idx] = utils.transformRpx(
+                            ' ' + style[idx],
+                            !0
+                          )
                         }
 
                         ele.animationStyle = {
@@ -155,7 +158,7 @@ function applyProperties (ele, props) {
                     let actonsLen = propValue.actions.length
 
                     ele.addListener('transitionend', function () {
-                      (turns += 1), execAnimationAction()
+                      ;(turns += 1), execAnimationAction()
                     })
                     execAnimationAction()
                   })()
@@ -179,7 +182,8 @@ const getEleInfo = function (ele) {
 }
 const getTouchInfo = function (touches) {
   if (touches) {
-    let touchInfo = [], idx = 0
+    let touchInfo = [],
+      idx = 0
     for (; idx < touches.length; idx++) {
       let touch = touches[idx]
       touchInfo.push({
@@ -193,7 +197,7 @@ const getTouchInfo = function (touches) {
     return touchInfo
   }
 }
-//事件绑定
+// 事件绑定
 const addEventHandler = function (ele, eventName, pageEventName, useCapture) {
   ele.__wxEventHandleName || (ele.__wxEventHandleName = Object.create(null))
   void 0 === ele.__wxEventHandleName[eventName] &&

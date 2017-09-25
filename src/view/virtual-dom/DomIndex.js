@@ -1,7 +1,8 @@
-//通过遍历tree找出patchIndexs中相应索引对应的node,返回nodes
+// 通过遍历tree找出patchIndexs中相应索引对应的node,返回nodes
 const getDomIndex = function (rootNode, tree, patchIndexs) {
   if (patchIndexs && patchIndexs.length != 0) {
-    patchIndexs = patchIndexs.sort(function (a, b) {//升序
+    patchIndexs = patchIndexs.sort(function (a, b) {
+      // 升序
       return a - b
     })
     let nodes = {} // real dom <-> vdom : key = nodeindex, value = real node
@@ -24,7 +25,8 @@ const mapIndexToDom = function mapIndexToDom (
       (nodes[rootIndex] = realDomRootNode)
     let vDomChildren = vDomRootNode.children
     if (vDomChildren) {
-      let realDomChildren = realDomRootNode.childNodes, idx = 0
+      let realDomChildren = realDomRootNode.childNodes,
+        idx = 0
       for (; idx < vDomChildren.length; ++idx) {
         let vChild = vDomChildren[idx]
         ++rootIndex
@@ -45,9 +47,11 @@ const mapIndexToDom = function mapIndexToDom (
 
 // Binary search for an index in the interval [left, right]
 const oneOfIndexesInRange = function (indices, left, right) {
-  let index = 0, length = indices.length - 1
+  let index = 0,
+    length = indices.length - 1
   for (; index <= length;) {
-    let pivotKey = length + index >> 1, pivotValue = indices[pivotKey]
+    let pivotKey = (length + index) >> 1,
+      pivotValue = indices[pivotKey]
     if (pivotValue < left) {
       index = pivotKey + 1
     } else {
@@ -58,4 +62,4 @@ const oneOfIndexesInRange = function (indices, left, right) {
   return !1
 }
 
-export default {getDomIndex, mapIndexToDom, oneOfIndexesInRange}
+export default { getDomIndex, mapIndexToDom, oneOfIndexesInRange }

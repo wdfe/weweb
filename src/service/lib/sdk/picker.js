@@ -5,36 +5,36 @@ import Scrollable from './scrollable'
 import tmplFn from './picker.et'
 
 export default class Picker extends Emitter {
-  constructor(opts) {
+  constructor (opts) {
     super()
     this.opts = opts
     this.root = document.createElement('div')
     document.body.appendChild(this.root)
-    this.events = events(this.root, this);
-    this.events.bind('click .cancel', 'cancel');
-    this.events.bind('click .confirm', 'confirm');
+    this.events = events(this.root, this)
+    this.events.bind('click .cancel', 'cancel')
+    this.events.bind('click .confirm', 'confirm')
   }
-  show() {
+  show () {
     this.root.appendChild(domify('<div class="wx-picker-mask"></div>'))
     const items = this.opts.array.map(text => {
-      return {text, value: text}
+      return { text, value: text }
     })
-    const el = domify(tmplFn({group: [items]}))
+    const el = domify(tmplFn({ group: [items] }))
     this.root.appendChild(el)
     const container = this.root.querySelector('.wx-picker-content')
     this.scrollable = new Scrollable(container, this.opts.current)
   }
-  hide() {
+  hide () {
     this.events.unbind()
     this.scrollable.unbind()
     document.body.removeChild(this.root)
   }
-  cancel(e) {
+  cancel (e) {
     e.preventDefault()
     this.hide()
     this.emit('cancel')
   }
-  confirm(e) {
+  confirm (e) {
     let index = this.scrollable.current()
     e.preventDefault()
     this.hide()

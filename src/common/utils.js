@@ -1,109 +1,138 @@
-
-function addPXSuffix(num) {
-  return "number" == typeof num ? num + "px" : num
+function addPXSuffix (num) {
+  return typeof num === 'number' ? num + 'px' : num
 }
 
-function addDegSuffix(num) {
-  return num + "deg"
+function addDegSuffix (num) {
+  return num + 'deg'
 }
 
-
-var words = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-  btoa = btoa ||
+var words = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
+  btoa =
+    btoa ||
     function (str) {
-      for (var curPosFlag, curCodeValue, text = String(str), res = "", i = 0, wordTpl = words; text.charAt(0 | i) || (wordTpl = "=", i % 1); res += wordTpl.charAt(63 & curPosFlag >> 8 - i % 1 * 8)) {
-        curCodeValue = text.charCodeAt(i += .75)
-        if (curCodeValue > 255) throw new Error('"btoa" failed');
-        curPosFlag = curPosFlag << 8 | curCodeValue
+      for (
+        var curPosFlag,
+          curCodeValue,
+          text = String(str),
+          res = '',
+          i = 0,
+          wordTpl = words;
+        text.charAt(0 | i) || ((wordTpl = '='), i % 1);
+        res += wordTpl.charAt(63 & (curPosFlag >> (8 - (i % 1) * 8)))
+      ) {
+        curCodeValue = text.charCodeAt((i += 0.75))
+        if (curCodeValue > 255) throw new Error('"btoa" failed')
+        curPosFlag = (curPosFlag << 8) | curCodeValue
       }
       return res
     },
-  atob = atob ||
+  atob =
+    atob ||
     function (str) {
-      var text = String(str).replace(/=+$/, ""),
-        res = "";
-      if (text.length % 4 === 1) throw new Error('"atob" failed');
-      for (var curFlage, curValue, i = 0, a = 0; curValue = text.charAt(a++); ~curValue && (curFlage = i % 4 ? 64 * curFlage + curValue : curValue, i++ % 4) ? res += String.fromCharCode(255 & curFlage >> ( -2 * i & 6)) : 0)
-        curValue = words.indexOf(curValue);
+      var text = String(str).replace(/=+$/, ''),
+        res = ''
+      if (text.length % 4 === 1) throw new Error('"atob" failed')
+      for (
+        var curFlage, curValue, i = 0, a = 0;
+        (curValue = text.charAt(a++));
+        ~curValue &&
+        ((curFlage = i % 4 ? 64 * curFlage + curValue : curValue), i++ % 4)
+          ? (res += String.fromCharCode(255 & (curFlage >> ((-2 * i) & 6))))
+          : 0
+      ) { curValue = words.indexOf(curValue) }
       return res
     }
 
 class setSelect {
-  constructor(t, n, r) {
-    this._selectorQuery = t,
-      this._selector = n,
-      this._single = r
+  constructor (t, n, r) {
+    ;(this._selectorQuery = t), (this._selector = n), (this._single = r)
   }
 
-  fields(e, t) {
-    return this._selectorQuery._push(this._selector, this._single, e, t),
+  fields (e, t) {
+    return (
+      this._selectorQuery._push(this._selector, this._single, e, t),
       this._selectorQuery
+    )
   }
 
-  boundingClientRect(e) {
-    return this._selectorQuery._push(this._selector, this._single, {
-      id: !0,
-      dataset: !0,
-      rect: !0,
-      size: !0
-    }, e),
+  boundingClientRect (e) {
+    return (
+      this._selectorQuery._push(
+        this._selector,
+        this._single,
+        {
+          id: !0,
+          dataset: !0,
+          rect: !0,
+          size: !0
+        },
+        e
+      ),
       this._selectorQuery
+    )
   }
 
-  scrollOffset(e) {
-    return this._selectorQuery._push(this._selector, this._single, {
-      id: !0,
-      dataset: !0,
-      scrollOffset: !0
-    }, e),
+  scrollOffset (e) {
+    return (
+      this._selectorQuery._push(
+        this._selector,
+        this._single,
+        {
+          id: !0,
+          dataset: !0,
+          scrollOffset: !0
+        },
+        e
+      ),
       this._selectorQuery
+    )
   }
-
 }
 class wxQuerySelector {
-  constructor(t) {
-    this._webviewId = t;
-    this._queue = [];
-    this._queueCb = [];
+  constructor (t) {
+    this._webviewId = t
+    this._queue = []
+    this._queueCb = []
   }
 
-  select(e) {
+  select (e) {
     return new setSelect(this, e, !0)
   }
 
-  selectAll(e) {
+  selectAll (e) {
     return new setSelect(this, e, !1)
   }
 
-  selectViewport() {
-    return new setSelect(this, "viewport", !0)
+  selectViewport () {
+    return new setSelect(this, 'viewport', !0)
   }
 
-  _push(e, t, n, o) {
-    this._queue.push({selector: e, single: t, fields: n}), this._queueCb.push(o || null)
+  _push (e, t, n, o) {
+    this._queue.push({ selector: e, single: t, fields: n }),
+    this._queueCb.push(o || null)
   }
 
-  exec(e) {
-    var t = this;
+  exec (e) {
+    var t = this
     u(this._webviewId, this._queue, function (n) {
-      var o = t._queueCb;
+      var o = t._queueCb
       n.forEach(function (e, n) {
-        "function" == typeof o[n] && o[n].call(t, e)
+        typeof o[n] === 'function' && o[n].call(t, e)
       }),
-      "function" == typeof e && e.call(t, n)
+      typeof e === 'function' && e.call(t, n)
     })
   }
 }
 class AppServiceSdkKnownError extends Error {
-  constructor(e) {
-    super("APP-SERVICE-SDK:" + e);
-    this.type = "AppServiceSdkKnownError";
+  constructor (e) {
+    super('APP-SERVICE-SDK:' + e)
+    this.type = 'AppServiceSdkKnownError'
   }
 }
 class AppServiceEngineKnownError extends Error {
-  constructor(e) {
-    super("APP-SERVICE-Engine:" + e);
-    this.type = "AppServiceEngineKnownError";
+  constructor (e) {
+    super('APP-SERVICE-Engine:' + e)
+    this.type = 'AppServiceEngineKnownError'
   }
 }
 
@@ -378,17 +407,25 @@ var APIs = {
 */
 const BASE_DEVICE_WIDTH = 750
 const ua = window.navigator.userAgent.toLowerCase()
-const platform = /(iphone|ipad)/.test(ua) ? 'ios' : /android/.test(ua) ? 'android' : ''
-const screenWidth = platform && window.innerWidth || 375
+const platform = /(iphone|ipad)/.test(ua)
+  ? 'ios'
+  : /android/.test(ua) ? 'android' : ''
+const screenWidth = (platform && window.innerWidth) || 375
 const devicePixelRatio = window.devicePixelRatio || 2
 const SMALL_NUM = 1e-4
 const rpxToPxNum = function (rpxNum) {
   rpxNum = rpxNum / BASE_DEVICE_WIDTH * screenWidth
   rpxNum = Math.floor(rpxNum + SMALL_NUM)
-  return rpxNum === 0 ? devicePixelRatio !== 1 && platform=='ios' ? 0.5 : 1 : rpxNum
+  return rpxNum === 0
+    ? devicePixelRatio !== 1 && platform == 'ios' ? 0.5 : 1
+    : rpxNum
 }
 const parseRpx = function (matches) {
-  let num = 0, decimalRadix = 1, isHandlingDecimal = !1, isNeg = !1, idx = 0
+  let num = 0,
+    decimalRadix = 1,
+    isHandlingDecimal = !1,
+    isNeg = !1,
+    idx = 0
   for (; idx < matches.length; ++idx) {
     let ch = matches[idx]
     if (ch >= '0' && ch <= '9') {
@@ -409,11 +446,14 @@ const rpxInTemplate = /%%\?[+-]?\d+(\.\d+)?rpx\?%%/g
 const rpxInCSS = /(:|\s)[+-]?\d+(\.\d+)?rpx/g
 
 const utils = {
-  copyObj(distObj, orgObj) {
-    for (var attrName in orgObj){
-      (function(attrName) {
+  copyObj (distObj, orgObj) {
+    for (var attrName in orgObj) {
+      ;(function (attrName) {
         distObj.__defineGetter__(attrName, function () {
-          return Reporter.surroundThirdByTryCatch(orgObj[attrName], "wd." + attrName)
+          return Reporter.surroundThirdByTryCatch(
+            orgObj[attrName],
+            'wd.' + attrName
+          )
         })
       })(attrName)
     }
@@ -422,294 +462,416 @@ const utils = {
     return platform
   },
   transformRpx: function (propValue, isInCSS) {
-    if ("String" !== this.getDataType(propValue)) return propValue
+    if (this.getDataType(propValue) !== 'String') return propValue
     let matches
     matches = isInCSS
       ? propValue.match(rpxInCSS)
       : propValue.match(rpxInTemplate)
     matches &&
-    matches.forEach(function (match) {
-      const pxNum = parseRpx(match)
-      const cssValue = (isInCSS ? match[0] : '') + pxNum + 'px'
-      propValue = propValue.replace(match, cssValue)
-    })
+      matches.forEach(function (match) {
+        const pxNum = parseRpx(match)
+        const cssValue = (isInCSS ? match[0] : '') + pxNum + 'px'
+        propValue = propValue.replace(match, cssValue)
+      })
     return propValue
   },
-  getRealRoute(pathPrefix='',pathname='') {//格式化一个路径
-    if (0 === pathname.indexOf("/")) return pathname.substr(1);
-    if (0 === pathname.indexOf("./")) return this.getRealRoute(pathPrefix, pathname.substr(2));
-    var index, folderLength, folderArr = pathname.split("/");
-    for (index = 0, folderLength = folderArr.length; index < folderLength && ".." === folderArr[index]; index++);
-    folderArr.splice(0, index);
-    var prefixArr = pathPrefix.length > 0 ? pathPrefix.split("/") : [];
-    prefixArr.splice(prefixArr.length - index - 1, index + 1);
-    var pathArr = prefixArr.concat(folderArr);
-    return pathArr.join("/")
+  getRealRoute (pathPrefix = '', pathname = '') {
+    // 格式化一个路径
+    if (pathname.indexOf('/') === 0) return pathname.substr(1)
+    if (pathname.indexOf('./') === 0) { return this.getRealRoute(pathPrefix, pathname.substr(2)) }
+    var index,
+      folderLength,
+      folderArr = pathname.split('/')
+    for (
+      index = 0, folderLength = folderArr.length;
+      index < folderLength && folderArr[index] === '..';
+      index++
+    );
+    folderArr.splice(0, index)
+    var prefixArr = pathPrefix.length > 0 ? pathPrefix.split('/') : []
+    prefixArr.splice(prefixArr.length - index - 1, index + 1)
+    var pathArr = prefixArr.concat(folderArr)
+    return pathArr.join('/')
   },
-  animationToStyle(params) {
+  animationToStyle (params) {
     var animates = params.animates,
       option = params.option,
       opts = void 0 === option ? {} : option,
       transformOrigin = opts.transformOrigin,
-      transition = opts.transition;
-    if ("undefined" == typeof transition || "undefined" == typeof animates) {
+      transition = opts.transition
+    if (typeof transition === 'undefined' || typeof animates === 'undefined') {
       return {
-        transformOrigin: "",
-        transform: "",
-        transition: ""
-      };
+        transformOrigin: '',
+        transform: '',
+        transition: ''
+      }
     }
 
-    var transform = animates.filter(function (animate) {
-      var type = animate.type;
-      return "style" !== type
-    }).map(function (animate) {
-      var animateType = animate.type,
-        animateArgs = animate.args;
-      switch (animateType) {
-        case "matrix":
-          return "matrix(" + animateArgs.join(",") + ")";
-        case "matrix3d":
-          return "matrix3d(" + animateArgs.join(",") + ")";
-        case "rotate":
-          return animateArgs = animateArgs.map(addDegSuffix), "rotate(" + animateArgs[0] + ")";
-        case "rotate3d":
-          return animateArgs[3] = addDegSuffix(animateArgs[3]), "rotate3d(" + animateArgs.join(",") + ")";
-        case "rotateX":
-          return animateArgs = animateArgs.map(addDegSuffix), "rotateX(" + animateArgs[0] + ")";
-        case "rotateY":
-          return animateArgs = animateArgs.map(addDegSuffix), "rotateY(" + animateArgs[0] + ")";
-        case "rotateZ":
-          return animateArgs = animateArgs.map(addDegSuffix), "rotateZ(" + animateArgs[0] + ")";
-        case "scale":
-          return "scale(" + animateArgs.join(",") + ")";
-        case "scale3d":
-          return "scale3d(" + animateArgs.join(",") + ")";
-        case "scaleX":
-          return "scaleX(" + animateArgs[0] + ")";
-        case "scaleY":
-          return "scaleY(" + animateArgs[0] + ")";
-        case "scaleZ":
-          return "scaleZ(" + animateArgs[0] + ")";
-        case "translate":
-          return animateArgs = animateArgs.map(addPXSuffix), "translate(" + animateArgs.join(",") + ")";
-        case "translate3d":
-          return animateArgs = animateArgs.map(addPXSuffix), "translate3d(" + animateArgs.join(",") + ")";
-        case "translateX":
-          return animateArgs = animateArgs.map(addPXSuffix), "translateX(" + animateArgs[0] + ")";
-        case "translateY":
-          return animateArgs = animateArgs.map(addPXSuffix), "translateY(" + animateArgs[0] + ")";
-        case "translateZ":
-          return animateArgs = animateArgs.map(addPXSuffix), "translateZ(" + animateArgs[0] + ")";
-        case "skew":
-          return animateArgs = animateArgs.map(addDegSuffix), "skew(" + animateArgs.join(",") + ")";
-        case "skewX":
-          return animateArgs = animateArgs.map(addDegSuffix), "skewX(" + animateArgs[0] + ")";
-        case "skewY":
-          return animateArgs = animateArgs.map(addDegSuffix), "skewY(" + animateArgs[0] + ")";
-        default:
-          return ""
-      }
-    }).join(" ")
+    var transform = animates
+      .filter(function (animate) {
+        var type = animate.type
+        return type !== 'style'
+      })
+      .map(function (animate) {
+        var animateType = animate.type,
+          animateArgs = animate.args
+        switch (animateType) {
+          case 'matrix':
+            return 'matrix(' + animateArgs.join(',') + ')'
+          case 'matrix3d':
+            return 'matrix3d(' + animateArgs.join(',') + ')'
+          case 'rotate':
+            return (
+              (animateArgs = animateArgs.map(addDegSuffix)),
+              'rotate(' + animateArgs[0] + ')'
+            )
+          case 'rotate3d':
+            return (
+              (animateArgs[3] = addDegSuffix(animateArgs[3])),
+              'rotate3d(' + animateArgs.join(',') + ')'
+            )
+          case 'rotateX':
+            return (
+              (animateArgs = animateArgs.map(addDegSuffix)),
+              'rotateX(' + animateArgs[0] + ')'
+            )
+          case 'rotateY':
+            return (
+              (animateArgs = animateArgs.map(addDegSuffix)),
+              'rotateY(' + animateArgs[0] + ')'
+            )
+          case 'rotateZ':
+            return (
+              (animateArgs = animateArgs.map(addDegSuffix)),
+              'rotateZ(' + animateArgs[0] + ')'
+            )
+          case 'scale':
+            return 'scale(' + animateArgs.join(',') + ')'
+          case 'scale3d':
+            return 'scale3d(' + animateArgs.join(',') + ')'
+          case 'scaleX':
+            return 'scaleX(' + animateArgs[0] + ')'
+          case 'scaleY':
+            return 'scaleY(' + animateArgs[0] + ')'
+          case 'scaleZ':
+            return 'scaleZ(' + animateArgs[0] + ')'
+          case 'translate':
+            return (
+              (animateArgs = animateArgs.map(addPXSuffix)),
+              'translate(' + animateArgs.join(',') + ')'
+            )
+          case 'translate3d':
+            return (
+              (animateArgs = animateArgs.map(addPXSuffix)),
+              'translate3d(' + animateArgs.join(',') + ')'
+            )
+          case 'translateX':
+            return (
+              (animateArgs = animateArgs.map(addPXSuffix)),
+              'translateX(' + animateArgs[0] + ')'
+            )
+          case 'translateY':
+            return (
+              (animateArgs = animateArgs.map(addPXSuffix)),
+              'translateY(' + animateArgs[0] + ')'
+            )
+          case 'translateZ':
+            return (
+              (animateArgs = animateArgs.map(addPXSuffix)),
+              'translateZ(' + animateArgs[0] + ')'
+            )
+          case 'skew':
+            return (
+              (animateArgs = animateArgs.map(addDegSuffix)),
+              'skew(' + animateArgs.join(',') + ')'
+            )
+          case 'skewX':
+            return (
+              (animateArgs = animateArgs.map(addDegSuffix)),
+              'skewX(' + animateArgs[0] + ')'
+            )
+          case 'skewY':
+            return (
+              (animateArgs = animateArgs.map(addDegSuffix)),
+              'skewY(' + animateArgs[0] + ')'
+            )
+          default:
+            return ''
+        }
+      })
+      .join(' ')
 
-    var style = animates.filter(function (animate) {
-      var type = animate.type;
-      return "style" === type
-    }).reduce(function (res, cur) {
-      return res[cur.args[0]] = cur.args[1], res
-    }, {})
+    var style = animates
+      .filter(function (animate) {
+        var type = animate.type
+        return type === 'style'
+      })
+      .reduce(function (res, cur) {
+        return (res[cur.args[0]] = cur.args[1]), res
+      }, {})
 
-    var transitionProperty = ["transform"].concat(Object.keys(style)).join(",");
+    var transitionProperty = ['transform'].concat(Object.keys(style)).join(',')
 
     return {
       style: style,
       transformOrigin: transformOrigin,
       transform: transform,
       transitionProperty: transitionProperty,
-      transition: transition.duration + "ms " + transition.timingFunction + " " + transition.delay + "ms"
+      transition:
+        transition.duration +
+        'ms ' +
+        transition.timingFunction +
+        ' ' +
+        transition.delay +
+        'ms'
     }
   },
-  //service
-  anyTypeToString(data) {//把e转成string并返回一个对象
-    var dataType = this.getDataType(data);
-    if ("Array" == dataType || "Object" == dataType){
+  // service
+  anyTypeToString (data) {
+    // 把e转成string并返回一个对象
+    var dataType = this.getDataType(data)
+    if (dataType == 'Array' || dataType == 'Object') {
       try {
         data = JSON.stringify(data)
       } catch (e) {
-        e.type = "AppServiceSdkKnownError"
+        e.type = 'AppServiceSdkKnownError'
         throw e
       }
-    }else{
-      data = "String" == dataType || "Number" == dataType || "Boolean" == dataType ?
-        data.toString() :
-        "Date" == dataType ?
-          data.getTime().toString() :
-          "Undefined" == dataType ?
-            "undefined" :
-            "Null" == dataType ? "null" : "";
+    } else {
+      data =
+        dataType == 'String' || dataType == 'Number' || dataType == 'Boolean'
+          ? data.toString()
+          : dataType == 'Date'
+            ? data.getTime().toString()
+            : dataType == 'Undefined'
+              ? 'undefined'
+              : dataType == 'Null' ? 'null' : ''
     }
     return {
       data: data,
       dataType: dataType
     }
   },
-  stringToAnyType(data, type) {//把e解码回来，和前面a相对应
+  stringToAnyType (data, type) {
+    // 把e解码回来，和前面a相对应
 
-    return data = "String" == type ?
-      data :
-      "Array" == type || "Object" == type ?
-        JSON.parse(data) :
-        "Number" == type ?
-          parseFloat(data) :
-          "Boolean" == type ?
-            "true" == data :
-            "Date" == type ?
-              new Date(parseInt(data)) :
-              "Undefined" == type ?
-                void 0 : "Null" == type ? null : ""
+    return (data =
+      type == 'String'
+        ? data
+        : type == 'Array' || type == 'Object'
+          ? JSON.parse(data)
+          : type == 'Number'
+            ? parseFloat(data)
+            : type == 'Boolean'
+              ? data == 'true'
+              : type == 'Date'
+                ? new Date(parseInt(data))
+                : type == 'Undefined' ? void 0 : type == 'Null' ? null : '')
   },
-  getDataType(data) {//get data type
-    return Object.prototype.toString.call(data).split(" ")[1].split("]")[0]
+  getDataType (data) {
+    // get data type
+    return Object.prototype.toString
+      .call(data)
+      .split(' ')[1]
+      .split(']')[0]
   },
-  isPlainObject(e) {
-    return "Object" === this.getDataType(e)
+  isPlainObject (e) {
+    return this.getDataType(e) === 'Object'
   },
-  paramCheck(params, paramTpl) {//比较e\t
+  paramCheck (params, paramTpl) {
+    // 比较e\t
     var result,
-      name = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : "parameter",
+      name =
+        arguments.length > 2 && void 0 !== arguments[2]
+          ? arguments[2]
+          : 'parameter',
       tplTpye = this.getDataType(paramTpl),
-      pType = this.getDataType(params);
-    if (pType != tplTpye) return name + " should be " + tplTpye + " instead of " + pType + ";";
-    switch (result = "", tplTpye) {
-      case "Object":
-        for (var i in paramTpl) result += this.paramCheck(params[i], paramTpl[i], name + "." + i);
-        break;
-      case "Array":
-        if (params.length < paramTpl.length) return name + " should have at least " + paramTpl.length + " item;";
-        for (var a = 0; a < paramTpl.length; ++a) result += this.paramCheck(params[a], paramTpl[a], name + "[" + a + "]")
+      pType = this.getDataType(params)
+    if (pType != tplTpye) { return name + ' should be ' + tplTpye + ' instead of ' + pType + ';' }
+    switch (((result = ''), tplTpye)) {
+      case 'Object':
+        for (var i in paramTpl) { result += this.paramCheck(params[i], paramTpl[i], name + '.' + i) }
+        break
+      case 'Array':
+        if (params.length < paramTpl.length) { return name + ' should have at least ' + paramTpl.length + ' item;' }
+        for (var a = 0; a < paramTpl.length; ++a) {
+          result += this.paramCheck(
+            params[a],
+            paramTpl[a],
+            name + '[' + a + ']'
+          )
+        }
     }
     return result
   },
-  urlEncodeFormData(data) {//把对象生成queryString
-    var needEncode = arguments.length > 1 && void 0 !== arguments[1] && arguments[1];
-    if ("object" !== typeof(data)) return data;
-    var tmpArr = [];
-    for (var o in data) if (data.hasOwnProperty(o)) {
-      if (needEncode) {
-        try {
-          tmpArr.push(encodeURIComponent(o) + "=" + encodeURIComponent(data[o]))
-        } catch (t) {
-          tmpArr.push(o + "=" + data[o])
-        }
-      }else tmpArr.push(o + "=" + data[o]);
-
-    }
-    return tmpArr.join("&")
-  },
-  addQueryStringToUrl(originalUrl, newParams) {//生成url t:param obj
-    if ("string" == typeof originalUrl && "object" === typeof(newParams) && Object.keys(newParams).length > 0) {
-      var urlComponents = originalUrl.split("?"),
-        host = urlComponents[0],
-        oldParams = (urlComponents[1] || "").split("&").reduce(function (res, cur) {
-          if ("string" == typeof cur && cur.length > 0) {
-            var curArr = cur.split("="),
-              key = curArr[0],
-              value = curArr[1];
-            res[key] = value
+  urlEncodeFormData (data) {
+    // 把对象生成queryString
+    var needEncode =
+      arguments.length > 1 && void 0 !== arguments[1] && arguments[1]
+    if (typeof data !== 'object') return data
+    var tmpArr = []
+    for (var o in data) {
+      if (data.hasOwnProperty(o)) {
+        if (needEncode) {
+          try {
+            tmpArr.push(
+              encodeURIComponent(o) + '=' + encodeURIComponent(data[o])
+            )
+          } catch (t) {
+            tmpArr.push(o + '=' + data[o])
           }
-          return res
-        }, {}),
+        } else tmpArr.push(o + '=' + data[o])
+      }
+    }
+    return tmpArr.join('&')
+  },
+  addQueryStringToUrl (originalUrl, newParams) {
+    // 生成url t:param obj
+    if (
+      typeof originalUrl === 'string' &&
+      typeof newParams === 'object' &&
+      Object.keys(newParams).length > 0
+    ) {
+      var urlComponents = originalUrl.split('?'),
+        host = urlComponents[0],
+        oldParams = (urlComponents[1] || '')
+          .split('&')
+          .reduce(function (res, cur) {
+            if (typeof cur === 'string' && cur.length > 0) {
+              var curArr = cur.split('='),
+                key = curArr[0],
+                value = curArr[1]
+              res[key] = value
+            }
+            return res
+          }, {}),
         refinedNewParams = Object.keys(newParams).reduce(function (res, cur) {
-          "object" === typeof(newParams[cur]) ?
-            res[encodeURIComponent(cur)] = encodeURIComponent(JSON.stringify(newParams[cur])) :
-            res[encodeURIComponent(cur)] = encodeURIComponent(newParams[cur])
+          typeof newParams[cur] === 'object'
+            ? (res[encodeURIComponent(cur)] = encodeURIComponent(
+              JSON.stringify(newParams[cur])
+            ))
+            : (res[encodeURIComponent(cur)] = encodeURIComponent(
+              newParams[cur]
+            ))
           return res
-        }, {});
-      return host + "?" + this.urlEncodeFormData(this.assign(oldParams, refinedNewParams))
+        }, {})
+      return (
+        host +
+        '?' +
+        this.urlEncodeFormData(this.assign(oldParams, refinedNewParams))
+      )
     }
     return originalUrl
   },
-  validateUrl(url) {
+  validateUrl (url) {
     return /^(http|https):\/\/.*/i.test(url)
   },
-  assign() {//endext 对象合并
-    const args = Array.prototype.slice.apply(arguments);
+  assign () {
+    // endext 对象合并
+    const args = Array.prototype.slice.apply(arguments)
     return args.reduce(function (res, cur) {
       for (var n in cur) {
-        res[n] = cur[n];
+        res[n] = cur[n]
       }
       return res
     }, {})
   },
-  encodeUrlQuery(url) {//把url中的参数encode
-    if ("string" == typeof url) {
-      var urlArr = url.split("?"),
+  encodeUrlQuery (url) {
+    // 把url中的参数encode
+    if (typeof url === 'string') {
+      var urlArr = url.split('?'),
         urlPath = urlArr[0],
-        queryParams = (urlArr[1] || "").split("&").reduce(function (res, cur) {
-          if ("string" == typeof cur && cur.length > 0) {
-            var curArr = cur.split("="),
+        queryParams = (urlArr[1] || '').split('&').reduce(function (res, cur) {
+          if (typeof cur === 'string' && cur.length > 0) {
+            var curArr = cur.split('='),
               key = curArr[0],
-              value = curArr[1];
+              value = curArr[1]
             res[key] = value
           }
           return res
         }, {}),
-        urlQueryArr = [];
+        urlQueryArr = []
       for (var i in queryParams) {
-        queryParams.hasOwnProperty(i) && urlQueryArr.push(i + "=" + encodeURIComponent(queryParams[i]));
+        queryParams.hasOwnProperty(i) &&
+          urlQueryArr.push(i + '=' + encodeURIComponent(queryParams[i]))
       }
-      return urlQueryArr.length > 0 ? urlPath + "?" + urlQueryArr.join("&") : url
+      return urlQueryArr.length > 0
+        ? urlPath + '?' + urlQueryArr.join('&')
+        : url
     }
     return url
   },
-  addHTMLSuffix(url) {//给url加上。html的扩展名
-    if ("string" != typeof url) {
-      return url;
+  addHTMLSuffix (url) {
+    // 给url加上。html的扩展名
+    if (typeof url !== 'string') {
+      return url
     }
-    var urlArr = url.split("?");
-    urlArr[0] += ".html"
-    return "undefined" != typeof urlArr[1] ? urlArr[0] + "?" + urlArr[1] : urlArr[0]
+    var urlArr = url.split('?')
+    urlArr[0] += '.html'
+    return typeof urlArr[1] !== 'undefined'
+      ? urlArr[0] + '?' + urlArr[1]
+      : urlArr[0]
   },
-  arrayBufferToBase64(buffer) {
-    for (var res = "", arr = new Uint8Array(buffer), arrLeng = arr.byteLength, r = 0; r < arrLeng; r++) {
-      res += String.fromCharCode(arr[r]);
+  arrayBufferToBase64 (buffer) {
+    for (
+      var res = '',
+        arr = new Uint8Array(buffer),
+        arrLeng = arr.byteLength,
+        r = 0;
+      r < arrLeng;
+      r++
+    ) {
+      res += String.fromCharCode(arr[r])
     }
     return btoa(res)
   },
-  base64ToArrayBuffer(str) {
-    for (var atobStr = atob(str), leng = atobStr.length, arr = new Uint8Array(leng), r = 0; r < leng; r++) arr[r] = atobStr.charCodeAt(r);
+  base64ToArrayBuffer (str) {
+    for (
+      var atobStr = atob(str),
+        leng = atobStr.length,
+        arr = new Uint8Array(leng),
+        r = 0;
+      r < leng;
+      r++
+    ) { arr[r] = atobStr.charCodeAt(r) }
     return arr.buffer
   },
-  blobToArrayBuffer(blobStr, callback) {//readAsArrayBuffer t:callback
-    var fileReader = new FileReader;
+  blobToArrayBuffer (blobStr, callback) {
+    // readAsArrayBuffer t:callback
+    var fileReader = new FileReader()
     fileReader.onload = function () {
       callback(this.result)
     }
     fileReader.readAsArrayBuffer(blobStr)
   },
-  convertObjectValueToString(obj) {//把对象元素都转成字符串
+  convertObjectValueToString (obj) {
+    // 把对象元素都转成字符串
     return Object.keys(obj).reduce(function (res, cur) {
-      "string" == typeof obj[cur] ?
-        res[cur] = obj[cur] :
-        "number" == typeof obj[cur] ?
-          res[cur] = obj[cur] + "" :
-          res[cur] = Object.prototype.toString.apply(obj[cur])
+      typeof obj[cur] === 'string'
+        ? (res[cur] = obj[cur])
+        : typeof obj[cur] === 'number'
+          ? (res[cur] = obj[cur] + '')
+          : (res[cur] = Object.prototype.toString.apply(obj[cur]))
       return res
     }, {})
   },
-  renameProperty(obj, oldName, newName) {
-    this.isPlainObject(obj) !== !1 && oldName != newName && obj.hasOwnProperty(oldName) && (obj[newName] = obj[oldName], delete obj[oldName])
+  renameProperty (obj, oldName, newName) {
+    this.isPlainObject(obj) !== !1 &&
+      oldName != newName &&
+      obj.hasOwnProperty(oldName) &&
+      ((obj[newName] = obj[oldName]), delete obj[oldName])
   },
-  toArray(arg) { // 把e转成array
+  toArray (arg) {
+    // 把e转成array
     if (Array.isArray(arg)) {
       for (var t = 0, n = Array(arg.length); t < arg.length; t++) n[t] = arg[t]
       return n
     }
     return Array.from(arg)
   },
-  canIUse (params,version){
-    return true;
-/*
+  canIUse (params, version) {
+    return true
+    /*
     var name = params[0];//API或组件名
     if(Components[name]){
       return this.isComponentExist(params);
@@ -719,9 +881,8 @@ const utils = {
       return false;
     }
 */
-
   },
-/*  isComponentExist(params){
+  /*  isComponentExist(params){
     var name = params[0],//组件名
       attribute = params[1],//属性名
       option = params[2],//组件属性可选值
@@ -780,52 +941,61 @@ const utils = {
       }
       return false;
     }
-  },*/
-  transWxmlToHtml(url) {
-    if ("string" != typeof url)return url;
-    var urlArr = url.split("?");
-    return urlArr[0] += ".html", void 0 !== urlArr[1] ? urlArr[0] + "?" + urlArr[1] : urlArr[0]
+  }, */
+  transWxmlToHtml (url) {
+    if (typeof url !== 'string') return url
+    var urlArr = url.split('?')
+    return (
+      (urlArr[0] += '.html'),
+      void 0 !== urlArr[1] ? urlArr[0] + '?' + urlArr[1] : urlArr[0]
+    )
   },
-  removeHtmlSuffixFromUrl(url) {
-    return "string" == typeof url ? -1 !== url.indexOf("?") ? url.replace(/\.html\?/, "?") : url.replace(/\.html$/, "") : url
+  removeHtmlSuffixFromUrl (url) {
+    return typeof url === 'string'
+      ? url.indexOf('?') !== -1
+        ? url.replace(/\.html\?/, '?')
+        : url.replace(/\.html$/, '')
+      : url
   },
   AppServiceSdkKnownError: AppServiceSdkKnownError,
-  AppServiceEngineKnownError:AppServiceEngineKnownError,
-  defaultRunningStatus : "active",
-  wxQuerySelector:wxQuerySelector,
+  AppServiceEngineKnownError: AppServiceEngineKnownError,
+  defaultRunningStatus: 'active',
+  wxQuerySelector: wxQuerySelector,
 
-  safeInvoke() {//do page method
+  safeInvoke () {
+    // do page method
     var res = void 0,
       args = Array.prototype.slice.call(arguments),
-      fn = args[0];
-    args = args.slice(1);
+      fn = args[0]
+    args = args.slice(1)
     try {
-      var startTime = Date.now();
-      res = this[fn].apply(this, args);
-      var doTime = Date.now() - startTime;
-      doTime > 1e3 && Reporter.slowReport({
-        key: "pageInvoke",
-        cost: doTime,
-        extend: "at " + this.__route__ + " page " + fn + " function"
-      });
-    } catch(e) {
+      var startTime = Date.now()
+      res = this[fn].apply(this, args)
+      var doTime = Date.now() - startTime
+      doTime > 1e3 &&
+        Reporter.slowReport({
+          key: 'pageInvoke',
+          cost: doTime,
+          extend: 'at ' + this.__route__ + ' page ' + fn + ' function'
+        })
+    } catch (e) {
       Reporter.thirdErrorReport({
         error: e,
-        extend: 'at "' + this.__route__ + '" page ' + fn + " function"
-      });
+        extend: 'at "' + this.__route__ + '" page ' + fn + ' function'
+      })
     }
-    return res;
+    return res
   },
-  isEmptyObject(obj) {
+  isEmptyObject (obj) {
     for (var t in obj) {
       if (obj.hasOwnProperty(t)) {
-        return false;
+        return false
       }
     }
-    return true;
+    return true
   },
-  noop() {},
-  def(obj, attr, value, enumerable) {
+  noop () {},
+  def (obj, attr, value, enumerable) {
     Object.defineProperty(obj, attr, {
       value: value,
       enumerable: !!enumerable,
@@ -833,27 +1003,31 @@ const utils = {
       configurable: true
     })
   },
-  error(title, err) {
-    console.group(new Date + " " + title);
-    console.error(err);
-    console.groupEnd();
+  error (title, err) {
+    console.group(new Date() + ' ' + title)
+    console.error(err)
+    console.groupEnd()
   },
-  warn(title, warn) {
+  warn (title, warn) {
     this.error(title, warn)
   },
-  info(msg) {
-    __wxConfig__ && __wxConfig__.debug && console.info(msg);
+  info (msg) {
+    __wxConfig__ && __wxConfig__.debug && console.info(msg)
   },
-  publish() {
+  publish () {
     var params = Array.prototype.slice.call(arguments),
       defaultOpt = {
         options: {
           timestamp: Date.now()
         }
-      };
-    params[1] ? params[1].options = Object.assign(params[1].options || {},defaultOpt.options) : params[1] = defaultOpt;
-    ServiceJSBridge.publish.apply(ServiceJSBridge, params);
+      }
+    params[1]
+      ? (params[1].options = Object.assign(
+        params[1].options || {},
+        defaultOpt.options
+      ))
+      : (params[1] = defaultOpt)
+    ServiceJSBridge.publish.apply(ServiceJSBridge, params)
   }
-
 }
 export default utils

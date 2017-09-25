@@ -15,7 +15,7 @@ class WxVirtualNode {
     Utils.isUndefined(wxKey)
       ? (this.wxKey = void 0)
       : (this.wxKey = String(wxKey))
-    this.descendants = 0//子节点数
+    this.descendants = 0 // 子节点数
     for (let c = 0; c < this.children.length; ++c) {
       let child = this.children[c]
       if (Utils.isVirtualNode(child)) {
@@ -33,9 +33,10 @@ class WxVirtualNode {
   }
 
   render () {
-    let ele = this.tagName !== 'virtual'
-      ? exparser.createElement(this.tagName)
-      : exparser.VirtualNode.create('virtual')
+    let ele =
+      this.tagName !== 'virtual'
+        ? exparser.createElement(this.tagName)
+        : exparser.VirtualNode.create('virtual')
 
     Properties.applyProperties(ele, this.props)
 

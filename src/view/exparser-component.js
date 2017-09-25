@@ -51,19 +51,19 @@
   })
   WeixinJSBridge.subscribe('setKeyboardValue', function (event) {
     event &&
-    event.data &&
-    exparser.triggerEvent(
-      document,
-      'setKeyboardValue',
-      {
-        value: event.data.value,
-        cursor: event.data.cursor,
-        inputId: event.data.inputId
-      },
-      {
-        bubbles: !0
-      }
-    )
+      event.data &&
+      exparser.triggerEvent(
+        document,
+        'setKeyboardValue',
+        {
+          value: event.data.value,
+          cursor: event.data.cursor,
+          inputId: event.data.inputId
+        },
+        {
+          bubbles: !0
+        }
+      )
   })
   WeixinJSBridge.subscribe('hideKeyboard', function (e) {
     exparser.triggerEvent(
@@ -196,7 +196,6 @@
         }, 17)
     })
 })(window)
-
 ;(function (win) {
   // touch events
   var triggerEvent = function (event, name, params) {
@@ -276,8 +275,10 @@
     touchmove = function (e, x, y) {
       if (oriTimeStamp) {
         if (
-          !(Math.abs(x - curX) < distanceThreshold &&
-            Math.abs(y - curY) < distanceThreshold)
+          !(
+            Math.abs(x - curX) < distanceThreshold &&
+            Math.abs(y - curY) < distanceThreshold
+          )
         ) {
           longtapTimer && (clearTimeout(longtapTimer), (longtapTimer = null))
           isCancletap = !0

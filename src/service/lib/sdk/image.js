@@ -1,4 +1,3 @@
-
 export default function (src) {
   let img = document.createElement('img')
   img.src = src
@@ -13,7 +12,7 @@ export default function (src) {
   })
 }
 
-function imgDimension(image) {
+function imgDimension (image) {
   if (image.naturalWidth) {
     return {
       height: image.naturalHeight,
@@ -21,7 +20,7 @@ function imgDimension(image) {
     }
   } else {
     let i = new Image()
-    i.src = image.currentSrc || image.src;
+    i.src = image.currentSrc || image.src
     return {
       height: i.height,
       width: i.width

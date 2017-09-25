@@ -1,4 +1,4 @@
-import {transition} from 'prop-detect'
+import { transition } from 'prop-detect'
 import assign from 'object-assign'
 import spin from './spin'
 
@@ -6,7 +6,7 @@ const body = document.body
 
 module.exports = {
   show: function () {
-    let overlay = this.overlay = document.createElement('div')
+    let overlay = (this.overlay = document.createElement('div'))
     let middle = document.createElement('div')
     assign(middle.style, {
       height: '48px',

@@ -115,7 +115,9 @@ export default class View extends Emitter {
     this.onReady(() => {
       data.msg = data.msg || {}
 
-      var msg = data.msg, command = data.command, ext = data.ext
+      var msg = data.msg,
+        command = data.command,
+        ext = data.ext
 
       if (command === 'MSG_FROM_APPSERVICE') {
         WeixinJSBridge.subscribeHandler(msg.eventName, msg.data)
@@ -156,7 +158,7 @@ export default class View extends Emitter {
     return el
   }
   inlineCss (content, path) {
-    content = utils.transformRpx(content,false)
+    content = utils.transformRpx(content, false)
     if (!content) return
     /*
      content = content.split('\n').map(function(value){
@@ -193,7 +195,9 @@ export default class View extends Emitter {
         let resArr = res.split('@code-separator-line:')
         try {
           new Function(`${resArr[2]}\n //# sourceURL=${self.path}.js`)() // define page service
-          if (!window.firstRender) { lifeSycleEvent(self.path, self.query, 'appLaunch') }
+          if (!window.firstRender) {
+            lifeSycleEvent(self.path, self.query, 'appLaunch')
+          }
         } catch (e) {
           console.error(e)
         }

@@ -9,7 +9,7 @@ SlotNode.prototype = Object.create(Element.prototype, {
   }
 })
 
-//对dom元素时行封装，返回虚拟dom
+// 对dom元素时行封装，返回虚拟dom
 SlotNode.wrap = function (ele) {
   let tempObj = Object.create(SlotNode.prototype)
   Element.initialize(tempObj)

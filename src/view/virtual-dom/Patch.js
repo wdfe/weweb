@@ -13,11 +13,7 @@ class Patch {
     let that = this
     if (this.patchIndexes.length === 0) return rootNode
 
-    let doms = DomIndex.getDomIndex(
-      rootNode,
-      this.oldTree,
-      this.patchIndexes
-    )
+    let doms = DomIndex.getDomIndex(rootNode, this.oldTree, this.patchIndexes)
 
     this.patchIndexes.forEach(function (patchIdx) {
       let dom = doms[patchIdx]

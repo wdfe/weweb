@@ -11,44 +11,51 @@ var audioInput = null,
 var analyserNode
 
 function initAudio () {
-  if (!navigator.getUserMedia) { navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia }
+  if (!navigator.getUserMedia) {
+    navigator.getUserMedia =
+      navigator.webkitGetUserMedia || navigator.mozGetUserMedia
+  }
   return new Promise(function (resolve, reject) {
     if (audioRecorder) return resolve()
-    navigator.getUserMedia({
-      'audio': {
-        'mandatory': {
-          'googEchoCancellation': 'false',
-          'googAutoGainControl': 'false',
-          'googNoiseSuppression': 'false',
-          'googHighpassFilter': 'false'
-        },
-        'optional': []
+    navigator.getUserMedia(
+      {
+        audio: {
+          mandatory: {
+            googEchoCancellation: 'false',
+            googAutoGainControl: 'false',
+            googNoiseSuppression: 'false',
+            googHighpassFilter: 'false'
+          },
+          optional: []
+        }
+      },
+      function (stream) {
+        inputPoint = audioContext.createGain()
+        // Create an AudioNode from the stream.
+        realAudioInput = audioContext.createMediaStreamSource(stream)
+        audioInput = realAudioInput
+        audioInput.connect(inputPoint)
+        // audioInput = convertToMono( input );
+        analyserNode = audioContext.createAnalyser()
+        analyserNode.fftSize = 2048
+        inputPoint.connect(analyserNode)
+
+        audioRecorder = new Recorder(inputPoint)
+
+        var zeroGain = audioContext.createGain()
+        zeroGain.gain.value = 0.0
+        inputPoint.connect(zeroGain)
+        zeroGain.connect(audioContext.destination)
+        resolve()
+      },
+      function (e) {
+        reject(e)
       }
-    }, function (stream) {
-      inputPoint = audioContext.createGain()
-      // Create an AudioNode from the stream.
-      realAudioInput = audioContext.createMediaStreamSource(stream)
-      audioInput = realAudioInput
-      audioInput.connect(inputPoint)
-      // audioInput = convertToMono( input );
-      analyserNode = audioContext.createAnalyser()
-      analyserNode.fftSize = 2048
-      inputPoint.connect(analyserNode)
-
-      audioRecorder = new Recorder(inputPoint)
-
-      var zeroGain = audioContext.createGain()
-      zeroGain.gain.value = 0.0
-      inputPoint.connect(zeroGain)
-      zeroGain.connect(audioContext.destination)
-      resolve()
-    }, function (e) {
-      reject(e)
-    })
+    )
   })
 }
 
-function emptyFn () { }
+function emptyFn () {}
 
 let recording = false
 

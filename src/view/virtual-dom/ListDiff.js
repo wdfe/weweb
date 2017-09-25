@@ -71,7 +71,8 @@ const listDiff = function (aChildren, bChildren) {
   // Iterate through b and append any new keys
   // O(M) time
   for (let idx = 0; idx < bChildren.length; ++idx) {
-    let newItem = bChildren[idx], bItemKey = getItemKey(newItem)
+    let newItem = bChildren[idx],
+      bItemKey = getItemKey(newItem)
     if (bItemKey) {
       aKeys.hasOwnProperty(bItemKey) || newChildren.push(newItem)
     } else if (idx >= lastFreeIndex) {
@@ -170,7 +171,8 @@ const listDiff = function (aChildren, bChildren) {
 }
 
 const makeKeyAndFreeIndexes = function (children) {
-  let keyIndexes = {}, freeIndexes = []
+  let keyIndexes = {},
+    freeIndexes = []
   for (let idx = 0; idx < children.length; ++idx) {
     let child = children[idx]
     let wxKey = getItemKey(child)

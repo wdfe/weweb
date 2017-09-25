@@ -1,4 +1,4 @@
-//管理data与绑定元素的更新
+// 管理data与绑定元素的更新
 const BoundProps = function () {}
 
 BoundProps.prototype = Object.create(Object.prototype, {
@@ -32,13 +32,17 @@ BoundProps.prototype.add = function (exp, targetElem, targetProp, updateFunc) {
     bindings[prop].push(propDes)
   }
 }
-//更新变量propKey相关联的元素ele属性
+// 更新变量propKey相关联的元素ele属性
 BoundProps.prototype.update = function (ele, propData, propKey) {
   let _binding = this._bindings[propKey]
   if (_binding) {
     for (let idx = 0; idx < _binding.length; idx++) {
       let boundProp = _binding[idx]
-      boundProp.updateFunc(boundProp.targetElem, boundProp.targetProp, boundProp.exp.calculate(ele, propData))
+      boundProp.updateFunc(
+        boundProp.targetElem,
+        boundProp.targetProp,
+        boundProp.exp.calculate(ele, propData)
+      )
     }
   }
 }

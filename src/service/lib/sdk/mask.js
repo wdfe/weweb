@@ -1,6 +1,6 @@
 import assign from 'object-assign'
 
-export default function Mask() {
+export default function Mask () {
   let el = document.createElement('div')
   el.className = 'mask'
   assign(el.style, {

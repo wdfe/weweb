@@ -1,7 +1,13 @@
 // send XMR request to server
 const request = require('request')
 
-export default function api({method = 'get', headers = {}, url, data = null, query = {}}) {
+export default function api ({
+  method = 'get',
+  headers = {},
+  url,
+  data = null,
+  query = {}
+}) {
   return new Promise((resolve, reject) => {
     let req = request(method, url)
     req.accept('json').type('json')

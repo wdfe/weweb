@@ -12,7 +12,7 @@ import './service/amdEngine'
 
 import './view/api'
 
-import  './view/exparser'
+import './view/exparser'
 
 import './view/exparser-component'
 

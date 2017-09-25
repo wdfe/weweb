@@ -63,41 +63,47 @@ const parsePath = function (path) {
   return strs
 }
 
-const getObjectByPath = function(obj, paths, spec) {
-    for (var tempObj = void 0, key = void 0, originObj = obj, changed = !1, idx = 0; idx < paths.length; idx++){
-        if(Number(paths[idx]) === paths[idx] && paths[idx] % 1 === 0){
-            if("Array" !== Utils.getDataType(originObj)){
-                if(spec && !changed){
-                    changed = !0;
-                    tempObj[key] = { __value__: [], __wxspec__: !0};
-                    originObj = tempObj[key].__value__;
-                }else{
-                    tempObj[key] = [];
-                    originObj = tempObj[key]
-                }
-            }
-        }else{
-            if("Object" !== Utils.getDataType(originObj)){
-                if(spec && !changed){
-                    changed = !0
-                    tempObj[key] = { __value__: {}, __wxspec__: !0}
-                    originObj = tempObj[key].__value__
-                }else{
-                    tempObj[key] = {}
-                    originObj = tempObj[key]
-                }
-            }
+const getObjectByPath = function (obj, paths, spec) {
+  for (
+    var tempObj = void 0, key = void 0, originObj = obj, changed = !1, idx = 0;
+    idx < paths.length;
+    idx++
+  ) {
+    if (Number(paths[idx]) === paths[idx] && paths[idx] % 1 === 0) {
+      if (Utils.getDataType(originObj) !== 'Array') {
+        if (spec && !changed) {
+          changed = !0
+          tempObj[key] = { __value__: [], __wxspec__: !0 }
+          originObj = tempObj[key].__value__
+        } else {
+          tempObj[key] = []
+          originObj = tempObj[key]
         }
-        key = paths[idx]
-        tempObj = originObj
-        originObj = originObj[paths[idx]]
-        originObj && originObj.__wxspec__ && (originObj = originObj.__value__, changed = !0)
+      }
+    } else {
+      if (Utils.getDataType(originObj) !== 'Object') {
+        if (spec && !changed) {
+          changed = !0
+          tempObj[key] = { __value__: {}, __wxspec__: !0 }
+          originObj = tempObj[key].__value__
+        } else {
+          tempObj[key] = {}
+          originObj = tempObj[key]
+        }
+      }
     }
-    return {
-        obj: tempObj,
-        key: key,
-        changed: changed
-    }
+    key = paths[idx]
+    tempObj = originObj
+    originObj = originObj[paths[idx]]
+    originObj &&
+      originObj.__wxspec__ &&
+      ((originObj = originObj.__value__), (changed = !0))
+  }
+  return {
+    obj: tempObj,
+    key: key,
+    changed: changed
+  }
 }
 export default {
   parsePath,

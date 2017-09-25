@@ -22,28 +22,36 @@ const fn = et.compile(tmpl)
 
 let el = null
 
-export default function ({itemList, itemColor = '#000000'}) {
+export default function ({ itemList, itemColor = '#000000' }) {
   if (el && el.parentNode) el.parentNode.removeChild(el)
 
   el = domify(fn({ itemList, itemColor }))
-  setTimeout(function(){//必须延迟一些，要不然会立即触发click
+  setTimeout(function () {
+    // 必须延迟一些，要不然会立即触发click
     document.body.appendChild(el)
-  },100);
+  }, 100)
   let called = false
   return new Promise(resolve => {
-    el.addEventListener('click', (e) => {
-      if (called) return
-      if (classes(e.target).has('wx-action-sheet-mask')) {
-        called = true
-        resolve({cancel: true})
-      } else if (classes(e.target).has('wx-action-sheet-item')) {
-        called = true
-        resolve({cancel: false, tapIndex: Number(e.target.getAttribute('data-index'))})
-      } else if (classes(e.target).has('wx-action-sheet-cancel')) {
-        called = true
-        resolve({cancel: true})
-      }
-      if (called && el && el.parentNode) el.parentNode.removeChild(el)
-    }, false)
+    el.addEventListener(
+      'click',
+      e => {
+        if (called) return
+        if (classes(e.target).has('wx-action-sheet-mask')) {
+          called = true
+          resolve({ cancel: true })
+        } else if (classes(e.target).has('wx-action-sheet-item')) {
+          called = true
+          resolve({
+            cancel: false,
+            tapIndex: Number(e.target.getAttribute('data-index'))
+          })
+        } else if (classes(e.target).has('wx-action-sheet-cancel')) {
+          called = true
+          resolve({ cancel: true })
+        }
+        if (called && el && el.parentNode) el.parentNode.removeChild(el)
+      },
+      false
+    )
   })
 }

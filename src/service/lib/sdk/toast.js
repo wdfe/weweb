@@ -17,13 +17,15 @@ const fn = et.compile(tmpl)
 let hideMask = null
 
 export default {
-  show: function ({duration = 1500, icon, title, mask}) {
+  show: function ({ duration = 1500, icon, title, mask }) {
     this.hide()
     duration = Math.min(duration, 10000)
-    let el = domify(fn({
-      title,
-      icon
-    }))
+    let el = domify(
+      fn({
+        title,
+        icon
+      })
+    )
     this.el = el
     document.body.appendChild(el)
     if (mask) {

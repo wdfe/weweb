@@ -59,7 +59,8 @@ const getCanvasTouches = function (args) {
   })
 }
 const calcDistance = function (end, start) {
-  var dx = end.x - start.x, dy = end.y - start.y
+  var dx = end.x - start.x,
+    dy = end.y - start.y
   return dx * dx + dy * dy
 }
 
@@ -127,9 +128,8 @@ export default window.exparser.registerElement({
     var canvasId = window.__webviewId__ + 'canvas' + this.canvasId
     if (window.__canvasNumbers__.hasOwnProperty(canvasId)) {
       this.triggerEvent('error', {
-        errMsg: 'canvas-id ' +
-          self.canvasId +
-          ' in this page has already existed'
+        errMsg:
+          'canvas-id ' + self.canvasId + ' in this page has already existed'
       })
       this._isError = !0
       this.$$.style.display = 'none'
@@ -146,7 +146,8 @@ export default window.exparser.registerElement({
       WeixinJSBridge.subscribe(
         'canvas' + self._canvasNumber + 'actionsChanged',
         function (params) {
-          var actions = params.actions, reserve = params.reserve
+          var actions = params.actions,
+            reserve = params.reserve
           self.actions = actions
           self.actionsChanged(actions, reserve)
         }
@@ -196,7 +197,8 @@ export default window.exparser.registerElement({
                 if (self._touchInfo.hasOwnProperty(curEvent.identifier)) {
                   self._touchInfo[curEvent.identifier].longPress = !0
                   ++self._disableScroll
-                  var _touches = [], _changedTouches = []
+                  var _touches = [],
+                    _changedTouches = []
                   for (var ide in self._touchInfo) {
                     var curTouche = {
                       identifier: ide,
@@ -209,7 +211,8 @@ export default window.exparser.registerElement({
                   }
                   wx.publishPageEvent(self.bindlongtap, {
                     type: 'bindlongtap',
-                    timeStamp: self._touchInfo[curEvent.identifier].timeStamp +
+                    timeStamp:
+                      self._touchInfo[curEvent.identifier].timeStamp +
                       LONG_PRESS_TIME_THRESHOLD,
                     target: {
                       id: event.target.parentElement.id,
@@ -282,7 +285,8 @@ export default window.exparser.registerElement({
   },
   actionsChanged: function (actions, flag) {
     if (actions) {
-      var __canvas = this.$.canvas, ctx = __canvas.getContext('2d')
+      var __canvas = this.$.canvas,
+        ctx = __canvas.getContext('2d')
       if (flag === !1) {
         ctx.fillStyle = '#000000'
         ctx.strokeStyle = '#000000'
@@ -293,7 +297,9 @@ export default window.exparser.registerElement({
         ctx.setTransform(1, 0, 0, 1, 0, 0)
         ctx.clearRect(0, 0, __canvas.width, __canvas.height)
         actions.forEach(function (act) {
-          var self = this, _method = act.method, _data = act.data
+          var self = this,
+            _method = act.method,
+            _data = act.data
           if (/^set/.test(_method)) {
             var styleKey = _method[3].toLowerCase() + _method.slice(4),
               styleVal = void 0
@@ -303,7 +309,8 @@ export default window.exparser.registerElement({
               } else if (_data[0] === 'linear') {
                 var _gradient = ctx.createLinearGradient.apply(ctx, _data[1])
                 _data[2].forEach(function (arr) {
-                  var t = arr[0], n = resolveColor(arr[1])
+                  var t = arr[0],
+                    n = resolveColor(arr[1])
                   _gradient.addColorStop(t, n)
                 })
               } else if (_data[0] === 'radial') {
@@ -313,7 +320,8 @@ export default window.exparser.registerElement({
                   d = [s, l, 0, s, l, c],
                   _gradient = ctx.createRadialGradient.apply(ctx, d)
                 _data[2].forEach(function (arr) {
-                  var t = arr[0], n = resolveColor(arr[1])
+                  var t = arr[0],
+                    n = resolveColor(arr[1])
                   _gradient.addColorStop(t, n)
                 })
               }

@@ -6,9 +6,9 @@ var localImgDataIng = !1,
   wx = {},
   foregroundCallbacks = [],
   backgroundCallbacks = [],
-
-  publish = function (name, args) {//publish
-    bridge.publish("INVOKE_METHOD", {
+  publish = function (name, args) {
+    // publish
+    bridge.publish('INVOKE_METHOD', {
       name: name,
       args: args
     })
@@ -24,75 +24,78 @@ var localImgDataIng = !1,
       backgroundCallbacks.push(fn)
     },
     reportIDKey: function (e, t) {
-      console.warn("reportIDKey has been removed wx")
+      console.warn('reportIDKey has been removed wx')
     },
     reportKeyValue: function (e, t) {
-      console.warn("reportKeyValue has been removed from wx")
+      console.warn('reportKeyValue has been removed from wx')
     },
     redirectTo: function (params) {
-      publish("redirectTo", params)
+      publish('redirectTo', params)
     },
     navigateTo: function (params) {
-      publish("navigateTo", params)
+      publish('navigateTo', params)
     },
-    reLaunch:function (params) {
-      publish("reLaunch", params)
+    reLaunch: function (params) {
+      publish('reLaunch', params)
     },
     switchTab: function (params) {
-      publish("switchTab", params)
+      publish('switchTab', params)
     },
     clearStorage: function () {
-      publish("clearStorage", {})
+      publish('clearStorage', {})
     },
     showKeyboard: function (params) {
-      bridge.invokeMethod("showKeyboard", params)
+      bridge.invokeMethod('showKeyboard', params)
     },
     showDatePickerView: function (params) {
-      bridge.invokeMethod("showDatePickerView", params)
+      bridge.invokeMethod('showDatePickerView', params)
     },
     hideKeyboard: function (params) {
-      bridge.invokeMethod("hideKeyboard", params)
+      bridge.invokeMethod('hideKeyboard', params)
     },
     insertMap: function (params) {
-      bridge.invokeMethod("insertMap", params)
+      bridge.invokeMethod('insertMap', params)
     },
     removeMap: function (params) {
-      bridge.invokeMethod("removeMap", params)
+      bridge.invokeMethod('removeMap', params)
     },
     updateMapCovers: function (params) {
-      bridge.invokeMethod("updateMapCovers", params)
+      bridge.invokeMethod('updateMapCovers', params)
     },
     getRealRoute: utils.getRealRoute,
     getCurrentRoute: function (params) {
-      bridge.invokeMethod("getCurrentRoute", params, {
+      bridge.invokeMethod('getCurrentRoute', params, {
         beforeSuccess: function (res) {
-          res.route = res.route.split("?")[0]
+          res.route = res.route.split('?')[0]
         }
       })
     },
     getLocalImgData: function (params) {
-      function beforeAllFn() {
+      function beforeAllFn () {
         localImgDataIng = !1
-        if ( imgData.length > 0) {
-          var item = imgData.shift();
+        if (imgData.length > 0) {
+          var item = imgData.shift()
           apiObj.getLocalImgData(item)
         }
       }
 
       if (localImgDataIng === !1) {
         localImgDataIng = !0
-        if ("string" == typeof params.path) {
+        if (typeof params.path === 'string') {
           apiObj.getCurrentRoute({
             success: function (res) {
-              var route = res.route;
-              params.path = utils.getRealRoute(route || "index.html", params.path);
-              bridge.invokeMethod("getLocalImgData", params, {
+              var route = res.route
+              params.path = utils.getRealRoute(
+                route || 'index.html',
+                params.path
+              )
+              bridge.invokeMethod('getLocalImgData', params, {
                 beforeAll: beforeAllFn
               })
             }
           })
         } else {
-          bridge.invokeMethod("getLocalImgData", params, {
+          bridge.invokeMethod('getLocalImgData', params, {
             beforeAll: beforeAllFn
           })
         }
@@ -101,52 +104,51 @@ var localImgDataIng = !1,
       }
     },
     insertVideoPlayer: function (e) {
-      bridge.invokeMethod("insertVideoPlayer", e)
+      bridge.invokeMethod('insertVideoPlayer', e)
     },
     removeVideoPlayer: function (e) {
-      bridge.invokeMethod("removeVideoPlayer", e)
+      bridge.invokeMethod('removeVideoPlayer', e)
     },
     insertShareButton: function (e) {
-      bridge.invokeMethod("insertShareButton", e)
+      bridge.invokeMethod('insertShareButton', e)
     },
     updateShareButton: function (e) {
-      bridge.invokeMethod("updateShareButton", e)
+      bridge.invokeMethod('updateShareButton', e)
     },
     removeShareButton: function (e) {
-      bridge.invokeMethod("removeShareButton", e)
+      bridge.invokeMethod('removeShareButton', e)
     },
     onAppDataChange: function (callback) {
-      bridge.subscribe("appDataChange", function (params) {
+      bridge.subscribe('appDataChange', function (params) {
         callback(params)
       })
     },
     onPageScrollTo: function (callback) {
-      bridge.subscribe("pageScrollTo",function (params) {
-        callback(params);
+      bridge.subscribe('pageScrollTo', function (params) {
+        callback(params)
       })
     },
     publishPageEvent: function (eventName, data) {
-      bridge.publish("PAGE_EVENT", {
+      bridge.publish('PAGE_EVENT', {
         eventName: eventName,
         data: data
       })
     },
     animationToStyle: utils.animationToStyle
-  };
-bridge.subscribe("onAppEnterForeground", function (e) {
+  }
+bridge.subscribe('onAppEnterForeground', function (e) {
   foregroundCallbacks.forEach(function (fn) {
     fn(e)
   })
-});
-bridge.subscribe("onAppEnterBackground", function (e) {
+})
+bridge.subscribe('onAppEnterBackground', function (e) {
   backgroundCallbacks.forEach(function (fn) {
     fn(e)
   })
-});
+})
 
-utils.copyObj(wx,apiObj);
-
+utils.copyObj(wx, apiObj)
 
 // export default wx
 module.exports = wx
-window.wx =wx
+window.wx = wx

@@ -13,11 +13,11 @@ export default {
     return Object.getPrototypeOf
       ? Object.getPrototypeOf(obj)
       : obj.__proto__
-          ? obj.__proto__
-          : obj.constructor ? obj.constructor.prototype : void 0
+        ? obj.__proto__
+        : obj.constructor ? obj.constructor.prototype : void 0
   },
   isObject: function (obj) {
-    return typeof(obj) === 'object' && obj !== null
+    return typeof obj === 'object' && obj !== null
   },
   isEmptyObject: function (obj) {
     for (let key in obj) {
@@ -36,9 +36,12 @@ export default {
   },
   uuid: function () {
     let uuidPart = function () {
-      return Math.floor(65536 * (1 + Math.random())).toString(16).substring(1)
+      return Math.floor(65536 * (1 + Math.random()))
+        .toString(16)
+        .substring(1)
     }
-    return uuidPart() +
+    return (
+      uuidPart() +
       uuidPart() +
       '-' +
       uuidPart() +
@@ -50,9 +53,13 @@ export default {
       uuidPart() +
       uuidPart() +
       uuidPart()
+    )
   },
   getDataType: function (obj) {
-    return Object.prototype.toString.call(obj).split(' ')[1].split(']')[0]
+    return Object.prototype.toString
+      .call(obj)
+      .split(' ')[1]
+      .split(']')[0]
   },
   getPageConfig: function () {
     let configs = {}

@@ -120,111 +120,124 @@ var util = require('../lib/util')
 var distPath = path.resolve(curPath, program.dist || './tmp/dist')
 
 function doTransformFile () {
-  util.copyDir(path.resolve(__dirname, '../lib/template/assets'), distPath, function () {
-    util.copyDir('./', distPath, {
-      filename: ['.git'],
-      extname: ['.js', '.json', '.wxss', '.css', '.git', '.md', '.wxml']
-    })
-    core.getIndex.then(function (content) {
-      /*
+  util.copyDir(
+    path.resolve(__dirname, '../lib/template/assets'),
+    distPath,
+    function () {
+      util.copyDir('./', distPath, {
+        filename: ['.git'],
+        extname: ['.js', '.json', '.wxss', '.css', '.git', '.md', '.wxml']
+      })
+      core.getIndex.then(function (content) {
+        /*
       if(program.transform){
         content = content.replace('var __wxConfig__ = {"weweb":{','var __wxConfig__ = {"weweb":{ "requestProxy":"/remoteProxy",')
       }
 */
-      util.createFile(distPath, 'index.html', content, null, program.transform)
-    })
-
-    core.getServiceJs.then(function (content) {
-      util.createFile(
-        distPath + '/script',
-        'app-service.js',
-        content,
-        null,
-        program.transform
-      )
-    })
-
-    core.getAppWxss('./app').then(function (content) {
-      util.createFile(
-        distPath + '/css',
-        'app.css',
-        content.replace(/\/\*#\s*sourceMappingURL=.*\*\/$/, ''),
-        null,
-        program.transform
-      )
-    })
-
-    util.readFile('./app.json').then(function (config) {
-      let appConfig = JSON.parse(config)
-      let tabBar = appConfig.tabBar
-      let pages = appConfig.pages
-      let count = 0
-      pages.forEach(function (path) {
-        let fullpath = path.replace(/^(\/|\.\/)/, '')
-        let paths = fullpath.split('/')
-        let file = paths.pop()
-        path = paths.join('/')
-
-        core.getPage(fullpath).then(function (arr) {
-          // page generateFunc
-          let content = arr[0][0] // .replace(/(src=[\"\']?)\/+/,"$1");//对以/开始的路径做处理
-          if (arr[1]) {
-            arr[1] = arr[1]
-              .replace(/\/\*#\s*sourceMappingURL=.*\*\/$/, '')
-              .replace(
-                /(position:\s*fixed\s*[^\}]*[^w]top:)\s*0\s*;/g,
-                '$142px;'
-              )
-            if (
-              tabBar &&
-              tabBar.list.findIndex(
-                item => item.pagePath.replace(/^(\/|\.\/)/, '') === fullpath
-              ) != -1
-            ) {
-              if (tabBar.position != 'top') {
-                arr[1] = arr[1].replace(
-                  /(position:\s*fixed\s*[^\}]*[^w]bottom:)\s*0\s*;/g,
-                  '$156px;'
-                )
-              }
-            }
-          } else {
-            arr[1] = ''
-          }
-          content += '@code-separator-line:' + arr[1] // page css
-          if (!arr[2]) arr[2] = ''
-          content += '@code-separator-line:' + arr[2] // app-service
-          content += '@code-separator-line:' + JSON.stringify(arr[0][1]) // tags
-          util.createFile(
-            distPath + '/src/' + path,
-            file + '.js',
-            content,
-            function () {
-              count++
-              if (count === pages.length) {
-                if (program.transform) {
-                  printLog('ok:' + distPath, true)
-                  setTimeout(() => {
-                    if (tmpFolderName) {
-                      exec(`rm -rf ${tmpFolderName}`)
-                    }
-                    util.rmEmptyDirsSync(distPath)
-                    process.exit()
-                  }, 12000)
-                } else {
-                  bootWebServer()
-                  setTimeout(() => {
-                    util.rmEmptyDirsSync(distPath)
-                  }, 12000)
-                }
-              }
-            },
-            program.transform
-          )
-        }).catch(err => console.error(err))
+        util.createFile(
+          distPath,
+          'index.html',
+          content,
+          null,
+          program.transform
+        )
       })
-    })
-  })
+
+      core.getServiceJs.then(function (content) {
+        util.createFile(
+          distPath + '/script',
+          'app-service.js',
+          content,
+          null,
+          program.transform
+        )
+      })
+
+      core.getAppWxss('./app').then(function (content) {
+        util.createFile(
+          distPath + '/css',
+          'app.css',
+          content.replace(/\/\*#\s*sourceMappingURL=.*\*\/$/, ''),
+          null,
+          program.transform
+        )
+      })
+
+      util.readFile('./app.json').then(function (config) {
+        let appConfig = JSON.parse(config)
+        let tabBar = appConfig.tabBar
+        let pages = appConfig.pages
+        let count = 0
+        pages.forEach(function (path) {
+          let fullpath = path.replace(/^(\/|\.\/)/, '')
+          let paths = fullpath.split('/')
+          let file = paths.pop()
+          path = paths.join('/')
+
+          core
+            .getPage(fullpath)
+            .then(function (arr) {
+              // page generateFunc
+              let content = arr[0][0] // .replace(/(src=[\"\']?)\/+/,"$1");//对以/开始的路径做处理
+              if (arr[1]) {
+                arr[1] = arr[1]
+                  .replace(/\/\*#\s*sourceMappingURL=.*\*\/$/, '')
+                  .replace(
+                    /(position:\s*fixed\s*[^\}]*[^w]top:)\s*0\s*;/g,
+                    '$142px;'
+                  )
+                if (
+                  tabBar &&
+                  tabBar.list.findIndex(
+                    item => item.pagePath.replace(/^(\/|\.\/)/, '') === fullpath
+                  ) != -1
+                ) {
+                  if (tabBar.position != 'top') {
+                    arr[1] = arr[1].replace(
+                      /(position:\s*fixed\s*[^\}]*[^w]bottom:)\s*0\s*;/g,
+                      '$156px;'
+                    )
+                  }
+                }
+              } else {
+                arr[1] = ''
+              }
+              content += '@code-separator-line:' + arr[1] // page css
+              if (!arr[2]) arr[2] = ''
+              content += '@code-separator-line:' + arr[2] // app-service
+              content += '@code-separator-line:' + JSON.stringify(arr[0][1]) // tags
+              util.createFile(
+                distPath + '/src/' + path,
+                file + '.js',
+                content,
+                function () {
+                  count++
+                  if (count === pages.length) {
+                    if (program.transform) {
+                      printLog('ok:' + distPath, true)
+                      setTimeout(() => {
+                        if (tmpFolderName) {
+                          exec(`rm -rf ${tmpFolderName}`)
+                        }
+                        util.rmEmptyDirsSync(distPath)
+                        process.exit()
+                      }, 12000)
+                    } else {
+                      bootWebServer()
+                      setTimeout(() => {
+                        util.rmEmptyDirsSync(distPath)
+                      }, 12000)
+                    }
+                  }
+                },
+                program.transform
+              )
+            })
+            .catch(err => console.error(err))
+        })
+      })
+    }
+  )
 }
 function bootWebServer () {
   var server = require('../lib/server')(distPath)

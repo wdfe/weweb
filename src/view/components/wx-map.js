@@ -116,11 +116,9 @@ window.exparser.registerElement({
     })
   },
   _update: function (opt, t) {
-    ;(opt.mapId = this._mapId), (opt.hide = this.hidden), WeixinJSBridge.invoke(
-      'updateMap',
-      opt,
-      function (e) {}
-    )
+    ;(opt.mapId = this._mapId),
+    (opt.hide = this.hidden),
+    WeixinJSBridge.invoke('updateMap', opt, function (e) {})
   },
   _updatePosition: function () {},
   _transformPath: function (path, t) {
@@ -129,10 +127,9 @@ window.exparser.registerElement({
       return item.iconPath
         ? (Object.keys(item).forEach(function (itemName) {
           tempObj[itemName] = item[itemName]
-        }), (tempObj.iconPath = wx.getRealRoute(
-            t,
-            tempObj.iconPath
-          )), tempObj)
+        }),
+          (tempObj.iconPath = wx.getRealRoute(t, tempObj.iconPath)),
+          tempObj)
         : item
     })
   },
@@ -146,15 +143,15 @@ window.exparser.registerElement({
       return marker
         ? (Object.keys(marker).forEach(function (t) {
           tempObj[t] = marker[t]
-        }), marker.name &&
-            (tempObj.title =
-              tempObj.title || tempObj.name), typeof marker.id !==
-            'undefined' &&
+        }),
+          marker.name && (tempObj.title = tempObj.title || tempObj.name),
+          typeof marker.id !== 'undefined' &&
             selof.bindmarkertap &&
             (tempObj.data = JSON.stringify({
               markerId: marker.id,
               bindmarkertap: selof.bindmarkertap
-            })), tempObj)
+            })),
+          tempObj)
         : tempObj
     })
   },
@@ -194,7 +191,8 @@ window.exparser.registerElement({
             markers: this._transformMarkers(this.markers).concat(this.covers)
           },
           function (e) {}
-        ), this.includePoints &&
+        ),
+        this.includePoints &&
         this.includePoints.length > 0 &&
         WeixinJSBridge.invoke(
           'includeMapPoints',
@@ -203,7 +201,8 @@ window.exparser.registerElement({
             points: this.includePoints
           },
           function (e) {}
-        ), this.polyline &&
+        ),
+        this.polyline &&
         this.polyline.length > 0 &&
         WeixinJSBridge.invoke(
           'addMapLines',
@@ -212,7 +211,8 @@ window.exparser.registerElement({
             lines: this.polyline
           },
           function (e) {}
-        ), this.circles &&
+        ),
+        this.circles &&
         this.circles.length > 0 &&
         WeixinJSBridge.invoke(
           'addMapCircles',
@@ -221,7 +221,8 @@ window.exparser.registerElement({
             circles: this.circles
           },
           function (e) {}
-        ), this.controls &&
+        ),
+        this.controls &&
         this.controls.length > 0 &&
         WeixinJSBridge.invoke(
           'addMapControls',
@@ -251,7 +252,9 @@ window.exparser.registerElement({
         !isDragging &&
         (wx.publishPageEvent(self.bindregionchange, {
           type: 'begin'
-        }), (isDragging = !0), (stopedDragging = !1))
+        }),
+          (isDragging = !0),
+          (stopedDragging = !1))
     })
     qq.maps.event.addListener(map, 'dragend', function () {
       isDragging && ((isDragging = !1), (stopedDragging = !0))
@@ -261,7 +264,8 @@ window.exparser.registerElement({
         stopedDragging &&
         (wx.publishPageEvent(self.bindregionchange, {
           type: 'end'
-        }), (stopedDragging = !1))
+        }),
+          (stopedDragging = !1))
     })
     var mapTitlesLoadedEvent = qq.maps.event.addListener(
       map,
@@ -343,20 +347,20 @@ window.exparser.registerElement({
       var projection = this.getProjection(),
         pixInfo = projection.fromLatLngToDivPixel(this.position),
         style = this.div.style
-        ;(style.left = pixInfo.x - 16 + 'px'), (style.top = pixInfo.y - 16 + 'px')
+      ;(style.left = pixInfo.x - 16 + 'px'), (style.top = pixInfo.y - 16 + 'px')
     }
     CustomOverlay.prototype.destroy = function () {
-      ;(this.div.onclick = null), this.div.parentNode.removeChild(
-        this.div
-      ), (this.div = null)
+      ;(this.div.onclick = null),
+      this.div.parentNode.removeChild(this.div),
+      (this.div = null)
     }
   },
   latitudeChanged: function (centerLatitude, ori) {
     if (centerLatitude) {
       this._isReady
         ? this._map.setCenter(
-            new qq.maps.LatLng(centerLatitude, this.longitude)
-          )
+          new qq.maps.LatLng(centerLatitude, this.longitude)
+        )
         : this._delay('latitudeChanged', centerLatitude, ori)
     }
   },
@@ -364,8 +368,8 @@ window.exparser.registerElement({
     if (centerLongitude) {
       this._isReady
         ? this._map.setCenter(
-            new qq.maps.LatLng(this.latitude, centerLongitude)
-          )
+          new qq.maps.LatLng(this.latitude, centerLongitude)
+        )
         : this._delay('longitudeChanged', centerLongitude, ori)
     }
   },
@@ -411,14 +415,14 @@ window.exparser.registerElement({
         markerItem.iconPath &&
           (Number(markerItem.width) && Number(markerItem.height)
             ? markerIns.setIcon(
-                new qq.maps.MarkerImage(
-                  markerItem.iconPath,
-                  new qq.maps.Size(markerItem.width, markerItem.height),
-                  new qq.maps.Point(0, 0),
-                  new qq.maps.Point(markerItem.width / 2, markerItem.height),
-                  new qq.maps.Size(markerItem.width, markerItem.height)
-                )
+              new qq.maps.MarkerImage(
+                markerItem.iconPath,
+                new qq.maps.Size(markerItem.width, markerItem.height),
+                new qq.maps.Point(0, 0),
+                new qq.maps.Point(markerItem.width / 2, markerItem.height),
+                new qq.maps.Size(markerItem.width, markerItem.height)
               )
+            )
             : markerIns.setIcon(new qq.maps.MarkerImage(markerItem.iconPath)))
         ;(markerItem.title || markerItem.name) &&
           markerIns.setTitle(markerItem.title || markerItem.name)
@@ -428,9 +432,9 @@ window.exparser.registerElement({
             var event = n.event
             event instanceof TouchEvent
               ? event.type === 'touchend' &&
-                  wx.publishPageEvent(self.bindmarkertap, {
-                    markerId: markerItem.id
-                  })
+                wx.publishPageEvent(self.bindmarkertap, {
+                  markerId: markerItem.id
+                })
               : wx.publishPageEvent(self.bindmarkertap, {
                 markerId: markerItem.id
               })
@@ -537,9 +541,8 @@ window.exparser.registerElement({
     var self = this
     this._isReady
       ? (this._posOverlay &&
-          (this._posOverlay.setMap(
-            null
-          ), (this._posOverlay = null)), location &&
+          (this._posOverlay.setMap(null), (this._posOverlay = null)),
+        location &&
           WeixinJSBridge.invoke('private_geolocation', {}, function (res) {
             try {
               res = JSON.parse(res)
@@ -550,7 +553,8 @@ window.exparser.registerElement({
               var loc = res.result.location
               ;(self._posOverlay = new self.CustomOverlay(
                 new qq.maps.LatLng(loc.lat, loc.lng)
-              )), self._posOverlay.setMap(self._map)
+              )),
+              self._posOverlay.setMap(self._map)
             }
           }))
       : this._delay('showLocationChanged', location, uselessArg)

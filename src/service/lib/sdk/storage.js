@@ -1,35 +1,35 @@
 import Emitter from 'emitter'
 
 // 5MB
-const LIMIT_SIZE = 5*1024
+const LIMIT_SIZE = 5 * 1024
 
 let directory = '__weweb__storage__'
 
-function currentSize() {
+function currentSize () {
   var total = 0
-  for(var x in localStorage) {
-    var amount = (localStorage[x].length * 2) / 1024
+  for (var x in localStorage) {
+    var amount = localStorage[x].length * 2 / 1024
     total += amount
   }
   return Math.ceil(total)
 }
 
-function getType(key) {
-  let str= localStorage.getItem(directory + '_type')
+function getType (key) {
+  let str = localStorage.getItem(directory + '_type')
   if (!str) return
   let obj = JSON.parse(str)
   return obj[key]
 }
 
-function getTypes() {
-  let str= localStorage.getItem(directory + '_type')
+function getTypes () {
+  let str = localStorage.getItem(directory + '_type')
   if (!str) return {}
   return JSON.parse(str)
 }
 
 let storage = {
   set: function (key, value, dataType) {
-    if (window.localStorage == null) return console.error('localStorage not supported')
+    if (window.localStorage == null) { return console.error('localStorage not supported') }
     let str = localStorage.getItem(directory)
     let obj
     obj = str ? JSON.parse(str) : {}
@@ -41,7 +41,7 @@ let storage = {
     this.emit('change')
   },
   get: function (key) {
-    if (window.localStorage == null) return console.error('localStorage not supported')
+    if (window.localStorage == null) { return console.error('localStorage not supported') }
     let str = localStorage.getItem(directory)
     let obj
     obj = str ? JSON.parse(str) : {}
@@ -51,10 +51,10 @@ let storage = {
     }
   },
   remove: function (key) {
-    if (window.localStorage == null) return console.error('localStorage not supported')
+    if (window.localStorage == null) { return console.error('localStorage not supported') }
     let str = localStorage.getItem(directory)
     if (!str) return
-    let obj =JSON.parse(str)
+    let obj = JSON.parse(str)
     let data = obj[key]
     delete obj[key]
     localStorage.setItem(directory, JSON.stringify(obj))
@@ -65,13 +65,13 @@ let storage = {
     return data
   },
   clear: function () {
-    if (window.localStorage == null) return console.error('localStorage not supported')
+    if (window.localStorage == null) { return console.error('localStorage not supported') }
     localStorage.removeItem(directory)
     localStorage.removeItem(directory + '_type')
     this.emit('change')
   },
   getAll: function () {
-    if (window.localStorage == null) return console.error('localStorage not supported')
+    if (window.localStorage == null) { return console.error('localStorage not supported') }
     let str = localStorage.getItem(directory)
     let obj = str ? JSON.parse(str) : {}
     let res = {}
@@ -84,7 +84,7 @@ let storage = {
     return res
   },
   info: function () {
-    if (window.localStorage == null) return console.error('localStorage not supported')
+    if (window.localStorage == null) { return console.error('localStorage not supported') }
     let str = localStorage.getItem(directory)
     let obj = str ? JSON.parse(str) : {}
     return {

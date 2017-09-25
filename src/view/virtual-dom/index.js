@@ -8,24 +8,24 @@ import Init from './Init'
 Init.init()
 
 window.__mergeData__ = AppData.mergeData
-window.__DOMTree__ = void 0//虚拟dom生成的domtree
+window.__DOMTree__ = void 0 // 虚拟dom生成的domtree
 window.firstRender = 0
 let domReady = '__DOMReady'
 let rootNode = void 0
 
-function setGlobalPageAttr(name, value) {
-  window[name] = value;
+function setGlobalPageAttr (name, value) {
+  window[name] = value
   window.__curPage__ = {
-    name:name,
-    value:value
-  };
+    name: name,
+    value: value
+  }
 }
-function setRootNode(value) {
-  rootNode = value;
+function setRootNode (value) {
+  rootNode = value
   window.__curPage__ = {
-    name:'rootNode',
-    value:value
-  };
+    name: 'rootNode',
+    value: value
+  }
 }
 
 const createWXVirtualNode = function (
@@ -43,7 +43,7 @@ const createWxVirtualText = function (txt) {
 }
 const createWXVirtualNodeRec = function (opt) {
   // Recursively
-  if (Utils.isString(opt) || Number(opt) === opt && Number(opt) % 1 === 0) {
+  if (Utils.isString(opt) || (Number(opt) === opt && Number(opt) % 1 === 0)) {
     return createWxVirtualText(String(opt))
   }
   let children = []
@@ -60,9 +60,9 @@ const createWXVirtualNodeRec = function (opt) {
   )
 }
 const createBodyNode = function (data) {
-  window.__curPage__.envData || (window.__curPage__.envData={})
+  window.__curPage__.envData || (window.__curPage__.envData = {})
   let root = window.__generateFunc__(
-    window.__curPage__.envData,//AppData.getAppData(),
+    window.__curPage__.envData, // AppData.getAppData(),
     data
   )
   // t.tag = "body"
@@ -71,10 +71,11 @@ const createBodyNode = function (data) {
 
 const firstTimeRender = function (event) {
   if (event.ext) {
-    event.ext.enablePullUpRefresh && (setGlobalPageAttr('__enablePullUpRefresh__',!0))
+    event.ext.enablePullUpRefresh &&
+      setGlobalPageAttr('__enablePullUpRefresh__', !0)
   }
   setRootNode(createBodyNode(event.data))
-  setGlobalPageAttr('__DOMTree__',rootNode.render())
+  setGlobalPageAttr('__DOMTree__', rootNode.render())
   exparser.Element.replaceDocumentElement(
     window.__DOMTree__,
     document.querySelector('#view-body-' + window.__wxConfig.viewId)
@@ -86,7 +87,8 @@ const firstTimeRender = function (event) {
 
 const reRender = function (event) {
   let newBodyNode = createBodyNode(event.data)
-  if(window.__curPage__ && window.__curPage__.rootNode!=rootNode){//切换页面了
+  if (window.__curPage__ && window.__curPage__.rootNode != rootNode) {
+    // 切换页面了
     rootNode = window.__curPage__.rootNode
   }
   let patch = rootNode.diff(newBodyNode)
@@ -95,14 +97,13 @@ const reRender = function (event) {
 }
 
 const renderOnDataChange = function (event) {
-
   if (window.firstRender) {
     reRender(event)
     document.dispatchEvent(new CustomEvent('pageReRender', {}))
   } else {
     firstTimeRender(event)
     if (!(event.options && event.options.firstRender)) {
-      console.log(event);
+      console.log(event)
       console.error('firstRender not the data from Page.data')
       Reporter.errorReport({
         key: 'webviewScriptError',
@@ -121,7 +122,6 @@ window.onerror = function (messageOrEvent, source, lineno, colno, error) {
     key: 'webviewScriptError',
     error: error
   })
-
 }
 
 wx.onAppDataChange(
@@ -129,7 +129,6 @@ wx.onAppDataChange(
     renderOnDataChange(event)
   })
 )
-
 
 exparser.addGlobalErrorListener(function (error, errData) {
   Reporter.errorReport({

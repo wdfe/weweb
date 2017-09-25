@@ -12,7 +12,7 @@ export function triggerEvent (target, type, detail, options) {
     timeStamp = Date.now() - now,
     nTarget = target.__wxElement || target
 
-  target === nTarget.shadowRoot && (nTarget = target)//_renderingMode === 'native'
+  target === nTarget.shadowRoot && (nTarget = target) // _renderingMode === 'native'
 
   const preventDefault = function () {
     originalEvent && originalEvent.preventDefault()
@@ -47,11 +47,13 @@ export function triggerEvent (target, type, detail, options) {
   let targetParent = nTarget.parentNode
   let targetEle = nTarget
 
-  const goAhead = function () {//冒泡执行事件
+  const goAhead = function () {
+    // 冒泡执行事件
     if (targetEle) {
       targetParent === targetEle && (targetParent = targetEle.parentNode)
       if (targetEle.__wxEvents) {
-        targetEle.__wxEvents[type] && exeEvent(targetEle.__wxEvents[type], targetEle)
+        targetEle.__wxEvents[type] &&
+          exeEvent(targetEle.__wxEvents[type], targetEle)
       }
       return !noBubbles && !stopTarget
     }
@@ -71,21 +73,25 @@ export function triggerEvent (target, type, detail, options) {
       if (targetEle.__domElement || targetEle.__virtual) {
         isRealDom = !1
       }
-      targetEle = isRealDom || noComposed ? targetEle.parentNode : targetEle.__slotParent
+      targetEle =
+        isRealDom || noComposed ? targetEle.parentNode : targetEle.__slotParent
     }
   }
 }
 
 export function addListenerToElement (ele, eventName, handler) {
-  let targetEle = ele.__wxElement || ele//vnode
+  let targetEle = ele.__wxElement || ele // vnode
   ele === targetEle.shadowRoot && (targetEle = ele)
   targetEle.__wxEvents || (targetEle.__wxEvents = Object.create(null))
-  targetEle.__wxEvents[eventName] || (targetEle.__wxEvents[eventName] = Events.create('Event Listener'))
+  targetEle.__wxEvents[eventName] ||
+    (targetEle.__wxEvents[eventName] = Events.create('Event Listener'))
   return targetEle.__wxEvents[eventName].add(handler)
 }
 
 export function removeListenerFromElement (ele, eventName, handler) {
   let targetEle = ele.__wxElement || ele
   ele === targetEle.shadowRoot && (targetEle = ele)
-  targetEle.__wxEvents && targetEle.__wxEvents[eventName] && targetEle.__wxEvents[eventName].remove(handler)
+  targetEle.__wxEvents &&
+    targetEle.__wxEvents[eventName] &&
+    targetEle.__wxEvents[eventName].remove(handler)
 }

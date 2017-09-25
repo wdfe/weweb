@@ -35,13 +35,18 @@ const setObjAttr = function (obj, key, value) {
   obj[key] = value
 }
 
-function domRendering (nodes, shadowRoot, idMap, slots, binding) {//把nodes追加到shadowRoot下
-  let newNode = null, attrIdx = 0, attr = null, rootIdx = 0
+function domRendering (nodes, shadowRoot, idMap, slots, binding) {
+  // 把nodes追加到shadowRoot下
+  let newNode = null,
+    attrIdx = 0,
+    attr = null,
+    rootIdx = 0
   for (; rootIdx < nodes.length; rootIdx++) {
     let node = nodes[rootIdx]
     if (node.name === undefined) {
       newNode = TextNode.create(node.text)
-      node.exp && binding.add(node.exp, newNode.__domElement, 'textContent', setObjAttr)
+      node.exp &&
+        binding.add(node.exp, newNode.__domElement, 'textContent', setObjAttr)
       element.appendChild(shadowRoot, newNode)
     } else {
       let attributes = node.attrs
@@ -64,7 +69,7 @@ function domRendering (nodes, shadowRoot, idMap, slots, binding) {//把nodes追�
           attr.exp && binding.add(attr.exp, newNode, attr.name, attr.updater)
         }
       } else {
-        newNode = initialize.wrap(document.importNode(node.prerendered, !1))//以real dom创建Vnode
+        newNode = initialize.wrap(document.importNode(node.prerendered, !1)) // 以real dom创建Vnode
         attrIdx = 0
         for (; attrIdx < attributes.length; attrIdx++) {
           attr = attributes[attrIdx]
@@ -80,12 +85,16 @@ function domRendering (nodes, shadowRoot, idMap, slots, binding) {//把nodes追�
 }
 
 function nativeRendering (nodes, shadowRoot, idMap, slots, binding) {
-  let tempNode = null, attrIdx = 0, attr = null, idx = 0
+  let tempNode = null,
+    attrIdx = 0,
+    attr = null,
+    idx = 0
   for (; idx < nodes.length; idx++) {
     let nodeItem = nodes[idx]
     if (void 0 === nodeItem.name) {
       tempNode = document.createTextNode(nodeItem.text)
-      nodeItem.exp && binding.add(nodeItem.exp, tempNode, 'textContent', setObjAttr)
+      nodeItem.exp &&
+        binding.add(nodeItem.exp, tempNode, 'textContent', setObjAttr)
       shadowRoot.appendChild(tempNode)
     } else {
       let attributes = nodeItem.attrs
@@ -172,18 +181,25 @@ let virtual = {
 }
 
 // create(insElement, defaultValuesJSON, componentBehavior.methods, opts)
-Template.create = function (ele, data, behaviorMethods, opts) {//opts:Element.options ele：dom
+Template.create = function (ele, data, behaviorMethods, opts) {
+  // opts:Element.options ele：dom
   let globOpt = globalOptions()
   let renderingMode = opts.renderingMode || globOpt.renderingMode
   let slotRef = slot
   if (renderingMode === 'native') {
     slotRef = virtual
   }
-  //确定配置项
+  // 确定配置项
   let eleAttributes = getAttributes(ele.attributes)
   let textParseOpt = {
-    parseTextContent: undefined !== eleAttributes['parse-text-content'] || opts.parseTextContent || globOpt.parseTextContent,
-    keepWhiteSpace: undefined !== eleAttributes['keep-white-space'] || opts.keepWhiteSpace || globOpt.keepWhiteSpace
+    parseTextContent:
+      undefined !== eleAttributes['parse-text-content'] ||
+      opts.parseTextContent ||
+      globOpt.parseTextContent,
+    keepWhiteSpace:
+      undefined !== eleAttributes['keep-white-space'] ||
+      opts.keepWhiteSpace ||
+      globOpt.keepWhiteSpace
   }
 
   let content = ele.content
@@ -196,22 +212,37 @@ Template.create = function (ele, data, behaviorMethods, opts) {//opts:Element.op
 
   let isSlotPused = false
 
-  const childNodeFn = function (tagTree, contentChildNodes, tempArr, textParseOpt) {
-    let exp, nodeIdx = 0
+  const childNodeFn = function (
+    tagTree,
+    contentChildNodes,
+    tempArr,
+    textParseOpt
+  ) {
+    let exp,
+      nodeIdx = 0
     for (; nodeIdx < contentChildNodes.length; nodeIdx++) {
       let nodeItem = contentChildNodes[nodeIdx]
       let treeLengthList = tempArr.concat(tagTree.length)
-      if (nodeItem.nodeType !== 8) { // if not Node.COMMENT_NODE
-        if (nodeItem.nodeType !== 3) { // if not Node.TEXT_NODE
-          if (nodeItem.tagName !== 'WX-CONTENT' && nodeItem.tagName !== 'SLOT') {//不是占位标签
-            let isCustomEle = nodeItem.tagName.indexOf('-') >= 0 && renderingMode !== 'native'
+      if (nodeItem.nodeType !== 8) {
+        // if not Node.COMMENT_NODE
+        if (nodeItem.nodeType !== 3) {
+          // if not Node.TEXT_NODE
+          if (
+            nodeItem.tagName !== 'WX-CONTENT' &&
+            nodeItem.tagName !== 'SLOT'
+          ) {
+            // 不是占位标签
+            let isCustomEle =
+              nodeItem.tagName.indexOf('-') >= 0 && renderingMode !== 'native'
             let prerendered = null
-            isCustomEle || (prerendered = document.createElement(nodeItem.tagName))
+            isCustomEle ||
+              (prerendered = document.createElement(nodeItem.tagName))
             let id = ''
             let nodeItemAttributes = nodeItem.attributes
             let attrs = []
             if (nodeItemAttributes) {
-              let pareOpts = {}, attrIdx = 0
+              let pareOpts = {},
+                attrIdx = 0
               for (; attrIdx < nodeItemAttributes.length; attrIdx++) {
                 let nodeItemAttr = nodeItemAttributes[attrIdx]
                 if (nodeItemAttr.name === 'id') {
@@ -225,21 +256,25 @@ Template.create = function (ele, data, behaviorMethods, opts) {//opts:Element.op
                   let attrSetter
                   let attrName = nodeItemAttr.name
 
-                  if (nodeItemAttr.name.slice(-1) === dollarSign) {//属性名末尾是$
+                  if (nodeItemAttr.name.slice(-1) === dollarSign) {
+                    // 属性名末尾是$
                     if (isCustomEle) {
                       attrSetter = setObjAttr
                       attrName = dashToCamel(nodeItemAttr.name.slice(0, -1))
-                    } else { // dom
+                    } else {
+                      // dom
                       attrSetter = setAttr
                       attrName = nodeItemAttr.name.slice(0, -1)
                     }
                   } else {
                     if (nodeItemAttr.name.slice(-1) === ':') {
-                      attrSetter = setObjAttr//整理后isCustomEle ? setAttr : setObjAttr 这是有误的
+                      attrSetter = setObjAttr // 整理后isCustomEle ? setAttr : setObjAttr 这是有误的
                       attrName = dashToCamel(nodeItemAttr.name.slice(0, -1))
                     } else {
                       if (nodeItemAttr.name.slice(0, 6) === 'class.') {
-                        attrSetter = isCustomEle ? toggleDomClassAttr : toggleClassAttr
+                        attrSetter = isCustomEle
+                          ? toggleDomClassAttr
+                          : toggleClassAttr
                         attrName = nodeItemAttr.name.slice(6)
                       } else {
                         if (nodeItemAttr.name.slice(0, 6) === 'style.') {
@@ -249,15 +284,21 @@ Template.create = function (ele, data, behaviorMethods, opts) {//opts:Element.op
                       }
                     }
                   }
-                  attrSetter && (exp = calculate.parse(nodeItemAttr.value, behaviorMethods))
-                  let value = exp ? exp.calculate(null, data) : nodeItemAttr.value
-                  isCustomEle || (attrSetter || setAttr)(prerendered, attrName, value);
-                  (isCustomEle || exp) && attrs.push({//isCustomEle 为后面设置属性用
-                    name: attrName,
-                    value: value,
-                    updater: attrSetter,
-                    exp: exp
-                  })
+                  attrSetter &&
+                    (exp = calculate.parse(nodeItemAttr.value, behaviorMethods))
+                  let value = exp
+                    ? exp.calculate(null, data)
+                    : nodeItemAttr.value
+                  isCustomEle ||
+                    (attrSetter || setAttr)(prerendered, attrName, value)
+                  ;(isCustomEle || exp) &&
+                    attrs.push({
+                      // isCustomEle 为后面设置属性用
+                      name: attrName,
+                      value: value,
+                      updater: attrSetter,
+                      exp: exp
+                    })
                 }
               }
 
@@ -270,9 +311,19 @@ Template.create = function (ele, data, behaviorMethods, opts) {//opts:Element.op
                 children: []
               }
               tagTree.push(elementNode)
-              nodeItem.tagName === 'VIRTUAL' && (elementNode.virtual = 'virtual')
-              nodeItem.childNodes && childNodeFn(elementNode.children, nodeItem.childNodes, treeLengthList, pareOpts)
-              if (elementNode.children.length === 1 && elementNode.children[0] === slotRef) {
+              nodeItem.tagName === 'VIRTUAL' &&
+                (elementNode.virtual = 'virtual')
+              nodeItem.childNodes &&
+                childNodeFn(
+                  elementNode.children,
+                  nodeItem.childNodes,
+                  treeLengthList,
+                  pareOpts
+                )
+              if (
+                elementNode.children.length === 1 &&
+                elementNode.children[0] === slotRef
+              ) {
                 elementNode.children.pop()
                 elementNode.slot = ''
               }
@@ -289,7 +340,8 @@ Template.create = function (ele, data, behaviorMethods, opts) {//opts:Element.op
             nodeItem.textContent = text
           }
           exp = undefined
-          textParseOpt.parseTextContent && (exp = calculate.parse(text, behaviorMethods))
+          textParseOpt.parseTextContent &&
+            (exp = calculate.parse(text, behaviorMethods))
           tagTree.push({
             exp: exp,
             text: exp ? exp.calculate(null, data) : text

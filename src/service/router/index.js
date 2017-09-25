@@ -9,31 +9,35 @@ const Bus = util.getBus()
 let curr = null
 let views = {}
 let tabViews = {}
-if(!window.__wxConfig){
+if (!window.__wxConfig) {
   Object.defineProperty(window, '__wxConfig', {
     get: function () {
-      return curr?curr.getConfig():__wxConfig__
+      return curr ? curr.getConfig() : __wxConfig__
     }
   })
   Object.defineProperty(window, '__curPage__', {
     get: function () {
-      return curr;
+      return curr
     },
     set: function (obj) {
-      curr[obj.name] = obj.value;
+      curr[obj.name] = obj.value
     }
   })
-  window.addEventListener("message", function (event) {//处理地图相关通讯
-    var data = event.data || {};
-    if ("object" === typeof(data) && ("geolocation" === data.module || "locationPicker" === data.module)) {
-      if("geolocation" == data.module){
+  window.addEventListener('message', function (event) {
+    // 处理地图相关通讯
+    var data = event.data || {}
+    if (
+      typeof data === 'object' &&
+      (data.module === 'geolocation' || data.module === 'locationPicker')
+    ) {
+      if (data.module == 'geolocation') {
         data = {
-          module: "locationPicker",
+          module: 'locationPicker',
           latlng: {
             lat: data.lat,
             lng: data.lng
           },
-          poiaddress: "" + data.province + data.city,
+          poiaddress: '' + data.province + data.city,
           poiname: data.addr,
           cityname: data.city
         }
@@ -41,10 +45,9 @@ if(!window.__wxConfig){
       curr.setLocation(data)
     }
   })
-
 }
 
-export function lifeSycleEvent(path, query, openType) {
+export function lifeSycleEvent (path, query, openType) {
   toAppService({
     msg: {
       eventName: 'onAppRoute',
@@ -57,19 +60,19 @@ export function lifeSycleEvent(path, query, openType) {
   })
 }
 
-function toAppService(obj) {
+function toAppService (obj) {
   const id = curr ? curr.id : 0
   const msg = obj.msg || {}
-  ServiceJSBridge.subscribeHandler(msg.eventName,msg.data || {},id)
+  ServiceJSBridge.subscribeHandler(msg.eventName, msg.data || {}, id)
 }
 
 function getRoutes () {
   const root = window.__root__
   const path = location.hash.replace(/^#!/, '')
   let result = path ? [path] : [root]
-  if (sessionStorage){
+  if (sessionStorage) {
     const routesStr = sessionStorage.getItem('weweb_routes')
-    if (routesStr){
+    if (routesStr) {
       const routes = routesStr.split('|')
       if (routes.indexOf(path) === routes.length - 1) {
         result = routes
@@ -79,13 +82,13 @@ function getRoutes () {
   return result
 }
 
-function onRoute() {
-  //改变地址栏
+function onRoute () {
+  // 改变地址栏
   let home = `${location.protocol}//${location.host}${location.pathname}`
-  if (typeof history.replaceState == 'function') {
+  if (typeof history.replaceState === 'function') {
     history.replaceState({}, '', `${home}#!${curr.url}`)
   }
-  Bus.emit('route', router.getViewIds().length, curr)//tabbar状态变化
+  Bus.emit('route', router.getViewIds().length, curr) // tabbar状态变化
   let arr = []
   let view = curr
   while (view) {
@@ -100,39 +103,45 @@ function onRoute() {
   sessionStorage.setItem('weweb_routes', str)
 }
 
-function onBack() {
-  if (!curr.external){
+function onBack () {
+  if (!curr.external) {
     lifeSycleEvent(curr.path, curr.query, 'navigateBack')
   }
 }
 
-function onNavigate(url, type = 'navigateTo') {
+function onNavigate (url, type = 'navigateTo') {
   if (!url) throw new Error('url not found')
-  if ((type == 'navigateTo' || type == 'redirectTo') && util.isTabbar(curr.path)) {
-    console.error('wx.navigateTo wx.redirectTo 不允许跳转到 tabbar 页面，请使用 wx.switchTab')
+  if (
+    (type == 'navigateTo' || type == 'redirectTo') &&
+    util.isTabbar(curr.path)
+  ) {
+    console.error(
+      'wx.navigateTo wx.redirectTo 不允许跳转到 tabbar 页面，请使用 wx.switchTab'
+    )
     return
   }
-  if(type == 'reLaunch' && util.isTabbar(curr.path) && curr.query){
+  if (type == 'reLaunch' && util.isTabbar(curr.path) && curr.query) {
     console.error('wx.reLaunch 跳转到 tabbar 页面时不允许携带参数，请去除参数或使用 wx.switchTab')
     return
   }
   curr.onReady(() => {
-    lifeSycleEvent(curr.path, curr.query,type)
+    lifeSycleEvent(curr.path, curr.query, type)
   })
 }
 
 const router = {
-  onLaunch () { //eslint-disable-line
+  onLaunch () {
+    //eslint-disable-line
     const routes = getRoutes()
     const first = routes.shift()
     let valid = util.validPath(first)
     // make sure root is valid page
-    let root =  valid ? first : window.__root__
-    this.navigateTo(root,true)//页面切换，路由表更新
-    let {path, query} = util.parsePath(root)
+    let root = valid ? first : window.__root__
+    this.navigateTo(root, true) // 页面切换，路由表更新
+    let { path, query } = util.parsePath(root)
     // lifeSycleEvent(path, query, 'appLaunch')
 
-    if (!valid){
+    if (!valid) {
       console.warn(`Invalid route: ${first}, redirect to root`)
       return
     }
@@ -142,12 +151,13 @@ const router = {
       Bus.once('ready', id => {
         mask.hide()
         if (id !== cid) return
-        for (let route of routes) {//为路由表中的页面注册ready事件
+        for (let route of routes) {
+          // 为路由表中的页面注册ready事件
           // check if in pages
           valid = util.validPath(route)
           if (!valid) {
             console.warn(`无法在 pages 配置中找到 ${route}，停止路由`)
-            break;
+            break
           }
           toAppService({
             msg: {
@@ -160,25 +170,25 @@ const router = {
                   }
                 }
               }
-            },
+            }
           })
         }
       })
     }
   },
-  redirectTo(path) {
+  redirectTo (path) {
     path = util.normalize(path)
     if (!curr) throw new Error('Current view not exists')
     let pid = curr.pid
     curr.destroy()
     delete views[curr.id]
-    let v = curr = new View(path)
+    let v = (curr = new View(path))
     curr.pid = pid
     views[curr.id] = v
     onRoute()
     onNavigate(path, 'redirectTo')
   },
-  navigateTo (path,isLaunch) {
+  navigateTo (path, isLaunch) {
     path = util.normalize(path)
     let exists = tabViews[path]
     if (curr) curr.hide()
@@ -188,13 +198,13 @@ const router = {
     } else {
       let isTabView = util.isTabbar(path)
       let pid = curr ? curr.id : null
-      let v = curr = new View(path)
+      let v = (curr = new View(path))
       curr.pid = isTabView ? null : pid
       views[v.id] = v
       if (isTabView) tabViews[path] = curr
     }
     onRoute()
-    if(!isLaunch)onNavigate(path, 'navigateTo')
+    if (!isLaunch) onNavigate(path, 'navigateTo')
   },
   reLaunch (path) {
     sessionStorage.clear()
@@ -206,7 +216,7 @@ const router = {
       exists.show()
     } else {
       let isTabView = util.isTabbar(path)
-      let v = curr = new View(path)
+      let v = (curr = new View(path))
       curr.pid = null
       views = []
       views[v.id] = v
@@ -232,11 +242,11 @@ const router = {
     } else {
       let isTabView = util.isTabbar(path)
       let pid = curr ? curr.id : null
-      let v = curr = new View(path)
+      let v = (curr = new View(path))
       curr.pid = isTabView ? null : pid
       views[v.id] = v
       if (isTabView) tabViews[path] = curr
-      //return Toast(`无法找到存在的 ${path} 页面`, {type: 'error'})
+      // return Toast(`无法找到存在的 ${path} 页面`, {type: 'error'})
     }
     onRoute()
     onNavigate(path, 'switchTab')
@@ -245,7 +255,7 @@ const router = {
     if (!curr) throw new Error('Current page not exists')
     if (curr.pid == null) return
     for (let i = delta; i > 0; i--) {
-      if (curr.pid == null) break;
+      if (curr.pid == null) break
       curr.destroy()
       delete views[curr.id]
       curr = views[curr.pid]
@@ -259,29 +269,28 @@ const router = {
     console.log('openExternal start!!!')
     if (curr) curr.hide()
     let pid = curr ? curr.id : null
-    let v = curr = new View(url)
+    let v = (curr = new View(url))
     views[v.id] = v
     v.pid = pid
     v.show()
     onRoute()
   },
-  currentView() {
+  currentView () {
     return curr
   },
-  getViewById(id) {
+  getViewById (id) {
     return views[id]
   },
-  getViewIds() {
+  getViewIds () {
     let ids = Object.keys(views).map(id => Number(id))
     return ids
   },
-  eachView(fn) {
+  eachView (fn) {
     let ids = this.getViewIds()
     ids.forEach(id => {
       fn.call(null, views[id])
     })
-  },
-
+  }
 }
 
 export default router

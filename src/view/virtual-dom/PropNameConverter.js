@@ -20,8 +20,10 @@ const dashToCamelCase = function (str) {
 }
 
 const camelToDashCase = function (str) {
-  return cache[str] ||
+  return (
+    cache[str] ||
     (cache[str] = str.replace(regexDict.camelToDash, '-$1').toLowerCase())
+  )
 }
 
 export default {

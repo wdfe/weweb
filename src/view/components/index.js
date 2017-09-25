@@ -6,7 +6,7 @@ import Button from './wx-button'
 import Canvas from './wx-canvas'
 import Checkbox from './wx-checkbox'
 import CheckboxGroup from './wx-checkbox-Group'
-//import ContactButton from './wx-contact-button'
+// import ContactButton from './wx-contact-button'
 import Form from './wx-form'
 import Icon from './wx-icon'
 import Image from './wx-image'
@@ -34,45 +34,39 @@ import Toast from './wx-toast'
 import Video from './wx-video'
 import View from './wx-view'
 
-
-
-
-
-
-
 export {
-    ActionSheetCancel,
-    ActionSheet,
-    ActionSheetItem,
-    Audio,
-    Button,
-    Canvas,
-    Checkbox,
-    CheckboxGroup,
-    Form,
-    Icon,
-    Image,
-    Input,
-    Label,
-    Loading,
-    Map,
-    Mask,
-    Modal,
-    Navigator,
-    Picker,
-    PickerView,
-    PickerViewColumn,
-    Progress,
-    Radio,
-    RadioGroup,
-    ScrollView,
-    Slider,
-    Swiper,
-    SwiperItem,
-    Switch,
-    Text,
-    TextArea,
-    Toast,
-    Video,
-    View
+  ActionSheetCancel,
+  ActionSheet,
+  ActionSheetItem,
+  Audio,
+  Button,
+  Canvas,
+  Checkbox,
+  CheckboxGroup,
+  Form,
+  Icon,
+  Image,
+  Input,
+  Label,
+  Loading,
+  Map,
+  Mask,
+  Modal,
+  Navigator,
+  Picker,
+  PickerView,
+  PickerViewColumn,
+  Progress,
+  Radio,
+  RadioGroup,
+  ScrollView,
+  Slider,
+  Swiper,
+  SwiperItem,
+  Switch,
+  Text,
+  TextArea,
+  Toast,
+  Video,
+  View
 }

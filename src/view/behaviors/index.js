@@ -11,19 +11,17 @@ import Native from './wx-native'
 import Player from './wx-player'
 import Touchtrack from './wx-touchtrack'
 
-
-
 export {
-    Base,
-    DataComponent,
-    Disabled,
-    Group,
-    Hover,
-    InputBase,
-    Item,
-    LabelTarget,
-    MaskBehavior,
-    Native,
-    Player,
-    Touchtrack
+  Base,
+  DataComponent,
+  Disabled,
+  Group,
+  Hover,
+  InputBase,
+  Item,
+  LabelTarget,
+  MaskBehavior,
+  Native,
+  Player,
+  Touchtrack
 }

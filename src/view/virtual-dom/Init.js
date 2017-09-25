@@ -6,11 +6,12 @@ const init = function () {
   document.addEventListener(
     'DOMContentLoaded',
     function () {
-      let screenWidth = utils.getPlatform() && window.innerWidth || 375
-      document.documentElement.style.fontSize = screenWidth / Enums.RPX_RATE + 'px'
+      let screenWidth = (utils.getPlatform() && window.innerWidth) || 375
+      document.documentElement.style.fontSize =
+        screenWidth / Enums.RPX_RATE + 'px'
     },
     1e3
   )
 }
 
-export default {init}
+export default { init }
