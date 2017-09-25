@@ -126,7 +126,7 @@ DFT_CMP=true ./bin/weweb demos/demo20170111
 
 weweb前期参考了[wept]项目的实现，目前有部分代码也是沿用了[wept]的或在这基础上改造而来。在此，特别感谢[wept]的作者 chemzqm 的无私奉献
 
-如果你有好的意见或建议，欢迎给我们提 [issue] 或 [PR]，为优化 [weweb] 贡献力量，如果觉得weweb不错，就请给给个star吧
+如果你有好的意见或建议，欢迎给我们提 [issue] 或 [PR]，为优化 [weweb] 贡献力量，如果觉得weweb不错，就请star起来吧
 
 ## License
 
