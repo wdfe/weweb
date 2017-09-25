@@ -571,7 +571,8 @@ export function uploadFile(data) {
   }
   let formData = args.formData || {}
   let xhr = new XMLHttpRequest()
-  xhr.open('POST', '/remoteProxy')
+  let reqUrl = args.url.indexOf('http')===0 && args.url.indexOf(location.host)===-1 && __wxConfig__.weweb && (__wxConfig__.weweb.requestProxy || '/remoteProxy') || args.url
+  xhr.open('POST', reqUrl)
   xhr.onload = function () {
     if (xhr.status / 100 | 0 == 2) {
       onSuccess(data, {statusCode: xhr.status, data: xhr.responseText})

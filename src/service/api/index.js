@@ -52,7 +52,8 @@ var emptyFn = function () {},
   compassChangeFns = [],
   refreshSessionTimeHander = void 0,
   curWebViewId = void 0,
-  currentClipBoardData = void 0;
+  currentClipBoardData = void 0,
+  loginSourceUrl = '';
 
 bridge.subscribe("SPECIAL_PAGE_EVENT", function (params) {
   var data = params.data,
@@ -622,12 +623,20 @@ var apiObj = {//wx对象
       if(__wxConfig__.weweb.loginUrl.indexOf('/')!=0){
         __wxConfig__.weweb.loginUrl = '/'+__wxConfig__.weweb.loginUrl
       }
+      loginSourceUrl = __curPage__.url
       apiObj.redirectTo({
         url:__wxConfig__.weweb.loginUrl
       })
     }else{
       bridge.invokeMethod("login", params)
     }
+  },
+  loginSuccess: function () {
+    const url = loginSourceUrl.indexOf('/')===0?loginSourceUrl:'/'+loginSourceUrl
+    loginSourceUrl = ''
+    apiObj.redirectTo({
+      url:url
+    })
   },
   checkLogin: function (params) {
     bridge.invokeMethod("checkLogin", params)

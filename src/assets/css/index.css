@@ -786,6 +786,7 @@ xpopup
   font-size: 16px;
   line-height: normal;
   padding:10px;
+  min-width:100px;
 }
 
 .wx-toast-icon {
@@ -1626,7 +1627,7 @@ wx-input div div {
 }
 
 .wx-icon-loading {
-  margin: 30px auto 5px;
+  margin: 10px auto 5px;
   width: 38px;
   height: 38px;
   vertical-align: baseline;
