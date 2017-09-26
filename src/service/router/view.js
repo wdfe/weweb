@@ -8,10 +8,6 @@ const Bus = getBus()
 function isMap (path) {
   return /^http(s)?:\/\/(apis\.map|3gimg\.qq\.com)/.test(path)
 }
-
-const curViewId = function () {
-  return (window.__wxConfig && window.__wxConfig.viewId) || 0
-}
 let loadedApp = false
 
 export default class View extends Emitter {
@@ -223,7 +219,7 @@ export default class View extends Emitter {
           window.firstRender = 0 // 重置
           Bus.emit('ready', self.id)
           Pull.register(function () {
-            ServiceJSBridge.subscribeHandler('onPullDownRefresh', {}, curViewId())
+            ServiceJSBridge.subscribeHandler('onPullDownRefresh', {}, self.id)
           })
         }
 
