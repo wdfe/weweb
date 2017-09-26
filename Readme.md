@@ -87,7 +87,7 @@ npm run autostart
 ## 在线演示demo
 [demo源码]
 [在线demo h5版]
-![小程序二维码](https://raw.githubusercontent.com/pgfxm/bbxx/master/src/images/awm.jpg =200)
+![小程序二维码](https://raw.githubusercontent.com/pgfxm/bbxx/master/src/images/awm.jpg)
 
 ## 注意事项
 
