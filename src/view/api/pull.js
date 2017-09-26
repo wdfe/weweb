@@ -12,15 +12,15 @@ var m = 100,
   touchendCallback = null,
   isPullDown = !1
 
-function CreateContainer() {
+function CreateContainer () {
   // 生成下拉时看到的logo容器
   if (!containerDiv) {
     containerDiv = document.createElement('div')
     var logoEle = document.createElement('i')
     if (__wxConfig.window.backgroundTextStyle === 'dark') {
-      logoEle.style.backgroundImage = 'url(' + pullLoadingImgBlack + ')'
-    } else {
       logoEle.style.backgroundImage = 'url(' + pullLoadingImgWhite + ')'
+    } else {
+      logoEle.style.backgroundImage = 'url(' + pullLoadingImgBlack + ')'
     }
     logoEle.style.width = '32px'
     logoEle.style.position = 'absolute'
@@ -44,25 +44,23 @@ function CreateContainer() {
 
 const navbarHeight = 42
 
-function handleTouchStart() {
-  window.addEventListener(
+function handleTouchStart () {
+  window.__curPage__.el.addEventListener(
     'touchstart',
     function (event) {
       if (window.scrollY == 0) {
         CreateContainer()
         isTouching = !0
         pageY = event.touches[0].pageY
-        // window.document.body.style.transition = 'all linear 0'
         window.__curPage__.el.style.transition = 'all linear 0'
         containerDiv.style.transition = 'all linear 0'
       }
-      // 0 == window.scrollY && (CreateContainer(), I = !0, h = event.touches[0].pageY, window.document.body.style.transition = "all linear 0", containerDiv.style.transition = "all linear 0")
     }, !0
   )
 }
 
-function handleTouchMove() {
-  window.addEventListener('touchmove', function (e) {
+function handleTouchMove () {
+  window.__curPage__.el.addEventListener('touchmove', function (e) {
     if (isTouching && __wxConfig.window.enablePullDownRefresh && !isPullDown) {
       height = e.touches[0].pageY - pageY
       height = Math.max(0, height)
@@ -71,12 +69,11 @@ function handleTouchMove() {
       height += navbarHeight
       containerDiv.style.height = height + 'px'
     }
-    // I && __wxConfig.window.enablePullDownRefresh && !M && (v = e.touches[0].pageY - h, v = Math.max(0, v), v = Math.min(m, v), window.document.body.style.marginTop = v + "px", containerDiv.style.height = v + "px")
   })
 }
 
-function handleTouchEnd() {
-  window.addEventListener('touchend', function (e) {
+function handleTouchEnd () {
+  window.__curPage__.el.addEventListener('touchend', function (e) {
     isTouching = !1
     if (height > leastHeight) {
       typeof touchendCallback === 'function' && touchendCallback()
@@ -88,30 +85,31 @@ function handleTouchEnd() {
     } else {
       reset()
     }
-    // I = !1, v > f ? ("function" == typeof y && y(), v = f, window.document.body.style.marginTop = v + "px", containerDiv.style.height = v + "px", setTimeout(reset, 3e3)) : reset()
   })
 }
 
-function reset() {
+function reset () {
   window.__curPage__.el.style.transition = 'all linear 0.3s'
   window.__curPage__.el.style.marginTop = '0px'
   if (containerDiv) {
     containerDiv.style.transition = 'all linear 0.3s'
     containerDiv.style.height = `${navbarHeight}px`
   }
-  // window.document.body.style.transition = "all linear 0.3s", window.document.body.style.marginTop = "0px", containerDiv && (containerDiv.style.transition = "all linear 0.3s", containerDiv.style.height = "0px")
 }
 
-function togglePullDownRefresh(isPullDownAgs) {
+function togglePullDownRefresh (isPullDownAgs) {
   // 禁用回弹
   isPullDown = isPullDownAgs
 }
+
+const registered = {}
 
 export default {
   // 下拉手势注册以及相关事件
   register: function (callback) {
     if (
       window.__wxConfig &&
+      !registered[window.__wxConfig.viewId] &&
       window.__wxConfig.window &&
       window.__wxConfig.window.enablePullDownRefresh
     ) {
@@ -119,6 +117,7 @@ export default {
       handleTouchStart()
       handleTouchMove()
       handleTouchEnd()
+      registered[window.__wxConfig.viewId] = true
     }
   },
   reset: reset,

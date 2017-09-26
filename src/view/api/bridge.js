@@ -77,9 +77,9 @@ window.WeixinJSBridge = {
     typeof handler === 'function' && handler(data)
   }
 }
-pull.register(function () {
-  ServiceJSBridge.subscribeHandler('onPullDownRefresh', {}, curViewId())
-})
+// pull.register(function () {
+//   ServiceJSBridge.subscribeHandler('onPullDownRefresh', {}, curViewId())
+// })
 
 function publish () {
   var params = Array.prototype.slice.call(arguments)

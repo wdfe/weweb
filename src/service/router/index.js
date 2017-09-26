@@ -193,9 +193,9 @@ const router = {
       if (isTabView) tabViews[path] = curr
     }
     onRoute()
-    if (isLaunch){
+    if (isLaunch) {
       onNavigate(path, 'appLaunch')
-    }else{
+    } else {
       onNavigate(path, 'navigateTo')
     }
   },

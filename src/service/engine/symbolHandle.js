@@ -22,7 +22,9 @@ var getKeys =
     }
     : function (obj) {
       var type = typeof obj
-      if (obj === null || (type !== 'function' && type !== 'object')) { throw new TypeError('obj must be an Object') }
+      if (obj === null || (type !== 'function' && type !== 'object')) {
+        throw new TypeError('obj must be an Object')
+      }
       var res = [],
         key
       for (key in obj) {
