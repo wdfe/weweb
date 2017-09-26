@@ -872,7 +872,7 @@ var apiObj = {
   },
   loginSuccess: function () {
     const url =
-      loginSourceUrl.indexOf('/') === 0 ? loginSourceUrl : '/' + loginSourceUrl
+      loginSourceUrl && (loginSourceUrl.indexOf('/') === 0 ? loginSourceUrl : '/' + loginSourceUrl) || '/' + __root__
     loginSourceUrl = ''
     apiObj.redirectTo({
       url: url

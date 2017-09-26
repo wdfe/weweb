@@ -3,18 +3,6 @@ import router from '../router/index'
 import * as util from './util'
 const Bus = util.getBus()
 let tabBar = window.__wxConfig__.tabBar || {}
-if (typeof Array.prototype.forEach !== 'function') {
-  Array.prototype.forEach = function (fn, context) {
-    for (var k = 0, length = this.length; k < length; k++) {
-      if (
-        typeof fn === 'function' &&
-        Object.prototype.hasOwnProperty.call(this, k)
-      ) {
-        fn.call(context, this[k], k, this)
-      }
-    }
-  }
-}
 
 var Tabbar = {
   init: function () {
@@ -65,7 +53,9 @@ var Tabbar = {
 */
     this.activeIdx = idx
     // this.doUpdate();
-    this.emit('active', item.pagePath)
+    let curr = router.currentView()
+    if (curr && curr.url == item.pagePath) return
+    router.switchTab(item.pagePath)
   },
   doUpdate: function () {
     let active = this.activeIdx
@@ -116,13 +106,7 @@ var Tabbar = {
 
 Emitter(Tabbar)
 
-Tabbar.on('active', pagePath => {
-  let curr = router.currentView()
-  if (curr && curr.url == pagePath) return
-  router.switchTab(pagePath)
-})
-
-Bus.on('route', (n, curr) => {
+Bus.on('route', (curr) => {
   Tabbar.show(curr.url)
 })
 export default Tabbar

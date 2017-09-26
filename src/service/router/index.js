@@ -88,7 +88,7 @@ function onRoute () {
   if (typeof history.replaceState === 'function') {
     history.replaceState({}, '', `${home}#!${curr.url}`)
   }
-  Bus.emit('route', router.getViewIds().length, curr) // tabbar状态变化
+  Bus.emit('route', curr) // tabbar状态变化
   let arr = []
   let view = curr
   while (view) {
@@ -111,15 +111,6 @@ function onBack () {
 
 function onNavigate (url, type = 'navigateTo') {
   if (!url) throw new Error('url not found')
-  if (
-    (type == 'navigateTo' || type == 'redirectTo') &&
-    util.isTabbar(curr.path)
-  ) {
-    console.error(
-      'wx.navigateTo wx.redirectTo 不允许跳转到 tabbar 页面，请使用 wx.switchTab'
-    )
-    return
-  }
   if (type == 'reLaunch' && util.isTabbar(curr.path) && curr.query) {
     console.error('wx.reLaunch 跳转到 tabbar 页面时不允许携带参数，请去除参数或使用 wx.switchTab')
     return
@@ -138,8 +129,6 @@ const router = {
     // make sure root is valid page
     let root = valid ? first : window.__root__
     this.navigateTo(root, true) // 页面切换，路由表更新
-    let { path, query } = util.parsePath(root)
-    // lifeSycleEvent(path, query, 'appLaunch')
 
     if (!valid) {
       console.warn(`Invalid route: ${first}, redirect to root`)
@@ -204,7 +193,11 @@ const router = {
       if (isTabView) tabViews[path] = curr
     }
     onRoute()
-    if (!isLaunch) onNavigate(path, 'navigateTo')
+    if (isLaunch){
+      onNavigate(path, 'appLaunch')
+    }else{
+      onNavigate(path, 'navigateTo')
+    }
   },
   reLaunch (path) {
     sessionStorage.clear()

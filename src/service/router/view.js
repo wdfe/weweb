@@ -195,9 +195,6 @@ export default class View extends Emitter {
         let resArr = res.split('@code-separator-line:')
         try {
           new Function(`${resArr[2]}\n //# sourceURL=${self.path}.js`)() // define page service
-          if (!window.firstRender) {
-            lifeSycleEvent(self.path, self.query, 'appLaunch')
-          }
         } catch (e) {
           console.error(e)
         }
