@@ -5,21 +5,22 @@ const pullLoadingImgWhite =
 
 var m = 100,
   leastHeight = 50,
-  tag = !1,
+  isTouching = !1,
   pageY = 0,
   height = 0,
   containerDiv = null,
   touchendCallback = null,
   isPullDown = !1
+
 function CreateContainer () {
   // 生成下拉时看到的logo容器
   if (!containerDiv) {
     containerDiv = document.createElement('div')
     var logoEle = document.createElement('i')
     if (__wxConfig.window.backgroundTextStyle === 'dark') {
-      logoEle.style.backgroundImage = 'url(' + pullLoadingImgBlack + ')'
-    } else {
       logoEle.style.backgroundImage = 'url(' + pullLoadingImgWhite + ')'
+    } else {
+      logoEle.style.backgroundImage = 'url(' + pullLoadingImgBlack + ')'
     }
     logoEle.style.width = '32px'
     logoEle.style.position = 'absolute'
@@ -34,64 +35,66 @@ function CreateContainer () {
     containerDiv.style.position = 'fixed'
     containerDiv.style.top = '0px'
     containerDiv.style.backgroundColor = __wxConfig.window.backgroundColor
-    document.body.insertBefore(containerDiv, document.body.firstChild)
+    window.__curPage__.el.parentNode.insertBefore(
+      containerDiv,
+      window.__curPage__.el
+    )
   }
 }
 
+const navbarHeight = 42
+
 function handleTouchStart () {
-  window.addEventListener(
+  window.__curPage__.el.addEventListener(
     'touchstart',
     function (event) {
       if (window.scrollY == 0) {
         CreateContainer()
-        tag = !0
+        isTouching = !0
         pageY = event.touches[0].pageY
-        window.document.body.style.transition = 'all linear 0'
+        window.__curPage__.el.style.transition = 'all linear 0'
         containerDiv.style.transition = 'all linear 0'
       }
-      // 0 == window.scrollY && (CreateContainer(), I = !0, h = event.touches[0].pageY, window.document.body.style.transition = "all linear 0", containerDiv.style.transition = "all linear 0")
-    },
-    !0
+    }, !0
   )
 }
 
 function handleTouchMove () {
-  window.addEventListener('touchmove', function (e) {
-    if (tag && __wxConfig.window.enablePullDownRefresh && !isPullDown) {
+  window.__curPage__.el.addEventListener('touchmove', function (e) {
+    if (isTouching && __wxConfig.window.enablePullDownRefresh && !isPullDown) {
       height = e.touches[0].pageY - pageY
       height = Math.max(0, height)
       height = Math.min(m, height)
-      window.document.body.style.marginTop = height + 'px'
+      window.__curPage__.el.style.marginTop = height + 'px'
+      height += navbarHeight
       containerDiv.style.height = height + 'px'
     }
-    // I && __wxConfig.window.enablePullDownRefresh && !M && (v = e.touches[0].pageY - h, v = Math.max(0, v), v = Math.min(m, v), window.document.body.style.marginTop = v + "px", containerDiv.style.height = v + "px")
   })
 }
 
 function handleTouchEnd () {
-  window.addEventListener('touchend', function (e) {
-    tag = !1
+  window.__curPage__.el.addEventListener('touchend', function (e) {
+    isTouching = !1
     if (height > leastHeight) {
       typeof touchendCallback === 'function' && touchendCallback()
       height = leastHeight
-      window.document.body.style.marginTop = height + 'px'
-      containerDiv.style.height = height + 'px'
+      // window.document.body.style.marginTop = height + 'px'
+      window.__curPage__.el.style.marginTop = height + 'px'
+      containerDiv.style.height = height + navbarHeight + 'px'
       setTimeout(reset, 3e3)
     } else {
       reset()
     }
-    // I = !1, v > f ? ("function" == typeof y && y(), v = f, window.document.body.style.marginTop = v + "px", containerDiv.style.height = v + "px", setTimeout(reset, 3e3)) : reset()
   })
 }
 
 function reset () {
-  window.document.body.style.transition = 'all linear 0.3s'
-  window.document.body.style.marginTop = '0px'
+  window.__curPage__.el.style.transition = 'all linear 0.3s'
+  window.__curPage__.el.style.marginTop = '0px'
   if (containerDiv) {
     containerDiv.style.transition = 'all linear 0.3s'
-    containerDiv.style.height = '0px'
+    containerDiv.style.height = `${navbarHeight}px`
   }
-  // window.document.body.style.transition = "all linear 0.3s", window.document.body.style.marginTop = "0px", containerDiv && (containerDiv.style.transition = "all linear 0.3s", containerDiv.style.height = "0px")
 }
 
 function togglePullDownRefresh (isPullDownAgs) {
@@ -99,9 +102,24 @@ function togglePullDownRefresh (isPullDownAgs) {
   isPullDown = isPullDownAgs
 }
 
+const registered = {}
+
 export default {
   // 下拉手势注册以及相关事件
-  register: function (callback) {},
+  register: function (callback) {
+    if (
+      window.__wxConfig &&
+      !registered[window.__wxConfig.viewId] &&
+      window.__wxConfig.window &&
+      window.__wxConfig.window.enablePullDownRefresh
+    ) {
+      touchendCallback = callback
+      handleTouchStart()
+      handleTouchMove()
+      handleTouchEnd()
+      registered[window.__wxConfig.viewId] = true
+    }
+  },
   reset: reset,
   togglePullDownRefresh: togglePullDownRefresh
 }

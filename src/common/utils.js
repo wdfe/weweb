@@ -39,7 +39,9 @@ var words = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
         ((curFlage = i % 4 ? 64 * curFlage + curValue : curValue), i++ % 4)
           ? (res += String.fromCharCode(255 & (curFlage >> ((-2 * i) & 6))))
           : 0
-      ) { curValue = words.indexOf(curValue) }
+      ) {
+        curValue = words.indexOf(curValue)
+      }
       return res
     }
 
@@ -478,7 +480,9 @@ const utils = {
   getRealRoute (pathPrefix = '', pathname = '') {
     // 格式化一个路径
     if (pathname.indexOf('/') === 0) return pathname.substr(1)
-    if (pathname.indexOf('./') === 0) { return this.getRealRoute(pathPrefix, pathname.substr(2)) }
+    if (pathname.indexOf('./') === 0) {
+      return this.getRealRoute(pathPrefix, pathname.substr(2))
+    }
     var index,
       folderLength,
       folderArr = pathname.split('/')
@@ -687,13 +691,19 @@ const utils = {
           : 'parameter',
       tplTpye = this.getDataType(paramTpl),
       pType = this.getDataType(params)
-    if (pType != tplTpye) { return name + ' should be ' + tplTpye + ' instead of ' + pType + ';' }
+    if (pType != tplTpye) {
+      return name + ' should be ' + tplTpye + ' instead of ' + pType + ';'
+    }
     switch (((result = ''), tplTpye)) {
       case 'Object':
-        for (var i in paramTpl) { result += this.paramCheck(params[i], paramTpl[i], name + '.' + i) }
+        for (var i in paramTpl) {
+          result += this.paramCheck(params[i], paramTpl[i], name + '.' + i)
+        }
         break
       case 'Array':
-        if (params.length < paramTpl.length) { return name + ' should have at least ' + paramTpl.length + ' item;' }
+        if (params.length < paramTpl.length) {
+          return name + ' should have at least ' + paramTpl.length + ' item;'
+        }
         for (var a = 0; a < paramTpl.length; ++a) {
           result += this.paramCheck(
             params[a],
@@ -833,7 +843,9 @@ const utils = {
         r = 0;
       r < leng;
       r++
-    ) { arr[r] = atobStr.charCodeAt(r) }
+    ) {
+      arr[r] = atobStr.charCodeAt(r)
+    }
     return arr.buffer
   },
   blobToArrayBuffer (blobStr, callback) {

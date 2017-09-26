@@ -29,7 +29,9 @@ function getTypes () {
 
 let storage = {
   set: function (key, value, dataType) {
-    if (window.localStorage == null) { return console.error('localStorage not supported') }
+    if (window.localStorage == null) {
+      return console.error('localStorage not supported')
+    }
     let str = localStorage.getItem(directory)
     let obj
     obj = str ? JSON.parse(str) : {}
@@ -41,7 +43,9 @@ let storage = {
     this.emit('change')
   },
   get: function (key) {
-    if (window.localStorage == null) { return console.error('localStorage not supported') }
+    if (window.localStorage == null) {
+      return console.error('localStorage not supported')
+    }
     let str = localStorage.getItem(directory)
     let obj
     obj = str ? JSON.parse(str) : {}
@@ -51,7 +55,9 @@ let storage = {
     }
   },
   remove: function (key) {
-    if (window.localStorage == null) { return console.error('localStorage not supported') }
+    if (window.localStorage == null) {
+      return console.error('localStorage not supported')
+    }
     let str = localStorage.getItem(directory)
     if (!str) return
     let obj = JSON.parse(str)
@@ -65,13 +71,17 @@ let storage = {
     return data
   },
   clear: function () {
-    if (window.localStorage == null) { return console.error('localStorage not supported') }
+    if (window.localStorage == null) {
+      return console.error('localStorage not supported')
+    }
     localStorage.removeItem(directory)
     localStorage.removeItem(directory + '_type')
     this.emit('change')
   },
   getAll: function () {
-    if (window.localStorage == null) { return console.error('localStorage not supported') }
+    if (window.localStorage == null) {
+      return console.error('localStorage not supported')
+    }
     let str = localStorage.getItem(directory)
     let obj = str ? JSON.parse(str) : {}
     let res = {}
@@ -84,7 +94,9 @@ let storage = {
     return res
   },
   info: function () {
-    if (window.localStorage == null) { return console.error('localStorage not supported') }
+    if (window.localStorage == null) {
+      return console.error('localStorage not supported')
+    }
     let str = localStorage.getItem(directory)
     let obj = str ? JSON.parse(str) : {}
     return {

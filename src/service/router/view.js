@@ -1,11 +1,16 @@
 import Emitter from 'emitter'
 import { uid, createFrame, parsePath, getBus } from '../lib/util'
-import { lifeSycleEvent } from './index'
+// import { lifeSycleEvent } from './index'
+import Pull from '../../view/api/pull'
 import utils from '../../common/utils'
 require('whatwg-fetch')
 const Bus = getBus()
 function isMap (path) {
   return /^http(s)?:\/\/(apis\.map|3gimg\.qq\.com)/.test(path)
+}
+
+const curViewId = function () {
+  return (window.__wxConfig && window.__wxConfig.viewId) || 0
 }
 let loadedApp = false
 
@@ -217,6 +222,9 @@ export default class View extends Emitter {
         function componentLoaded () {
           window.firstRender = 0 // 重置
           Bus.emit('ready', self.id)
+          Pull.register(function () {
+            ServiceJSBridge.subscribeHandler('onPullDownRefresh', {}, curViewId())
+          })
         }
 
         if (resArr[3]) {

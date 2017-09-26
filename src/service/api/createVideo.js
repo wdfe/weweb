@@ -34,7 +34,9 @@ ServiceJSBridge.subscribe('videoPlayerRemoved', function (params, t) {
 
 class VideoControl {
   constructor (videoId) {
-    if (typeof videoId !== 'string') { throw new Error('video ID should be a String') }
+    if (typeof videoId !== 'string') {
+      throw new Error('video ID should be a String')
+    }
     this.domId = videoId
   }
 

@@ -28,7 +28,9 @@ ServiceJSBridge.subscribe('audioInsert', function (params, webviewId) {
 
 class Audio {
   constructor (audioId, webviewId) {
-    if (typeof audioId !== 'string') { throw new Error('audioId should be a String') }
+    if (typeof audioId !== 'string') {
+      throw new Error('audioId should be a String')
+    }
     this.audioId = audioId
     this.webviewId = webviewId
   }

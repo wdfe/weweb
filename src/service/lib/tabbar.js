@@ -106,7 +106,7 @@ var Tabbar = {
 
 Emitter(Tabbar)
 
-Bus.on('route', (curr) => {
+Bus.on('route', curr => {
   Tabbar.show(curr.url)
 })
 export default Tabbar

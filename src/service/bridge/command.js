@@ -737,7 +737,9 @@ export function showModal (data) {
 export function showActionSheet (data) {
   let args = data.args
   if (requiredArgs(['itemList'], data)) return
-  if (!Array.isArray(args.itemList)) { return onError(data, 'itemList must be Array') }
+  if (!Array.isArray(args.itemList)) {
+    return onError(data, 'itemList must be Array')
+  }
   args.itemList = args.itemList.slice(0, 6)
   actionSheet(args).then(res => {
     onSuccess(data, res)

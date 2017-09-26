@@ -321,7 +321,9 @@ var apiObj = {
               arguments.length > 0 && void 0 !== arguments[0]
                 ? arguments[0]
                 : {}
-            if (res.errMsg && res.errMsg.indexOf('data not found') > 0) { return !1 }
+            if (res.errMsg && res.errMsg.indexOf('data not found') > 0) {
+              return !1
+            }
           }
         }
       )
@@ -683,7 +685,6 @@ var apiObj = {
   },
   getLocation: function (params) {
     console.log('getLocation', params, apiObj.appStatus, apiObj.hanged)
-
     ;(apiObj.appStatus === configFlags.AppStatus.BACK_GROUND &&
       apiObj.hanged === !1) ||
       bridge.invokeMethod('getLocation', params)
@@ -872,7 +873,11 @@ var apiObj = {
   },
   loginSuccess: function () {
     const url =
-      loginSourceUrl && (loginSourceUrl.indexOf('/') === 0 ? loginSourceUrl : '/' + loginSourceUrl) || '/' + __root__
+      (loginSourceUrl &&
+        (loginSourceUrl.indexOf('/') === 0
+          ? loginSourceUrl
+          : '/' + loginSourceUrl)) ||
+      '/' + __root__
     loginSourceUrl = ''
     apiObj.redirectTo({
       url: url
@@ -1621,7 +1626,6 @@ var getTouchInfo = function (touchInfo, eventKey, eventInfo) {
     onTouchCancel: 'touchcancel',
     onLongPress: 'longtap'
   }
-
 ;[
   'onTouchStart',
   'onTouchMove',
