@@ -20,6 +20,11 @@ weweb是一个兼容小程序语法的前端框架，你可以用小程序的写
 - 开发出小程序后，同时想拥有同样功能的h5应用，并希望能复用小程序的代码
 - 代替小程序开发者工具对小程序部分功能在浏览器端进行调试
 
+## 优点
+- 跨平台，一套代码多端运行（小程序、h5、未来还可以直接打包成app)
+- 自带常用组件，完美继承了小程序内置组件
+- 兼容小程序rpx语法，使页面更容易适配各种机型
+
 ## 运行
 > 请先在系统中安装[node](https://nodejs.org/zh-cn/)，官方的安装包会同时为您装上依赖管理工具[npm](https://www.npmjs.com/)
 
@@ -62,7 +67,7 @@ npm run build
 # 压缩app代码：使用环境变量 NODE_ENV=production
 NODE_ENV=production ./bin/weweb demos/demo20170111
 
-# 替换编译器：当编译出错时使用环境变量 DFT_CMP=true 调用微信开发者工具自带的编译器
+# 替换编译器：当默认编译出错时使用环境变量 DFT_CMP=true 可切换为微信开发者工具自带的编译器
 DFT_CMP=true ./bin/weweb demos/demo20170111
 
 # 环境变量可以组合使用
@@ -79,8 +84,12 @@ npm run dev
 npm run autostart
 ```
 
-## 注意事项
+## 在线演示demo
+[demo源码]
+[在线demo h5版]
+![小程序二维码](https://raw.githubusercontent.com/pgfxm/bbxx/master/src/images/awm.jpg =200)
 
+## 注意事项
 
 weweb默认使用我们自己写的编译器对wxml和wxss进行编译，但目前编译器还处于试用阶段，有些case可能没测全，使用weweb过程中如果发现一些异常情况，可以尝试切换成微信官方编译器，看看是不否能解决问题。出现类似问题欢迎大家给我们提issue。我们将尽快修正
 
@@ -102,6 +111,22 @@ DFT_CMP=true ./bin/weweb demos/demo20170111
 "weweb":{
   "loginUrl":"/page/H5login"
 }
+
+当登录成功后调用
+wx.loginSuccess();
+这个api可以自动返回到来源页面
+示例代码：
+          success : function(rt){
+            if(rt.result){
+              var login = require("../../modules/login/index.js");
+              app.globalData.userInfo = rt.result;
+              login.setLoginInfo(rt.result);
+              wx.loginSuccess();
+            }else{
+              toast.show(self,rt.status.status_reason||'登录失败');
+            }
+          }
+
 ```
 
 - 跨域请求：当后端接口不支持JSONP时，可以增加requestProxy配置项来设置服务器端代理地址，以实现跨域请求
@@ -137,3 +162,5 @@ weweb前期参考了[wept]项目的实现，目前有部分代码也是沿用了
 [PR]: https://github.com/wdfe/weweb/compare
 [weweb]: https://github.com/wdfe/weweb
 [wept]: https://chemzqm.github.io/wept/#/
+[在线demo]: https://wxshow.vipsinaapp.com/bbxx/
+[demo源码]: https://github.com/pgfxm/bbxx
