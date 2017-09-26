@@ -86,7 +86,9 @@ npm run autostart
 
 ## 在线演示demo
 [demo源码]
-[在线demo h5版]
+
+[h5版在线demo]
+
 ![小程序二维码](https://raw.githubusercontent.com/pgfxm/bbxx/master/src/images/awm.jpg)
 
 ## 注意事项
@@ -162,5 +164,5 @@ weweb前期参考了[wept]项目的实现，目前有部分代码也是沿用了
 [PR]: https://github.com/wdfe/weweb/compare
 [weweb]: https://github.com/wdfe/weweb
 [wept]: https://chemzqm.github.io/wept/#/
-[在线demo]: https://wxshow.vipsinaapp.com/bbxx/
+[h5版在线demo]: https://wxshow.vipsinaapp.com/bbxx/
 [demo源码]: https://github.com/pgfxm/bbxx
