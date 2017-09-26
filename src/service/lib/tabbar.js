@@ -25,7 +25,7 @@ var Tabbar = {
     let self = this
     this.tabbarItems = this.tabbar.querySelectorAll('.jshook-ws-tabbar-item')
     ;[].forEach.call(this.tabbarItems, function (item, i) {
-      item.onclick = self.onItemTap.bind(self, i, item)
+      item.addEventListener('touchstart', self.onItemTap.bind(self, i, item))
     })
   },
   reset: function () {
