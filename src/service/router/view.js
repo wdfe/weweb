@@ -87,7 +87,7 @@ export default class View extends Emitter {
   hide () {
     // this.el.style.display = 'none'
     // 移除当前页面css
-    if (this.el) {
+    if (this.el && this.el.parentNode) {
       this.elParent.removeChild(this.el)
     }
   }
@@ -109,7 +109,9 @@ export default class View extends Emitter {
      document.querySelector('head').removeChild(cssObj)
      }
      */
-    this.el.parentNode.removeChild(this.el)
+    if (this.el && this.el.parentNode) {
+      this.elParent.removeChild(this.el)
+    }
   }
   postMessage (data) {
     this.onReady(() => {

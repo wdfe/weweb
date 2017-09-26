@@ -181,7 +181,7 @@ const router = {
     path = util.normalize(path)
     let exists = tabViews[path]
     if (curr) curr.hide()
-    if (exists) {
+    if (exists && exists.__DOMTree__) {
       curr = exists
       exists.show()
     } else {
@@ -204,7 +204,7 @@ const router = {
     path = util.normalize(path)
     let exists = tabViews[path]
     if (curr) curr.hide()
-    if (exists) {
+    if (exists && exists.__DOMTree__) {
       curr = exists
       exists.show()
     } else {
@@ -229,7 +229,7 @@ const router = {
         delete views[key]
       }
     })
-    if (exists) {
+    if (exists && exists.__DOMTree__) {
       curr = exists
       exists.show()
     } else {
