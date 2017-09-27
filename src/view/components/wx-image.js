@@ -88,14 +88,17 @@ export default window.exparser.registerElement({
     (this.$$.style.height = this.$$.offsetWidth / this.rate + 'px')
   },
   _srcChanged: function (url) {
-    this._img.src = url
-    const isAbsolute = new RegExp('^([a-z]+://|//|/)', 'i')
-    if (!isAbsolute.test(url)) {
-      const currPath = window.__curPage__.url.split('/').slice(0, -1)
-      if (currPath.length) {
-        url = `${currPath.join('/')}/${url}`
+    if (!/https?:/i.test(url)) {
+      if(url.indexOf('/')===0){
+        url = url.substr(1)
+      }else{
+        const currPath = window.__curPage__.url.split('/').slice(0, -1)
+        if (currPath.length) {
+          url = `${currPath.join('/')}/${url}`
+        }
       }
     }
+    this._img.src = url
     this.$.div.style.backgroundImage = 'url(\'' + url + '\')'
   },
   srcChanged: function (filePath, t) {
