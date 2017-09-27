@@ -8,6 +8,7 @@
 weweb是一个兼容小程序语法的前端框架，你可以用小程序的写法，来写web应用。如果你已经有小程序了，通过它你可以将你的小程序运行在浏览器中。如果你熟悉vue的语法，也可以使用wepy编写小程序，再通过weweb转换后将其运行在web端。
 
 该项目基于小程序开发者工具内置的小程序运行框架来实现的，我们在仔细研究了小程序官方的底层框架后，实现了小程序运行在web端的service和view引擎，为了使weweb能适应web端的性能要求，相较小程序原生框架，主要有以下调整：
+
 - 框架核心库进行了大量精减，剔除web不相关的部分,使核心库体积大大减小
 - 将原有的三层架构精简为Service和View两层架构
 - 页面资源、框架内置组件均使用异步加载，提升加载速度
@@ -16,11 +17,13 @@ weweb是一个兼容小程序语法的前端框架，你可以用小程序的写
 - 实现了js版的wxml和wxss编译器以适应跨平台编译需求并无缝整合至weweb
 
 ## 适用场景
+
 - 喜欢小程序的开发方式，或者只懂小程序开发，想通过小程序的开发方式来写web应用
 - 开发出小程序后，同时想拥有同样功能的h5应用，并希望能复用小程序的代码
 - 代替小程序开发者工具对小程序部分功能在浏览器端进行调试
 
 ## 优点
+
 - 跨平台，一套代码多端运行（小程序、h5、未来还可以直接打包成app)
 - 自带常用组件，完美继承了小程序内置组件
 - 兼容小程序rpx语法，使页面更容易适配各种机型
@@ -85,6 +88,7 @@ npm run autostart
 ```
 
 ## 在线演示demo
+
 [demo源码]
 
 [h5版在线demo]
@@ -114,21 +118,21 @@ DFT_CMP=true ./bin/weweb demos/demo20170111
   "loginUrl":"/page/H5login"
 }
 
-当登录成功后调用
-wx.loginSuccess();
-这个api可以自动返回到来源页面
-示例代码：
-          success : function(rt){
-            if(rt.result){
-              var login = require("../../modules/login/index.js");
-              app.globalData.userInfo = rt.result;
-              login.setLoginInfo(rt.result);
-              wx.loginSuccess();
-            }else{
-              toast.show(self,rt.status.status_reason||'登录失败');
-            }
-          }
+/**
+ * 当登录成功后调wx.loginSuccess();
+ * 这个api可以自动返回到来源页面
+ */
 
+success : function(rt){
+  if(rt.result){
+    var login = require("../../modules/login/index.js");
+    app.globalData.userInfo = rt.result;
+    login.setLoginInfo(rt.result);
+    wx.loginSuccess();
+  }else{
+    toast.show(self,rt.status.status_reason||'登录失败');
+  }
+}
 ```
 
 - 跨域请求：当后端接口不支持JSONP时，可以增加requestProxy配置项来设置服务器端代理地址，以实现跨域请求
