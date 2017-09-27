@@ -62,6 +62,9 @@ Page({
           }, {
             zh: '显示消息提示框',
             url: 'toast/toast'
+          }, {
+            zh: 'WXML节点信息',
+            url: 'create-selector-query/create-selector-query'
           }
         ]
       }, {

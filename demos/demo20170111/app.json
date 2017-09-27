@@ -50,6 +50,7 @@
     "page/API/pages/navigator/navigator",
     "page/API/pages/pull-down-refresh/pull-down-refresh",
     "page/API/pages/animation/animation",
+    "page/API/pages/create-selector-query/create-selector-query",
 
     "page/API/pages/action-sheet/action-sheet",
     "page/API/pages/modal/modal",
