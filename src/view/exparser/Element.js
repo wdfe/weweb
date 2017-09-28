@@ -28,7 +28,7 @@ const attachedElement = function (ele) {
     let setAttachedRecursively = function (ele) {
       ele.__attached = !0
       ele.shadowRoot instanceof Element &&
-        setAttachedRecursively(ele.shadowRoot)
+      setAttachedRecursively(ele.shadowRoot)
       let childNodes = ele.childNodes
       if (childNodes) {
         for (let idx = 0; idx < childNodes.length; idx++) {
@@ -41,7 +41,7 @@ const attachedElement = function (ele) {
     let callAttachedLifeTimeFuncRecursively = function (ele) {
       ele.__lifeTimeFuncs && componentSystem._callLifeTimeFuncs(ele, 'attached')
       ele.shadowRoot instanceof Element &&
-        callAttachedLifeTimeFuncRecursively(ele.shadowRoot)
+      callAttachedLifeTimeFuncRecursively(ele.shadowRoot)
       let childNodes = ele.childNodes
       if (childNodes) {
         for (let idx = 0; idx < childNodes.length; idx++) {
@@ -69,7 +69,7 @@ const detachedElement = function (ele) {
     const callLifeTimeFuncRecursively = function (ele) {
       ele.__lifeTimeFuncs && componentSystem._callLifeTimeFuncs(ele, 'detached')
       ele.shadowRoot instanceof Element &&
-        callLifeTimeFuncRecursively(ele.shadowRoot)
+      callLifeTimeFuncRecursively(ele.shadowRoot)
       let childNodes = ele.childNodes
       if (childNodes) {
         for (let idx = 0; idx < childNodes.length; idx++) {
@@ -102,12 +102,10 @@ const childObserver = function (ele, observerName, targetNode) {
     Observer._callObservers(ele, '__childObservers', opt)
   }
 }
-const attachShadowRoot = function (
-  componentObj,
-  newNode,
-  oldNode,
-  isRemoveOldNode
-) {
+const attachShadowRoot = function (componentObj,
+                                   newNode,
+                                   oldNode,
+                                   isRemoveOldNode) {
   // 增、删、改节点
   let copyOfOriginalElement = componentObj
   // 找dom根节点
@@ -127,7 +125,7 @@ const attachShadowRoot = function (
       copyOfOriginalElement = slotParent
     }
     copyOfOriginalElement instanceof Element &&
-      (copyOfOriginalElement = copyOfOriginalElement.__domElement)
+    (copyOfOriginalElement = copyOfOriginalElement.__domElement)
   }
 
   let newDomEle = null
@@ -218,9 +216,9 @@ const attachShadowRoot = function (
       : copyOfOriginalElement.removeChild(oldDomEle)
   } else {
     newDomEle &&
-      (oldDomEle
-        ? copyOfOriginalElement.insertBefore(newDomEle, oldDomEle)
-        : copyOfOriginalElement.appendChild(newDomEle))
+    (oldDomEle
+      ? copyOfOriginalElement.insertBefore(newDomEle, oldDomEle)
+      : copyOfOriginalElement.appendChild(newDomEle))
   }
 }
 const updateSubtree = function (ele, newNode, oldNode, willRemoveOldNode) {
@@ -258,12 +256,12 @@ const updateSubtree = function (ele, newNode, oldNode, willRemoveOldNode) {
       let originalIndexOfNewNode = parentNode.childNodes.indexOf(newNode)
       parentNode.childNodes.splice(originalIndexOfNewNode, 1)
       parentNode === ele &&
-        originalIndexOfNewNode < oldNodeIndex &&
-        oldNodeIndex--
+      originalIndexOfNewNode < oldNodeIndex &&
+      oldNodeIndex--
       subtreeObserversCount -= parentNode.__subtreeObserversCount
     }
     subtreeObserversCount &&
-      Observer._updateSubtreeCaches(newNode, subtreeObserversCount)
+    Observer._updateSubtreeCaches(newNode, subtreeObserversCount)
   }
   attachShadowRoot(originalParentNode, newNode, oldNode, willRemoveOldNode)
   oldNodeIndex === -1 && (oldNodeIndex = ele.childNodes.length)
@@ -316,6 +314,53 @@ Element.replaceDocumentElement = function (ele, oldChild) {
   }
 }
 
+const parseSimpleSelector = function (simpleSelector, relation) {
+  // simpleSelector => #a.b
+  // primitiveSelector => ["#a", ".b"]
+  const primitiveSelector = simpleSelector.match(/^(#[_a-zA-Z][-_a-zA-Z0-9:]*|)((?:\.-?[_a-zA-Z][-_a-zA-Z0-9]*)+|)$/)
+  if (!primitiveSelector) return null
+  const idSelectors = primitiveSelector[1].slice(1)
+  const classSelectors = primitiveSelector[2].split('.')
+  classSelectors.shift()
+  return idSelectors || classSelectors.length ? {
+    id: idSelectors,
+    classes: classSelectors,
+    relation: relation || ''
+  } : null
+}
+
+Element.parseSelector = function (selectorStr) {
+  // origin => a.b.c, b.c#d {}
+  // complex => ["a.b.c>d", "a>b.c#d"]
+  // simple => ["a.b.c", ">", "d"]
+  const complexSelector = selectorStr.split(',')
+  const res = []
+  for (let i = 0; i < complexSelector.length; i++) {
+    const simpleSelectors = complexSelector[i].split(/( |\t|>)/g)
+    const parsedSelector = []
+    let relation = ''
+    let s = 0
+    for (; s < simpleSelectors.length; s++) {
+      let simpleSelector = simpleSelectors[s]
+      if (simpleSelector && simpleSelector !== ' ' && simpleSelector !== '\t') {
+        if (simpleSelector !== '>') {
+          let selectorQueryObj = parseSimpleSelector(simpleSelector, relation)
+          relation = ''
+          if (!selectorQueryObj) break
+          parsedSelector.push(selectorQueryObj)
+        } else {
+          if (relation !== '') break
+          relation = 'child'
+        }
+      }
+    }
+    s === simpleSelectors.length && parsedSelector.length && res.push(parsedSelector)
+  }
+  return res.length ? res : null
+}
+
+const parseSelector = Element.parseSelector
+
 Element.prototype.appendChild = function (child) {
   return childHandle(this, child, null, false)
 }
@@ -339,6 +384,40 @@ Element.prototype.removeListener = function (eventName, handler) {
 }
 Element.prototype.hasBehavior = function (behavior) {
   return !!this.__behavior && this.__behavior.hasBehavior(behavior)
+}
+const x = function (e, t, n, i, o, r) {
+    var a = n[i],
+      s = !0
+    a.id && a.id !== t.__id && (s = !1)
+    for (var l = a.classes, c = 0; s && c < l.length; c++) t.classList.contains(l[c]) || (s = !1);
+    if (s && 0 === i) return !0
+    if (t === e) return !1
+    for (var u = o ? t.__wxSlotParent : t.parentNode; u && u.__virtual;) {
+      if (u === e) return !1
+      u = o ? u.__wxSlotParent : u.parentNode
+    }
+    return !!u && (s ? x(e, u, n, i - 1, o, '' === a.relation) : !!r && x(e, u, n, i, o, !0))
+  },
+  C = function (e, t, n, i) {
+    if (n.__virtual) return !1
+    for (var o = 0; o < e.length; o++) {
+      var r = e[o]
+      if (x(t, n, r, r.length - 1, i, !1)) return !0
+    }
+    return !1
+  },
+  E = function (e, t, n, i, o, r) {
+    if (C(t, n, i, o) && (e.push(i), r)) return !0
+    for (var a = o ? i.__wxSlotChildren : i.childNodes, l = 0; l < a.length; l++)
+      if (a[l] instanceof Element && E(e, t, n, a[l], o, r) && r) return !0
+    return !1
+  }
+Element.prototype.querySelector = function (selector, t) {
+  var n = typeof selector === 'object' ? selector : parseSelector(selector)
+  if (!n) return null
+  var i = []
+  E(i, n, this, this, t, !0)
+  return i[0] || null
 }
 
 export default Element

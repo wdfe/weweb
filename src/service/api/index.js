@@ -231,7 +231,6 @@ var apiObj = {
       var n = getCurrentPages()
       t = n[n.length - 1].__wxWebviewId__
     }
-    console.log(111)
     return new utils.wxQuerySelector(t)
   },
 
