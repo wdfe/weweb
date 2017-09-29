@@ -5,18 +5,18 @@ Page({
     date: '2016-09-01',
     time: '12:01'
   },
-  bindPickerChange: function(e) {
+  onStateChange: function(e) {
     console.log('picker发送选择改变，携带值为', e.detail.value)
     this.setData({
       index: e.detail.value
     })
   },
-  bindDateChange: function(e) {
+  onDateChange: function(e) {
     this.setData({
       date: e.detail.value
     })
   },
-  bindTimeChange: function(e) {
+  onTimeChange: function(e) {
     this.setData({
       time: e.detail.value
     })

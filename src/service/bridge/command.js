@@ -783,32 +783,26 @@ export function showPickerView (args) {
   picker.show()
   // picker.on('cancel', () => {})
   picker.on('select', n => {
-    publishPagEevent('bindPickerChange', {
-      type: 'change',
-      detail: {
-        value: n + ''
-      }
+    WeixinJSBridge.subscribeHandler('showPickerView', {
+      errMsg: 'showPickerView:ok',
+      index: n
     })
   })
 }
 
 export function showDatePickerView (args) {
   let picker
-  let eventName
   if (args.mode == 'time') {
-    eventName = 'bindTimeChange'
     picker = new TimePicker(args)
   } else {
-    eventName = 'bindDateChange'
     picker = new DatePicker(args)
   }
+
   picker.show()
   picker.on('select', val => {
-    publishPagEevent(eventName, {
-      type: 'change',
-      detail: {
-        value: val
-      }
+    WeixinJSBridge.subscribeHandler('showDatePickerView', {
+      errMsg: 'showDatePickerView:ok',
+      value: val
     })
   })
 }
