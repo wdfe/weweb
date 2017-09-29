@@ -12,7 +12,7 @@ var texts = [
   '2016年1月，企业微信发布',
   '2017年1月，小程序发布',
   '......'
-];
+]
 
 Page({
   data: {
@@ -21,22 +21,25 @@ Page({
     canRemove: false
   },
   extraLine: [],
-  add: function(e) {
-    var that = this;
+  add: function (e) {
+    var that = this
     this.extraLine.push(texts[this.extraLine.length % 12])
     this.setData({
       text: this.extraLine.join('\n'),
       canAdd: this.extraLine.length < 12,
       canRemove: this.extraLine.length > 0
+    }, function (res) {
+      // this is setData callback
+      console.log('setData Callback', res)
     })
-    setTimeout(function(){
+    setTimeout(function () {
       that.setData({
         scrollTop: 99999
-      });
+      })
     }, 0)
   },
-  remove: function(e) {
-    var that = this;
+  remove: function (e) {
+    var that = this
     if (this.extraLine.length > 0) {
       this.extraLine.pop()
       this.setData({
@@ -45,10 +48,10 @@ Page({
         canRemove: this.extraLine.length > 0,
       })
     }
-    setTimeout(function(){
+    setTimeout(function () {
       that.setData({
         scrollTop: 99999
-      });
+      })
     }, 0)
   }
 })

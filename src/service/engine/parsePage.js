@@ -1,8 +1,8 @@
 import utils from '../../common/utils'
-import * as parsePath from './parsePath'
+import { getObjectByPath } from './parsePath'
 import organize from './iteratorHandle'
 
-var sysEventKeys = [
+const sysEventKeys = [
   'onLoad',
   'onReady',
   'onShow',
@@ -10,7 +10,7 @@ var sysEventKeys = [
   'onHide',
   'onUnload'
 ]
-var isSysAttr = function (key) {
+const isSysAttr = function (key) {
   // 校验e是否为系统事件或属性
   for (var i = 0; i < sysEventKeys.length; ++i) {
     if (sysEventKeys[i] === key) {
@@ -24,7 +24,8 @@ var baseAttrs = ['__wxWebviewId__', '__route__']
 var isBaseAttr = function (name) {
   return baseAttrs.indexOf(name) !== -1
 }
-class parsePage {
+
+class PageParser {
   constructor () {
     var pageObj =
         arguments.length <= 0 || void 0 === arguments[0] ? {} : arguments[0],
@@ -45,6 +46,9 @@ class parsePage {
       })
     })
     pageObj.data = pageObj.data || {}
+    if (pageObj.route == null) {
+      pageObj.route = routePath
+    }
     utils.isPlainObject(pageObj.data) ||
       utils.error(
         'Page data error',
@@ -130,19 +134,22 @@ class parsePage {
     typeof pageObj.onShareAppMessage === 'function' &&
       ServiceJSBridge.invoke('showShareMenu', {}, utils.info)
   }
+
   update () {
     utils.warn(
       '将被废弃',
       'Page.update is deprecated, setData updates the view implicitly. [It will be removed in 2016.11]'
     )
   }
+
   forceUpdate () {
     utils.warn(
       '将被废弃',
       'Page.forceUpdate is deprecated, setData updates the view implicitly. [It will be removed in 2016.11]'
     )
   }
-  setData (dataObj) {
+
+  setData (dataObj, callback) {
     try {
       var type = utils.getDataType(dataObj)
       type !== 'Object' &&
@@ -151,10 +158,18 @@ class parsePage {
           'setData accepts an Object rather than some ' + type
         )
       for (var key in dataObj) {
-        var curValue = parsePath.getObjectByPath(this.data, key),
+        var curValue = getObjectByPath(this.data, key),
           curObj = curValue.obj,
           curKey = curValue.key
         curObj && (curObj[curKey] = organize(dataObj[key]))
+      }
+
+      const execCallback = function () {
+        callback()
+        document.removeEventListener('pageReRender', execCallback)
+      }
+      if (callback) {
+        document.addEventListener('pageReRender', execCallback)
       }
       if (window.firstRender) {
         WeixinJSBridge.subscribeHandler('custom_event_appDataChange', {
@@ -183,4 +198,5 @@ class parsePage {
     }
   }
 }
-export default parsePage
+
+export default PageParser

@@ -1,14 +1,7 @@
 import utils from '../../common/utils'
-import parsePage from './parsePage'
-import * as eventDefine from './constants'
-import * as reportRealtimeAction from './logReport'
-
-// var getRouteToPage
-// var getWebviewIdToPage
-// var setWxRouteBegin
-// var setWxRoute
-// var setWxConfig
-// var reset
+import PageParser from './parsePage'
+import { DOM_READY_EVENT } from './constants'
+import { triggerAnalytics } from './logReport'
 
 var pageStack = []
 var tabBars = [] // tab栏url列表
@@ -75,9 +68,6 @@ const pageHolder = function (pageObj) {
     )
   }
   utils.info('Register Page: ' + pagePath)
-  if (pageObj.route == null) {
-    pageObj.route = __wxRoute
-  }
   pageRegObjs[pagePath] = pageObj
 }
 
@@ -99,12 +89,12 @@ var pageInitData = Reporter.surroundThirdByTryCatch(function (
     }
   }
   utils.publish('appDataChange', params, [webviewId])
-  reportRealtimeAction.triggerAnalytics('pageReady', pageObj)
+  triggerAnalytics('pageReady', pageObj)
 })
 
-var pageParse = function (routePath, webviewId, params) {
+const pageParse = function (routePath, webviewId, params) {
   // 解析page e:pagepath t:webviewId params:
-  var curPageObj
+  let curPageObj
   if (pageRegObjs.hasOwnProperty(routePath)) {
     curPageObj = pageRegObjs[routePath]
   } else {
@@ -117,7 +107,7 @@ var pageParse = function (routePath, webviewId, params) {
     curPageObj = {}
   }
   app.newPageTime = Date.now()
-  var page = new parsePage(curPageObj, webviewId, routePath)
+  const page = new PageParser(curPageObj, webviewId, routePath)
   currentPage = {
     page: page,
     webviewId: webviewId,
@@ -131,13 +121,13 @@ var pageParse = function (routePath, webviewId, params) {
   pageInitData(page, webviewId)
   page.onLoad(params)
   page.onShow()
-  reportRealtimeAction.triggerAnalytics('enterPage', page)
+  triggerAnalytics('enterPage', page)
 }
 
 var pageHide = function (pageItem) {
   // 执行page hide event
   pageItem.page.onHide()
-  reportRealtimeAction.triggerAnalytics('leavePage', pageItem.page)
+  triggerAnalytics('leavePage', pageItem.page)
 }
 
 var pageUnload = function (pageItem) {
@@ -145,7 +135,7 @@ var pageUnload = function (pageItem) {
   pageItem.page.onUnload()
   delete pageStackObjs[pageItem.webviewId]
   pageStack = pageStack.slice(0, pageStack.length - 1)
-  reportRealtimeAction.triggerAnalytics('leavePage', pageItem.page)
+  triggerAnalytics('leavePage', pageItem.page)
 }
 
 var isTabBarsPage = function (pageItem) {
@@ -183,7 +173,7 @@ var skipPage = function (routePath, pWebViewId, pageParams, pApiKey) {
         isExist = !0
         currentPage = pageItem
         pageItem.page.onShow()
-        reportRealtimeAction.triggerAnalytics('enterPage', pageItem)
+        triggerAnalytics('enterPage', pageItem)
         break
       }
       pageUnload(pageItem)
@@ -223,7 +213,7 @@ var skipPage = function (routePath, pWebViewId, pageParams, pApiKey) {
       }
       pageStack = [currentPage]
       pageObj.onShow()
-      reportRealtimeAction.triggerAnalytics('enterPage', pageObj)
+      triggerAnalytics('enterPage', pageObj)
     } else {
       pageStack = []
       pageParse(routePath, pWebViewId, pageParams)
@@ -254,7 +244,7 @@ const doWebviewEvent = function (pWebviewId, pEvent, params) {
   }
   var pageItem = pageStackObjs[pWebviewId],
     pageObj = pageItem.page
-  return pEvent === eventDefine.DOM_READY_EVENT
+  return pEvent === DOM_READY_EVENT
     ? ((app.pageReadyTime = Date.now()),
       utils.info('Invoke event onReady in page: ' + pageItem.route),
       pageObj.onReady())
@@ -289,7 +279,7 @@ const pullDownRefresh = function (pWebviewId) {
   if (pageObj.hasOwnProperty('onPullDownRefresh')) {
     utils.info('Invoke event onPullDownRefresh in page: ' + pageItem.route)
     utils.safeInvoke.call(pageObj, 'onPullDownRefresh')
-    reportRealtimeAction.triggerAnalytics('pullDownRefresh', pageObj)
+    triggerAnalytics('pullDownRefresh', pageObj)
   }
 }
 
@@ -388,7 +378,6 @@ ServiceJSBridge.on(
   'onShareAppMessage',
   Reporter.surroundThirdByTryCatch(shareAppMessage, 'onShareAppMessage')
 )
-
 
 export default {
   getRouteToPage,
