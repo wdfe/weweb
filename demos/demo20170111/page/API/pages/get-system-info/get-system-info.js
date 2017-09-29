@@ -6,6 +6,7 @@ Page({
     var that = this
     wx.getSystemInfo({
       success: function (res) {
+        res.route = that.route
         that.setData({
           systemInfo: res
         })

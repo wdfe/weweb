@@ -3,15 +3,12 @@ import parsePage from './parsePage'
 import * as eventDefine from './constants'
 import * as reportRealtimeAction from './logReport'
 
-var getRouteToPage
-var getWebviewIdToPage
-var setWxRouteBegin
-var setWxRoute
-var setWxConfig
-var reset
-var pageHolder
-var getCurrentPages
-var getCurrentPage
+// var getRouteToPage
+// var getWebviewIdToPage
+// var setWxRouteBegin
+// var setWxRoute
+// var setWxConfig
+// var reset
 
 var pageStack = []
 var tabBars = [] // tab栏url列表
@@ -34,17 +31,17 @@ var pageStackObjs = {}
 var pageRegObjs = {} // key:pathname
 var pageIndex = 0
 
-getCurrentPage = function () {
+const getCurrentPage = function () {
   return currentPage
 }
-getCurrentPages = function () {
+const getCurrentPages = function () {
   var pageArr = []
   pageStack.forEach(function (pageObj) {
     pageArr.push(pageObj.page)
   })
   return pageArr
 }
-pageHolder = function (pageObj) {
+const pageHolder = function (pageObj) {
   // Page 接口
   if (!__wxRouteBegin) {
     throw utils.error(
@@ -78,8 +75,12 @@ pageHolder = function (pageObj) {
     )
   }
   utils.info('Register Page: ' + pagePath)
+  if (pageObj.route == null) {
+    pageObj.route = __wxRoute
+  }
   pageRegObjs[pagePath] = pageObj
 }
+
 var pageInitData = Reporter.surroundThirdByTryCatch(function (
   pageObj,
   webviewId
@@ -100,6 +101,7 @@ var pageInitData = Reporter.surroundThirdByTryCatch(function (
   utils.publish('appDataChange', params, [webviewId])
   reportRealtimeAction.triggerAnalytics('pageReady', pageObj)
 })
+
 var pageParse = function (routePath, webviewId, params) {
   // 解析page e:pagepath t:webviewId params:
   var curPageObj
@@ -241,7 +243,7 @@ var skipPage = function (routePath, pWebViewId, pageParams, pApiKey) {
   }
 }
 
-var doWebviewEvent = function (pWebviewId, pEvent, params) {
+const doWebviewEvent = function (pWebviewId, pEvent, params) {
   // do dom ready
 
   if (!pageStackObjs.hasOwnProperty(pWebviewId)) {
@@ -275,7 +277,7 @@ var doWebviewEvent = function (pWebviewId, pEvent, params) {
         ))
 }
 
-var pullDownRefresh = function (pWebviewId) {
+const pullDownRefresh = function (pWebviewId) {
   // do pulldownrefresh
   pageStackObjs.hasOwnProperty(pWebviewId) ||
     utils.warn(
@@ -291,7 +293,7 @@ var pullDownRefresh = function (pWebviewId) {
   }
 }
 
-var invokeShareAppMessage = function (params, pWebviewId) {
+const invokeShareAppMessage = function (params, pWebviewId) {
   // invoke event onShareAppMessage
   var shareParams = params,
     pageItem = pageStackObjs[pWebviewId],
@@ -314,6 +316,45 @@ var invokeShareAppMessage = function (params, pWebviewId) {
     shareParams.complete = shareObj.complete
   }
   return shareParams
+}
+
+const shareAppMessage = function (params, webviewId) {
+  var shareInfo = invokeShareAppMessage(params, webviewId)
+  ServiceJSBridge.invoke('shareAppMessage', shareInfo, function (res) {
+    ;/ ^shareAppMessage: ok /.test(res.errMsg) &&
+    typeof shareInfo.success === 'function'
+      ? shareInfo.success(res)
+      : /^shareAppMessage:cancel/.test(res.errMsg) &&
+        typeof shareInfo.cancel === 'function'
+        ? shareInfo.cancel(res)
+        : /^shareAppMessage:fail/.test(res.errMsg) &&
+          typeof shareInfo.fail === 'function' &&
+          shareInfo.fail(res), // bug?? 原代码：shareInfo.fail && shareInfo.cancel(res)
+    typeof shareInfo.complete === 'function' && shareInfo.complete(res)
+  })
+}
+
+const reset = function () {
+  currentPage = undefined
+  pageStackObjs = {}
+  pageRegObjs = {}
+  pageStack = []
+  pageIndex = 0
+}
+const setWxConfig = function (e) {
+  __wxConfig__ = e
+}
+const setWxRoute = function (e) {
+  __wxRoute = e
+}
+const setWxRouteBegin = function (e) {
+  __wxRouteBegin = e
+}
+const getWebviewIdToPage = function () {
+  return pageStackObjs
+}
+const getRouteToPage = function () {
+  return pageRegObjs
 }
 
 wd.onAppRoute(
@@ -343,48 +384,11 @@ ServiceJSBridge.on(
   }, 'onPullDownRefresh')
 )
 
-var shareAppMessage = function (params, webviewId) {
-  var shareInfo = invokeShareAppMessage(params, webviewId)
-  ServiceJSBridge.invoke('shareAppMessage', shareInfo, function (res) {
-    ;/ ^shareAppMessage: ok /.test(res.errMsg) &&
-    typeof shareInfo.success === 'function'
-      ? shareInfo.success(res)
-      : /^shareAppMessage:cancel/.test(res.errMsg) &&
-        typeof shareInfo.cancel === 'function'
-        ? shareInfo.cancel(res)
-        : /^shareAppMessage:fail/.test(res.errMsg) &&
-          typeof shareInfo.fail === 'function' &&
-          shareInfo.fail(res), // bug?? 原代码：shareInfo.fail && shareInfo.cancel(res)
-    typeof shareInfo.complete === 'function' && shareInfo.complete(res)
-  })
-}
-
 ServiceJSBridge.on(
   'onShareAppMessage',
   Reporter.surroundThirdByTryCatch(shareAppMessage, 'onShareAppMessage')
 )
-reset = function () {
-  currentPage = undefined
-  pageStackObjs = {}
-  pageRegObjs = {}
-  pageStack = []
-  pageIndex = 0
-}
-setWxConfig = function (e) {
-  __wxConfig__ = e
-}
-setWxRoute = function (e) {
-  __wxRoute = e
-}
-setWxRouteBegin = function (e) {
-  __wxRouteBegin = e
-}
-getWebviewIdToPage = function () {
-  return pageStackObjs
-}
-getRouteToPage = function () {
-  return pageRegObjs
-}
+
 
 export default {
   getRouteToPage,
