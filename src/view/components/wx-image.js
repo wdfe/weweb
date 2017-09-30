@@ -65,9 +65,16 @@ export default window.exparser.registerElement({
             (self.$.div.offsetWidth || self.$$.offsetWidth) / self.rate + 'px'
         }
       }
+      const cb = this._pageReRenderCallback.bind(this)
+      document.addEventListener('leavePage', () => {
+        document.removeEventListener(
+          'pageReRender',
+          cb
+        )
+      })
       document.addEventListener(
         'pageReRender',
-        this._pageReRenderCallback.bind(this)
+        cb
       )
     }
   },

@@ -126,6 +126,7 @@ const pageParse = function (routePath, webviewId, params) {
 
 var pageHide = function (pageItem) {
   // 执行page hide event
+  document.dispatchEvent(new CustomEvent('leavePage', {}))
   pageItem.page.onHide()
   triggerAnalytics('leavePage', pageItem.page)
 }
