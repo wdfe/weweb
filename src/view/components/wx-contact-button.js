@@ -60,7 +60,8 @@ export default window.exparser.registerElement({
       : buttonTypes['default-dark']
     this.$.wrapper.style.backgroundImage = "url('" + url + "')"
     this.$.wrapper.addEventListener('click', function () {
-      alert('进入客服会话，sessionFrom: ' + self.sessionFrom)
+      // alert('进入客服会话，sessionFrom: ' + self.sessionFrom)
+      alert('客服功能暂未支持，请自行实现意见反馈页面')
     })
   },
   detached: function () {},

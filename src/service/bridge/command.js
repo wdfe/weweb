@@ -634,7 +634,16 @@ export function downloadFile (data) {
   let xhr = new XMLHttpRequest()
   xhr.responseType = 'arraybuffer'
   let headers = args.header || {}
-  xhr.open('GET', '/remoteProxy?' + encodeURIComponent(args.url), true)
+  let reqUrl =
+    (args.url.indexOf('http') === 0 &&
+      args.url.indexOf(location.host) === -1 &&
+      __wxConfig__.weweb &&
+      (__wxConfig__.weweb.requestProxy || '/remoteProxy') +
+        '?' +
+        encodeURIComponent(args.url)) ||
+    args.url
+
+  xhr.open('GET', reqUrl, true)
   xhr.onload = function () {
     if ((xhr.status / 100) | (0 === 2) || xhr.status == 304) {
       let b = new Blob([xhr.response], {
