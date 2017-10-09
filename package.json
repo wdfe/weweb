@@ -41,6 +41,7 @@
     "koa-router": "^5.4.0",
     "koa-send": "^3.2.0",
     "koa-static": "^2.0.0",
+    "log4js": "^2.3.4",
     "merge": "^1.2.0",
     "mkdir-p": "0.0.7",
     "node-parallel": "^0.1.6",
