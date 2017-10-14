@@ -404,8 +404,8 @@ export function chooseLocation (data) {
   let url = `https://3gimg.qq.com/lightmap/components/locationPicker2/index.html?search=1&type=1&coord=39.90403%2C116.407526&key=JMRBZ-R4HCD-X674O-PXLN4-B7CLH-42BSB&referer=wxdevtools`
   router.openExternal(url)
   let called = false
-  Bus.once('back', () => {
-    if (!called) {
+  Bus.once('back', (send) => {
+    if (!called && !send) {
       called = true
       onCancel(data)
     }

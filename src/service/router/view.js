@@ -111,7 +111,7 @@ export default class View extends Emitter {
      }
      */
     if (this.el && this.el.parentNode) {
-      this.elParent.removeChild(this.el)
+      this.el.parentNode.removeChild(this.el)
     }
   }
   postMessage (data) {

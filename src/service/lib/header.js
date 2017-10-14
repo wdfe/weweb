@@ -86,15 +86,16 @@ let header = {
       })
     }
   },
-  onBack: function (e) {
+  onBack: function (e,send) {
     e.preventDefault()
-    Bus.emit('back')
+    Bus.emit('back',send)
   },
   onSend: function (e) {
     // TODO send location
     e.stopPropagation()
-    Bus.emit('location', router.currentView().location)
-    this.onBack(e)
+    const data = Object.assign({},router.currentView().location)
+    this.onBack(e,true)
+    Bus.emit('location', data)
   },
   onOptions: function (e) {
     e.preventDefault()
