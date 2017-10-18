@@ -5,6 +5,7 @@ node_modules
 .idea/
 .vscode
 build/
+demos/
 
 # dist files
 tmp/
