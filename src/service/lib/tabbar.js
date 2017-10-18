@@ -2,7 +2,16 @@ import Emitter from 'emitter'
 import router from '../router/index'
 import * as util from './util'
 const Bus = util.getBus()
-let tabBar = window.__wxConfig__.tabBar || {}
+let tabBar = Object.assign(
+  {},
+  {
+    color: '#7A7E83',
+    selectedColor: '#3cc51f',
+    borderStyle: 'black',
+    backgroundColor: '#ffffff'
+  },
+  window.__wxConfig__.tabBar
+)
 
 var Tabbar = {
   init: function () {
@@ -38,8 +47,7 @@ var Tabbar = {
   },
   onItemTap: function (idx, elemt) {
     if (idx == this.activeIdx) return
-    let item,
-      list = tabBar.list || []
+    let item, list = tabBar.list || []
     for (let i in list) {
       if (i == idx) {
         item = list[i]

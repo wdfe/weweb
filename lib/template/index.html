@@ -36,10 +36,10 @@
         {{if !_.topBar}}
         <img class="tabbar-icon" src="{{= item.iconPath||''}}" icon="{{= item.iconPath||''}}" select-icon="{{= item.selectedIconPath||''}}" alt="" />
         {{/}}
-        <p class="tabbar-label" style="color:{{= _.tabLabelColor}}">
+        <p class="tabbar-label" style="color:{{= _.tabLabelColor || '#7A7E83'}}">
         {{= item.text||''}}
         {{if _.topBar}}
-        <i class="tabbar-label-indicator" style="display: none; color:{{= _.tabLabelSelectedColor}}"></i>
+        <i class="tabbar-label-indicator" style="display: none; color:{{= _.tabLabelSelectedColor || '#3cc51f'}}"></i>
         {{/}}
         </p>
       </div>
