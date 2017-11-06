@@ -8,10 +8,16 @@
   },
   "scripts": {
     "start": "sh run.sh",
-    "format": "prettier-standard './*.js' && prettier-standard 'src/**/*.js' && prettier-standard 'lib/**/*.js'",
+    "format":
+      "prettier-standard './*.js' && prettier-standard 'src/**/*.js' && prettier-standard 'lib/**/*.js'",
     "dev": "WATCH=true webpack --progress",
     "build": "NODE_ENV=production webpack --progress",
-    "autostart": "nodemon -w demos -w lib/template -d 1.5 -e js,json,wxss,wxml --exec 'npm run start'"
+    "precommit": "lint-staged",
+    "autostart":
+      "nodemon -w demos -w lib/template -d 1.5 -e js,json,wxss,wxml --exec 'npm run start'"
+  },
+  "lint-staged": {
+    "{*.js,bin/weweb,*.json}": ["prettier-standard", "git add"]
   },
   "repository": {
     "type": "git",
@@ -62,8 +68,6 @@
     "babel-plugin-transform-runtime": "^6.15.0",
     "babel-preset-es2015-without-strict": "^0.0.4",
     "babel-preset-react": "^6.16.0",
-    "babel-preset-env": "^1.6.0",
-    "babel-preset-stage-0": "^6.24.1",
     "classnames": "^2.2.5",
     "component-classes": "^1.2.6",
     "component-closest": "^1.0.1",
@@ -104,7 +108,9 @@
     "nprogress": "^0.2.0",
     "object-assign": "^4.1.0",
     "pinch-zoom": "^0.3.8",
-    "prettier-standard": "^6.0.0",
+    "prettier-standard": "^7.0.3",
+    "husky": "^0.14.3",
+    "lint-staged": "^4.3.0",
     "prop-detect": "^1.1.0",
     "radio-component": "0.0.2",
     "react": "^15.4.0",

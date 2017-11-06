@@ -8,4 +8,6 @@ gulpfile.js
 webpack.*.js
 run.sh
 .eslintrc
+wewebTmp
+logs
 tmp

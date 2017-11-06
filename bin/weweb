@@ -14,14 +14,16 @@ var net = require('net')
 var boxen = require('boxen')
 const isWin = /^win/.test(process.platform)
 const path = require('path')
+var util = require('../lib/util')
+// const Parallel = require('node-parallel')
 // const co = require('co')
 // const notify = require('node-notifier')
-let cmdRm,cmdCp,cmdCpArg
-if(isWin){
+let cmdRm, cmdCp, cmdCpArg
+if (isWin) {
   cmdRm = 'rmdir /s /q '
   cmdCp = 'xcopy '
   cmdCpArg = ' /y /d /s'
-}else{
+} else {
   cmdRm = 'rm -rf '
   cmdCp = 'cp -rf '
   cmdCpArg = ''
@@ -29,7 +31,7 @@ if(isWin){
 
 program
   .version(json.version)
-  .usage('[app root]')
+  .usage('[options] <appRoot>')
   .option('-o, --open', '使用 Chrome 打开小程序，仅对 Mac 有效')
   .option('-l, --list', '使用默认浏览器打开更新历史')
   .option('-p, --port <n>', '指定服务端口，默认 3000', parseInt)
@@ -38,11 +40,20 @@ program
   .option('-t, --transform', '只转换小程序,不起web服务')
 
 program.parse(process.argv)
+
+/**
+ * log 函数，只转换小程序时不输出
+ *
+ * @param {any} msg
+ * @param {any} allow
+ */
 var printLog = function (msg, allow) {
   if (!program.transform || allow) {
     console.log(msg)
   }
 }
+
+// 更新检查方法
 var notifier = new UpdateNotifier({
   pkg: json,
   callback: function (err, result) {
@@ -70,72 +81,81 @@ var notifier = new UpdateNotifier({
   }
 })
 
-// notifier.check()
-
+// 打开更新历史
 if (program.list) {
   open('https://github.com/wdfe/weweb/releases')
   process.exit()
 }
-var tmpFolderName, curPath = process.cwd()
-var folder = program.args[0]
 
-if (folder) {
-  var stats
-  try {
-    stats = fs.statSync(folder)
-  } catch (e) {}
-  if (!stats) {
-    printLog('指定目录不存在或者不是目录，请检查')
-    process.exit()
-  } else if (stats.isFile()) {
-    if (folder.match(/\.zip$/i)) {
-      tmpFolderName =
-        '/tmp/__weapp' +
-        Math.random().toString(16).substr(2) +
-        new Date().getTime()
-      childProcess.execSync(`unzip ${folder} -d ${tmpFolderName}`)
-      printLog(folder)
-      folder = childProcess
-        .execSync(`find ${tmpFolderName} -name app.json -print`)
-        .toString()
-        .replace(/^\s+|(app\.json\s*$)/, '')
-      var tmpMatchValue = folder.match(/(^.*)\n/)
-      if (tmpMatchValue) {
-        folder = tmpMatchValue[1].replace(/app\.json\s*$/, '')
+var tmpFolderName
+var curPath = process.cwd()
+
+function checkProject () {
+  var folder = program.args[0]
+  if (folder) {
+    var stats
+    try {
+      stats = fs.statSync(folder)
+    } catch (e) {}
+    if (!stats) {
+      printLog('指定目录不存在或者不是目录，请检查')
+      process.exit()
+    } else if (stats.isFile()) {
+      if (folder.match(/\.zip$/i)) {
+        tmpFolderName =
+          '/tmp/__weapp' +
+          Math.random()
+            .toString(16)
+            .substr(2) +
+          new Date().getTime()
+        childProcess.execSync(`unzip ${folder} -d ${tmpFolderName}`)
+        printLog(folder)
+        folder = childProcess
+          .execSync(`find ${tmpFolderName} -name app.json -print`)
+          .toString()
+          .replace(/^\s+|(app\.json\s*$)/, '')
+        var tmpMatchValue = folder.match(/(^.*)\n/)
+        if (tmpMatchValue) {
+          folder = tmpMatchValue[1].replace(/app\.json\s*$/, '')
+        }
+      } else {
+        printLog('指定目录不存在或者不是目录，请检查')
+        process.exit()
       }
-    } else {
+    } else if (!stats.isDirectory) {
       printLog('指定目录不存在或者不是目录，请检查')
       process.exit()
     }
-  } else if (!stats.isDirectory) {
-    printLog('指定目录不存在或者不是目录，请检查')
+    // var chdirFail = false
+    try {
+      printLog(folder)
+      process.chdir(folder)
+    } catch (err) {
+      // chdirFail = true
+      printLog('切换目录失败: ' + err)
+    }
+  }
+  if (!fs.existsSync('./app.json')) {
+    printLog(chalk.red('无法找到 app.json 文件，请检查'))
     process.exit()
   }
-  var chdirFail = false
-  try {
-    printLog(folder)
-    process.chdir(folder)
-  } catch (err) {
-    chdirFail = true
-    printLog('切换目录失败: ' + err)
-  }
 }
 
-if (!fs.existsSync('./app.json')) {
-  printLog(chalk.red('无法找到 app.json 文件，请检查'))
-  process.exit()
-}
 // 开始转换代码
-var util = require('../lib/util')
-// const Parallel = require('node-parallel')
-var distPath = path.resolve(curPath, program.dist || './tmp/dist')
-function printRunTime() {
+
+var distPath = path.resolve(curPath, program.dist || './wewebTmp/dist')
+/**
+ *   记录构建时间
+ */
+function printRunTime () {
   const endTime = new Date()
-  console.log(
-    chalk.yellow(`Time elapsed: ${(endTime - startTime) / 1000}s`)
-  )
+  console.log(chalk.yellow(`Time elapsed: ${(endTime - startTime) / 1000}s`))
 }
 
+/**
+ * 启动服务器
+ *
+ */
 function bootWebServer () {
   var server = require('../lib/server')(distPath)
   var startPort = 2000
@@ -183,134 +203,143 @@ function bootWebServer () {
     })
   }
 }
-exec(cmdRm + distPath, function (err, out) {
-  //printLog(out)
-  err && printLog(err)
-  util.mkdirsSync(distPath)
-  printLog('文件将生成到:\n' + distPath)
-  //doTransformFile()
-  const assetsPath = path.resolve(__dirname, '../lib/template/assets')
-  exec(cmdCp + assetsPath + (isWin?' ':'/* ') + distPath + cmdCpArg, function (err, out)  {
+
+/**
+ * 构建 小程序
+ *
+ */
+function build () {
+  exec(cmdRm + distPath, function (err, out) {
+    // printLog(out)
     err && printLog(err)
-    util.copyDir('./', distPath, {
-      filename: ['.git'],
-      extname: ['.js', '.json', '.wxss', '.css', '.git', '.md', '.wxml']
-    })
-    //printRunTime()
-    //console.log('b',program.babel)
-    loadConfig({babel:program.babel}).then(function (appConfig) {
-      var core = require('../lib/core')
-      core.getIndex.then(function (content) {
-        /*
-         if(program.transform){
-         content = content.replace('var __wxConfig__ = {"weweb":{','var __wxConfig__ = {"weweb":{ "requestProxy":"/remoteProxy",')
-         }
-         */
-        util.createFile(
-          distPath,
-          'index.html',
-          content,
-          null,
-          program.transform
-        )
-      })
-
-      core.getServiceJs.then(function (content) {
-        util.createFile(
-          distPath + '/script',
-          'app-service.js',
-          content,
-          null,
-          program.transform
-        )
-      })
-
-      core.getAppWxss('./app').then(function (content) {
-        util.createFile(
-          distPath + '/css',
-          'app.css',
-          content.replace(/\/\*#\s*sourceMappingURL=.*\*\/$/, ''),
-          null,
-          program.transform
-        )
-      })
-
-      let tabBar = appConfig.tabBar
-      let pages = appConfig.pages
-      let count = 0
-      pages.forEach(function (path) {
-        let fullpath = path.replace(/^(\/|\.\/)/, '')
-        let paths = fullpath.split('/')
-        let file = paths.pop()
-        path = paths.join('/')
-
-        core
-        .getPage(fullpath)
-        .then(function (arr) {
-          // page generateFunc
-          let content = arr[0][0] // .replace(/(src=[\"\']?)\/+/,"$1");//对以/开始的路径做处理
-          if (arr[1]) {
-            arr[1] = arr[1]
-            .replace(/\/\*#\s*sourceMappingURL=.*\*\/$/, '')
-            .replace(
-              /(position:\s*fixed\s*[^\}]*[^w]top:)\s*0\s*;/g,
-              '$142px;'
-            )
-            if (
-              tabBar &&
-              tabBar.list.findIndex(
-                item => item.pagePath.replace(/^(\/|\.\/)/, '') === fullpath
-              ) != -1
-            ) {
-              if (tabBar.position != 'top') {
-                arr[1] = arr[1].replace(
-                  /(position:\s*fixed\s*[^\}]*[^w]bottom:)\s*0\s*;/g,
-                  '$156px;'
-                )
-              }
-            }
-          } else {
-            arr[1] = ''
-          }
-          content += '@code-separator-line:' + arr[1] // page css
-          if (!arr[2]) arr[2] = ''
-          content += '@code-separator-line:' + arr[2] // app-service
-          content += '@code-separator-line:' + JSON.stringify(arr[0][1]) // tags
-          util.createFile(
-            distPath + '/src/' + path,
-            file + '.js',
-            content,
-            function () {
-              count++
-              if (count === pages.length) {
-                if (program.transform) {
-                  printRunTime()
-                  printLog('ok:' + distPath, true)
-                  setTimeout(() => {
-                    if (tmpFolderName) {
-                      exec(`${cmdRm}${tmpFolderName}`)
-                    }
-                    util.rmEmptyDirsSync(distPath)
-                    process.exit()
-                  }, 12000)
-                } else {
-                  bootWebServer()
-                  setTimeout(() => {
-                    util.rmEmptyDirsSync(distPath)
-                  }, 12000)
-                }
-              }
-            },
-            program.transform
-          )
+    util.mkdirsSync(distPath)
+    printLog('文件将生成到:\n' + distPath)
+    // doTransformFile()
+    const assetsPath = path.resolve(__dirname, '../lib/template/assets')
+    exec(
+      cmdCp + assetsPath + (isWin ? ' ' : '/* ') + distPath + cmdCpArg,
+      function (err, out) {
+        err && printLog(err)
+        util.copyDir('./', distPath, {
+          filename: ['.git'],
+          extname: ['.js', '.json', '.wxss', '.css', '.git', '.md', '.wxml']
         })
-        .catch(err => console.error(err))
-      })
+        // printRunTime()
+        // console.log('b',program.babel)
+        loadConfig({ babel: program.babel }).then(function (appConfig) {
+          var core = require('../lib/core')
+          core.getIndex.then(function (content) {
+            /*
+           if(program.transform){
+           content = content.replace('var __wxConfig__ = {"weweb":{','var __wxConfig__ = {"weweb":{ "requestProxy":"/remoteProxy",')
+           }
+           */
+            util.createFile(
+              distPath,
+              'index.html',
+              content,
+              null,
+              program.transform
+            )
+          })
 
-    })
+          core.getServiceJs.then(function (content) {
+            util.createFile(
+              distPath + '/script',
+              'app-service.js',
+              content,
+              null,
+              program.transform
+            )
+          })
+
+          core.getAppWxss('./app').then(function (content) {
+            util.createFile(
+              distPath + '/css',
+              'app.css',
+              content.replace(/\/\*#\s*sourceMappingURL=.*\*\/$/, ''),
+              null,
+              program.transform
+            )
+          })
+
+          let tabBar = appConfig.tabBar
+          let pages = appConfig.pages
+          let count = 0
+          pages.forEach(function (path) {
+            let fullpath = path.replace(/^(\/|\.\/)/, '')
+            let paths = fullpath.split('/')
+            let file = paths.pop()
+            path = paths.join('/')
+
+            core
+              .getPage(fullpath)
+              .then(function (arr) {
+                // page generateFunc
+                let content = arr[0][0] // .replace(/(src=[\"\']?)\/+/,"$1");//对以/开始的路径做处理
+                if (arr[1]) {
+                  arr[1] = arr[1]
+                    .replace(/\/\*#\s*sourceMappingURL=.*\*\/$/, '')
+                    .replace(
+                      /(position:\s*fixed\s*[^}]*[^w]top:)\s*0\s*;/g,
+                      '$142px;'
+                    )
+                  if (
+                    tabBar &&
+                    tabBar.list.findIndex(
+                      item =>
+                        item.pagePath.replace(/^(\/|\.\/)/, '') === fullpath
+                    ) !== -1
+                  ) {
+                    if (tabBar.position !== 'top') {
+                      arr[1] = arr[1].replace(
+                        /(position:\s*fixed\s*[^}]*[^w]bottom:)\s*0\s*;/g,
+                        '$156px;'
+                      )
+                    }
+                  }
+                } else {
+                  arr[1] = ''
+                }
+                content += '@code-separator-line:' + arr[1] // page css
+                if (!arr[2]) arr[2] = ''
+                content += '@code-separator-line:' + arr[2] // app-service
+                content += '@code-separator-line:' + JSON.stringify(arr[0][1]) // tags
+                util.createFile(
+                  distPath + '/src/' + path,
+                  file + '.js',
+                  content,
+                  function () {
+                    count++
+                    if (count === pages.length) {
+                      if (program.transform) {
+                        printRunTime()
+                        printLog('ok:' + distPath, true)
+                        setTimeout(() => {
+                          if (tmpFolderName) {
+                            exec(`${cmdRm}${tmpFolderName}`)
+                          }
+                          util.rmEmptyDirsSync(distPath)
+                          process.exit()
+                        }, 12000)
+                      } else {
+                        bootWebServer()
+                        setTimeout(() => {
+                          util.rmEmptyDirsSync(distPath)
+                        }, 12000)
+                      }
+                    }
+                  },
+                  program.transform
+                )
+              })
+              .catch(err => console.error(err))
+          })
+        })
+      }
+    )
   })
-
-})
+}
 
 process.on('uncaughtException', function (e) {
   printLog(chalk.red('发生了未知错误'))
@@ -321,3 +350,10 @@ process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection at:', p, 'reason:', reason)
   // application specific logging, throwing an error, or other logic here
 })
+
+// 执行更新检查
+notifier.check()
+// 检查项目目录
+checkProject()
+// 开始构建
+build()
