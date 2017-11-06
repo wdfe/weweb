@@ -315,18 +315,15 @@ function build () {
                       if (program.transform) {
                         printRunTime()
                         printLog('ok:' + distPath, true)
-                        setTimeout(() => {
-                          if (tmpFolderName) {
-                            exec(`${cmdRm}${tmpFolderName}`)
-                          }
-                          util.rmEmptyDirsSync(distPath)
-                          process.exit()
-                        }, 12000)
+
+                        if (tmpFolderName) {
+                          exec(`${cmdRm}${tmpFolderName}`)
+                        }
+                        util.rmEmptyDirsSync(distPath)
+                        process.exit()
                       } else {
                         bootWebServer()
-                        setTimeout(() => {
-                          util.rmEmptyDirsSync(distPath)
-                        }, 12000)
+                        util.rmEmptyDirsSync(distPath)
                       }
                     }
                   },
