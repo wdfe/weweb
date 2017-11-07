@@ -1,5 +1,7 @@
 import './assets/css/index.css'
 
+import './common/globalDefined'
+
 import './service/bridge'
 
 import './common/reporter'
