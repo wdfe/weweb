@@ -104,7 +104,11 @@ weweb默认使用我们自己写的编译器对wxml和wxss进行编译，但目�
 ```sh
 # 切换成微信开发者工具自带的编译器：使用环境变量 DFT_CMP=true 如下：
 
+# linux
 DFT_CMP=true ./bin/weweb demos/demo20170111
+
+# windows
+set DFT_CMP=true&&./bin/weweb demos/demo20170111
 ```
 
 转换成H5后，会存在跨域访问接口及脱离微信环境带来的一些api无法支持的问题。我们可以通过在小程序的`app.json`文件中增加`weweb`配置项来解决一些常见的问题：

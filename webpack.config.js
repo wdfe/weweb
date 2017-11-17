@@ -8,6 +8,7 @@ const DIST_PATH = './lib/template/assets/script'
 const isProd = process.env.NODE_ENV === 'production'
 const showAnalysis = process.env.ANA === 'true'
 const watch = process.env.WATCH === 'true'
+// 将 css 从文本中提取出来，参数为资源存放的位置
 let plugins = [new ExtractTextPlugin('../css/weweb.min.css')]
 if (showAnalysis) {
   plugins = plugins.concat([new BundleAnalyzerPlugin()])
@@ -82,6 +83,7 @@ module.exports = {
       {
         test: /\.(jpe?g|png|gif|svg)$/i,
         loaders: [
+          // 注意此处 outputPath 为输出结果的地址
           'file-loader?name=[name].[ext]&publicPath=&outputPath=../images/'
           // 'image-webpack-loader?bypassOnDebug&optimizationLevel=7&interlaced=false'
         ]

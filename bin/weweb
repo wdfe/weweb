@@ -209,7 +209,7 @@ function bootWebServer () {
  *
  */
 function build () {
-  exec(cmdRm + distPath, function (err, out) {
+  var execBuild = function (err, out) {
     // printLog(out)
     err && printLog(err)
     util.mkdirsSync(distPath)
@@ -335,7 +335,12 @@ function build () {
         })
       }
     )
-  })
+  }
+  if (fs.existsSync(distPath)) {
+    exec(cmdRm + distPath, execBuild)
+  } else {
+    execBuild()
+  }
 }
 
 process.on('uncaughtException', function (e) {
