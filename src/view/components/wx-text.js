@@ -19,6 +19,16 @@ export default window.exparser.registerElement({
       type: Boolean,
       value: !1,
       public: !0
+    },
+    decode: {
+      type: Boolean,
+      value: !1,
+      public: !0
+    },
+    space: {
+      type: String,
+      value: '',
+      public: !0
     }
   },
   _styleChanged: function (styles) {
@@ -27,13 +37,25 @@ export default window.exparser.registerElement({
   _classChanged: function (cls) {
     this.$$.setAttribute('class', cls)
   },
-  _htmlEncode: function (txt) {
-    return txt
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/\"/g, '&quot;')
-      .replace(/\'/g, '&apos;')
+  _htmlDecode: function (txt) {
+    this.space &&
+      (this.space === 'nbsp'
+        ? (txt = txt.replace(/ /g, ' '))
+        : this.space === 'ensp'
+          ? (txt = txt.replace(/ /g, ' '))
+          : this.space === 'emsp' && (txt = txt.replace(/ /g, ' ')))
+
+    return this.decode
+      ? txt
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&ensp;/g, ' ')
+        .replace(/&emsp;/g, ' ')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&apos;/g, "'")
+        .replace(/&amp;/g, '&')
+      : txt
   },
   _update: function () {
     var rawEle = this.$.raw,
@@ -43,12 +65,13 @@ export default window.exparser.registerElement({
     for (; idx < len; idx++) {
       var childNode = rawEle.childNodes.item(idx)
       if (childNode.nodeType === childNode.TEXT_NODE) {
-        var spanEle = document.createElement('span')
-        spanEle.innerHTML = this._htmlEncode(childNode.textContent).replace(
-          /\n/g,
-          '<br>'
-        )
-        fragment.appendChild(spanEle)
+        const txtList = this._htmlDecode(
+          decodeURIComponent(childNode.textContent)
+        ).split('\n')
+        for (let i = 0; i < txtList.length; i++) {
+          i && fragment.appendChild(document.createElement('br'))
+          fragment.appendChild(document.createTextNode(txtList[i]))
+        }
       } else {
         childNode.nodeType === childNode.ELEMENT_NODE &&
           childNode.tagName === 'WX-TEXT' &&

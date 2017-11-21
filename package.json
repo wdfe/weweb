@@ -11,6 +11,7 @@
     "format":
       "prettier-standard './*.js' && prettier-standard 'src/**/*.js' && prettier-standard 'lib/**/*.js'",
     "dev": "WATCH=true webpack --progress",
+    "dev:tm": "WATCH=true webpack --progress --config webpack.config.dev.js",
     "build": "NODE_ENV=production webpack --progress",
     "precommit": "lint-staged",
     "autostart":
@@ -57,7 +58,7 @@
     "tunnel": "0.0.4",
     "uglify-js": "^2.8.29",
     "update-notifier": "^1.0.2",
-    "wxml-transpiler": "^1.0.1",
+    "wxml-transpiler": "^1.0.2",
     "wxss-transpiler": "^0.1.6"
   },
   "devDependencies": {
