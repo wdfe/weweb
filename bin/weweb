@@ -320,7 +320,7 @@ function build () {
                           exec(`${cmdRm}${tmpFolderName}`)
                         }
                         util.rmEmptyDirsSync(distPath)
-                        process.exit()
+                        process.exit(0)
                       } else {
                         bootWebServer()
                         util.rmEmptyDirsSync(distPath)

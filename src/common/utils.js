@@ -6,7 +6,7 @@ function addDegSuffix (num) {
   return num + 'deg'
 }
 
-const words = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
+// const words = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
 const btoa = window.btoa
 const atob = window.atob
 
@@ -34,9 +34,7 @@ class SelQuery {
       },
       e
     )
-    return (
-      this._selectorQuery
-    )
+    return this._selectorQuery
   }
 
   scrollOffset (e) {
@@ -50,10 +48,7 @@ class SelQuery {
       },
       e
     )
-    return (
-
-      this._selectorQuery
-    )
+    return this._selectorQuery
   }
 }
 
@@ -61,9 +56,15 @@ const getViewPortInfo = function (e) {
   var t = {}
   e.id && (t.id = '')
   e.dataset && (t.dataset = {})
-  e.rect && (t.left = 0, t.right = 0, t.top = 0, t.bottom = 0)
-  e.size && (t.width = document.documentElement.clientWidth, t.height = document.documentElement.clientHeight)
-  e.scrollOffset && (t.scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft || 0, t.scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0)
+  e.rect && ((t.left = 0), (t.right = 0), (t.top = 0), (t.bottom = 0))
+  e.size &&
+    ((t.width = document.documentElement.clientWidth),
+      (t.height = document.documentElement.clientHeight))
+  e.scrollOffset &&
+    ((t.scrollLeft =
+      document.documentElement.scrollLeft || document.body.scrollLeft || 0),
+      (t.scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop || 0))
   return t
 }
 
@@ -74,15 +75,21 @@ const getInfoInFields = function (info, fields) {
   fields.dataset && (res.dataset = info.dataset || {})
   if (fields.rect || fields.size) {
     const domBounding = dom.getBoundingClientRect()
-    fields.rect && (res.left = domBounding.left, res.right = domBounding.right, res.top = domBounding.top, res.bottom = domBounding.bottom)
-    fields.size && (res.width = domBounding.width, res.height = domBounding.height)
+    fields.rect &&
+      ((res.left = domBounding.left),
+        (res.right = domBounding.right),
+        (res.top = domBounding.top),
+        (res.bottom = domBounding.bottom))
+    fields.size &&
+      ((res.width = domBounding.width), (res.height = domBounding.height))
   }
-  fields.properties && fields.properties.forEach(function (t) {
-    var n = t.replace(/-([a-z])/g, function (e, t) {
-      return t.toUpperCase()
+  fields.properties &&
+    fields.properties.forEach(function (t) {
+      var n = t.replace(/-([a-z])/g, function (e, t) {
+        return t.toUpperCase()
+      })
+      window.exparser.Component.hasPublicProperty(info, n) && (res[n] = info[n])
     })
-    window.exparser.Component.hasPublicProperty(info, n) && (res[n] = info[n])
-  })
   if (fields.scrollOffset) {
     if (info.hasBehavior('wx-positioning-container')) {
       var r = info.getScrollPosition()
@@ -112,7 +119,9 @@ const execQuery = function (viewId, reqs, cb) {
     } else {
       var c = window.__DOMTree__.querySelectorAll(selector)
       res = []
-      for (var u = 0; u < c.length; u++) res.push(getInfoInFields(c[u], fields))
+      for (var u = 0; u < c.length; u++) {
+        res.push(getInfoInFields(c[u], fields))
+      }
     }
     ret.push(res)
   })
@@ -139,7 +148,7 @@ class wxQuerySelector {
   }
 
   _push (e, t, n, o) {
-    this._queue.push({selector: e, single: t, fields: n})
+    this._queue.push({ selector: e, single: t, fields: n })
     this._queueCb.push(o || null)
   }
 
@@ -501,11 +510,11 @@ const utils = {
       ? propValue.match(rpxInCSS)
       : propValue.match(rpxInTemplate)
     matches &&
-    matches.forEach(function (match) {
-      const pxNum = parseRpx(match)
-      const cssValue = (isInCSS ? match[0] : '') + pxNum + 'px'
-      propValue = propValue.replace(match, cssValue)
-    })
+      matches.forEach(function (match) {
+        const pxNum = parseRpx(match)
+        const cssValue = (isInCSS ? match[0] : '') + pxNum + 'px'
+        propValue = propValue.replace(match, cssValue)
+      })
     return propValue
   },
   getRealRoute (pathPrefix = '', pathname = '') {
@@ -521,7 +530,7 @@ const utils = {
       index = 0, folderLength = folderArr.length;
       index < folderLength && folderArr[index] === '..';
       index++
-    ) ;
+    );
     folderArr.splice(0, index)
     var prefixArr = pathPrefix.length > 0 ? pathPrefix.split('/') : []
     prefixArr.splice(prefixArr.length - index - 1, index + 1)
@@ -653,12 +662,12 @@ const utils = {
       transform: transform,
       transitionProperty: transitionProperty,
       transition:
-      transition.duration +
-      'ms ' +
-      transition.timingFunction +
-      ' ' +
-      transition.delay +
-      'ms'
+        transition.duration +
+        'ms ' +
+        transition.timingFunction +
+        ' ' +
+        transition.delay +
+        'ms'
     }
   },
   // service
@@ -677,10 +686,10 @@ const utils = {
         dataType == 'String' || dataType == 'Number' || dataType == 'Boolean'
           ? data.toString()
           : dataType == 'Date'
-          ? data.getTime().toString()
-          : dataType == 'Undefined'
-            ? 'undefined'
-            : dataType == 'Null' ? 'null' : ''
+            ? data.getTime().toString()
+            : dataType == 'Undefined'
+              ? 'undefined'
+              : dataType == 'Null' ? 'null' : ''
     }
     return {
       data: data,
@@ -694,14 +703,14 @@ const utils = {
       type == 'String'
         ? data
         : type == 'Array' || type == 'Object'
-        ? JSON.parse(data)
-        : type == 'Number'
-          ? parseFloat(data)
-          : type == 'Boolean'
-            ? data == 'true'
-            : type == 'Date'
-              ? new Date(parseInt(data))
-              : type == 'Undefined' ? void 0 : type == 'Null' ? null : '')
+          ? JSON.parse(data)
+          : type == 'Number'
+            ? parseFloat(data)
+            : type == 'Boolean'
+              ? data == 'true'
+              : type == 'Date'
+                ? new Date(parseInt(data))
+                : type == 'Undefined' ? void 0 : type == 'Null' ? null : '')
   },
   getDataType (data) {
     // get data type
@@ -789,10 +798,10 @@ const utils = {
         refinedNewParams = Object.keys(newParams).reduce(function (res, cur) {
           typeof newParams[cur] === 'object'
             ? (res[encodeURIComponent(cur)] = encodeURIComponent(
-            JSON.stringify(newParams[cur])
+              JSON.stringify(newParams[cur])
             ))
             : (res[encodeURIComponent(cur)] = encodeURIComponent(
-            newParams[cur]
+              newParams[cur]
             ))
           return res
         }, {})
@@ -834,7 +843,7 @@ const utils = {
         urlQueryArr = []
       for (var i in queryParams) {
         queryParams.hasOwnProperty(i) &&
-        urlQueryArr.push(i + '=' + encodeURIComponent(queryParams[i]))
+          urlQueryArr.push(i + '=' + encodeURIComponent(queryParams[i]))
       }
       return urlQueryArr.length > 0
         ? urlPath + '?' + urlQueryArr.join('&')
@@ -893,21 +902,23 @@ const utils = {
       typeof obj[cur] === 'string'
         ? (res[cur] = obj[cur])
         : typeof obj[cur] === 'number'
-        ? (res[cur] = obj[cur] + '')
-        : (res[cur] = Object.prototype.toString.apply(obj[cur]))
+          ? (res[cur] = obj[cur] + '')
+          : (res[cur] = Object.prototype.toString.apply(obj[cur]))
       return res
     }, {})
   },
   renameProperty (obj, oldName, newName) {
     this.isPlainObject(obj) !== !1 &&
-    oldName != newName &&
-    obj.hasOwnProperty(oldName) &&
-    ((obj[newName] = obj[oldName]), delete obj[oldName])
+      oldName != newName &&
+      obj.hasOwnProperty(oldName) &&
+      ((obj[newName] = obj[oldName]), delete obj[oldName])
   },
   toArray (arg) {
     // 把e转成array
     if (Array.isArray(arg)) {
-      for (var t = 0, n = Array(arg.length); t < arg.length; t++) n[t] = arg[t]
+      for (var t = 0, n = Array(arg.length); t < arg.length; t++) {
+        n[t] = arg[t]
+      }
       return n
     }
     return Array.from(arg)
@@ -988,10 +999,8 @@ const utils = {
   transWxmlToHtml (url) {
     if (typeof url !== 'string') return url
     var urlArr = url.split('?')
-    return (
-      (urlArr[0] += '.html'),
-        void 0 !== urlArr[1] ? urlArr[0] + '?' + urlArr[1] : urlArr[0]
-    )
+    urlArr[0] += '.html'
+    return void 0 !== urlArr[1] ? urlArr[0] + '?' + urlArr[1] : urlArr[0]
   },
   removeHtmlSuffixFromUrl (url) {
     return typeof url === 'string'
@@ -1016,11 +1025,11 @@ const utils = {
       res = this[fn].apply(this, args)
       var doTime = Date.now() - startTime
       doTime > 1e3 &&
-      Reporter.slowReport({
-        key: 'pageInvoke',
-        cost: doTime,
-        extend: 'at ' + this.__route__ + ' page ' + fn + ' function'
-      })
+        Reporter.slowReport({
+          key: 'pageInvoke',
+          cost: doTime,
+          extend: 'at ' + this.__route__ + ' page ' + fn + ' function'
+        })
     } catch (e) {
       Reporter.thirdErrorReport({
         error: e,
@@ -1066,8 +1075,8 @@ const utils = {
       }
     params[1]
       ? (params[1].options = Object.assign(
-      params[1].options || {},
-      defaultOpt.options
+        params[1].options || {},
+        defaultOpt.options
       ))
       : (params[1] = defaultOpt)
     ServiceJSBridge.publish.apply(ServiceJSBridge, params)

@@ -522,169 +522,144 @@ window.exparser.registerAsyncComp = function (names, cb) {
   function requireAsync (name) {
     switch (name) {
       case 'wx-map':
-        ;(function () {
-          var script = document.createElement('script')
-          script.async = true
-          script.type = 'text/javascript'
-          script.src =
-            'https://map.qq.com/api/js?v=2.exp&callback=__map_jssdk_init'
-          document.body.appendChild(script)
-          window.__map_jssdk_id = 0
-          window.__map_jssdk_ready = !1
-          window.__map_jssdk_callback = []
-          window.__map_jssdk_init = function () {
-            for (
-              window.__map_jssdk_ready = !0;
-              window.__map_jssdk_callback.length;
+        var script = document.createElement('script')
+        script.async = true
+        script.type = 'text/javascript'
+        script.src =
+          'https://map.qq.com/api/js?v=2.exp&callback=__map_jssdk_init'
+        document.body.appendChild(script)
+        window.__map_jssdk_id = 0
+        window.__map_jssdk_ready = !1
+        window.__map_jssdk_callback = []
+        window.__map_jssdk_init = function () {
+          for (
+            window.__map_jssdk_ready = !0;
+            window.__map_jssdk_callback.length;
 
-            ) {
-              var e = window.__map_jssdk_callback.pop()
-              e()
-            }
+          ) {
+            var e = window.__map_jssdk_callback.pop()
+            e()
           }
-        })()
-        require.ensure([], function () {
-          require('./components/wx-map')
-          checkState()
-        })
+        }
+
+        import(/* webpackChunkName: "wx-map" */ './components/wx-map').then(
+          checkState
+        )
         break
       case 'wx-canvas':
-        require.ensure([], function () {
-          require('./components/wx-canvas')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-canvas" */ './components/wx-canvas').then(
+          checkState
+        )
         break
       case 'wx-picker-view':
-        require.ensure([], function () {
-          require('./components/wx-picker-view')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-picker-view" */ './components/wx-picker-view').then(
+          checkState
+        )
         break
       case 'wx-picker':
-        require.ensure([], function () {
-          require('./components/wx-picker')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-picker" */ './components/wx-picker').then(
+          checkState
+        )
         break
       case 'wx-picker-view-column':
-        require.ensure([], function () {
-          require('./components/wx-picker-view-column')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-picker-view-column" */ './components/wx-picker-view-column').then(
+          checkState
+        )
         break
       case 'wx-video':
-        require.ensure([], function () {
-          require('./components/wx-video')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-video" */ './components/wx-video').then(
+          checkState
+        )
         break
       case 'wx-radio-group':
-        require.ensure([], function () {
-          require('./components/wx-radio-group')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-radio-group" */ './components/wx-radio-group').then(
+          checkState
+        )
         break
       case 'wx-swiper':
-        require.ensure([], function () {
-          require('./components/wx-swiper')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-swiper" */ './components/wx-swiper').then(
+          checkState
+        )
         break
       case 'wx-modal':
-        require.ensure([], function () {
-          require('./components/wx-modal')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-modal" */ './components/wx-modal').then(
+          checkState
+        )
         break
       case 'wx-switch':
-        require.ensure([], function () {
-          require('./components/wx-switch')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-switch" */ './components/wx-switch').then(
+          checkState
+        )
         break
       case 'wx-toast':
-        require.ensure([], function () {
-          require('./components/wx-toast')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-toast" */ './components/wx-toast').then(
+          checkState
+        )
         break
       case 'wx-radio':
-        require.ensure([], function () {
-          require('./components/wx-radio')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-radio" */ './components/wx-radio').then(
+          checkState
+        )
         break
       case 'wx-scroll-view':
-        require.ensure([], function () {
-          require('./components/wx-scroll-view')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-scroll-view" */ './components/wx-scroll-view').then(
+          checkState
+        )
         break
       case 'wx-textarea':
-        require.ensure([], function () {
-          require('./components/wx-textarea')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-textarea" */ './components/wx-textarea').then(
+          checkState
+        )
         break
       case 'wx-input':
-        require.ensure([], function () {
-          require('./components/wx-input')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-input" */ './components/wx-input').then(
+          checkState
+        )
         break
       case 'wx-contact-button':
-        require.ensure([], function () {
-          require('./components/wx-contact-button')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-contact-button" */ './components/wx-contact-button').then(
+          checkState
+        )
         break
       case 'wx-audio':
-        require.ensure([], function () {
-          require('./components/wx-audio')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-audio" */ './components/wx-audio').then(
+          checkState
+        )
         break
       case 'wx-form':
-        require.ensure([], function () {
-          require('./components/wx-form')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-form" */ './components/wx-form').then(
+          checkState
+        )
         break
       case 'wx-slider':
-        require.ensure([], function () {
-          require('./components/wx-slider')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-slider" */ './components/wx-slider').then(
+          checkState
+        )
         break
       case 'wx-swiper-item':
-        require.ensure([], function () {
-          require('./components/wx-swiper-item')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-swiper-item" */ './components/wx-swiper-item').then(
+          checkState
+        )
         break
       case 'wx-progress':
-        require.ensure([], function () {
-          require('./components/wx-progress')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-progress" */ './components/wx-progress').then(
+          checkState
+        )
         break
       case 'wx-action-sheet-cancel':
-        require.ensure([], function () {
-          require('./components/wx-action-sheet-cancel')
-          checkState()
-        })
+        import(/* webpackChunkName: "/wx-action-sheet-cancel" */ './components/wx-action-sheet-cancel').then(
+          checkState
+        )
         break
       case 'wx-action-sheet':
-        require.ensure([], function () {
-          require('./components/wx-action-sheet')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-action-sheet" */ './components/wx-action-sheet').then(
+          checkState
+        )
         break
       case 'wx-action-sheet-item':
-        require.ensure([], function () {
-          require('./components/wx-action-sheet-item')
-          checkState()
-        })
+        import(/* webpackChunkName: "wx-action-sheet-item" */ './components/wx-action-sheet-item').then(
+          checkState
+        )
         break
       case 'wx-template':
       case 'wx-div':
