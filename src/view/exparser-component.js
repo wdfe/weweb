@@ -647,7 +647,7 @@ window.exparser.registerAsyncComp = function (names, cb) {
         )
         break
       case 'wx-action-sheet-cancel':
-        import(/* webpackChunkName: "/wx-action-sheet-cancel" */ './components/wx-action-sheet-cancel').then(
+        import(/* webpackChunkName: "wx-action-sheet-cancel" */ './components/wx-action-sheet-cancel').then(
           checkState
         )
         break
