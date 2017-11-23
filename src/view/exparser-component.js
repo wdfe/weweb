@@ -501,6 +501,7 @@ require('./components/wx-navigator')
 require('./components/wx-text')
 require('./components/wx-view')
 require('./components/wx-web-view')
+require('./components/wx-rich-text')
 
 window.exparser.registerAsyncComp = function (names, cb) {
   let len = names.length

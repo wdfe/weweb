@@ -50,23 +50,19 @@ const setAttribute = function (ele, opt, propKey, value) {
 }
 
 const normalizeValue = function (value, type) {
-  // 根据type,格式化value
-  if (type === String) {
-    return value === null || undefined === value ? '' : String(value)
-  } else {
-    if (type === Number) {
+  switch (type) {
+    case String:
+      return value === null || undefined === value ? '' : String(value)
+    case Number:
       return isFinite(value) ? Number(value) : false
-    } else {
-      if (type === Boolean) {
-        return !!value
-      } else {
-        if (type === Array) {
-          return value instanceof Array ? value : []
-        } else {
-          return typeof value === 'object' ? value : null
-        }
-      }
-    }
+    case Boolean:
+      return !!value
+    case Array:
+      return value instanceof Array ? value : []
+    case Object:
+      return typeof value === 'object' ? value : null
+    default:
+      return void 0 === value ? null : value
   }
 }
 
