@@ -16,7 +16,14 @@ import image from '../lib/sdk/image'
 import modal from '../lib/sdk/modal'
 import actionSheet from '../lib/sdk/actionsheet'
 import Preview from '../lib/component/preview'
-import { dataURItoBlob, toNumber, getBus, once } from '../lib/util'
+import {
+  dataURItoBlob,
+  toNumber,
+  getBus,
+  once,
+  createWebview,
+  updateWebView
+} from '../lib/util'
 
 const Bus = getBus()
 let fileIndex = 0
@@ -216,7 +223,7 @@ export function pageScrollTo (param) {
     var clientHeight = getWindowHeight(),
       scrollHeight = getScrollHeight()
     scrollTop > scrollHeight - clientHeight &&
-    (scrollTop = scrollHeight - clientHeight)
+      (scrollTop = scrollHeight - clientHeight)
     var init = function () {
         scrollable.style.transition = ''
         scrollable.style.webkitTransition = ''
@@ -245,7 +252,7 @@ export function setNavigationBarTitle (data) {
 
 export function setStatusBarStyle (data) {
   let color = data.args.color
-  if (color) header.setState({color: color})
+  if (color) header.setState({ color: color })
 }
 
 export function setNavigationBarColor (data) {
@@ -263,20 +270,20 @@ export function hideNavigationBarLoading () {
 
 export function chooseImage (data) {
   let URL = window.URL || window.webkitURL
-  filePicker({multiple: true, accept: 'image/*'}, files => {
+  filePicker({ multiple: true, accept: 'image/*' }, files => {
     files = [].slice.call(files).slice(0, data.args.count || files.length)
     let paths = files.map(file => {
       let blob = URL.createObjectURL(file)
       fileStore[blob] = file
       return blob
     })
-    onSuccess(data, {tempFilePaths: paths})
+    onSuccess(data, { tempFilePaths: paths })
   })
 }
 
 export function chooseVideo (data) {
   let URL = window.URL || window.webkitURL
-  filePicker({accept: 'video/*'}, files => {
+  filePicker({ accept: 'video/*' }, files => {
     let path = URL.createObjectURL(files[0])
     fileStore[path] = files[0]
     let video = document.createElement('video')
@@ -340,7 +347,7 @@ export function enableCompass () {
 export function enableAccelerometer () {
   if (window.DeviceMotionEvent) {
     let handler = throttle(event => {
-      let {x, y, z} = {
+      let { x, y, z } = {
         x: event.accelerationIncludingGravity.x,
         y: event.accelerationIncludingGravity.y,
         z: event.accelerationIncludingGravity.z
@@ -349,7 +356,7 @@ export function enableAccelerometer () {
       toAppService({
         msg: {
           eventName: 'onAccelerometerChange',
-          data: {x, y, z}
+          data: { x, y, z }
         }
       })
     }, 200)
@@ -404,7 +411,7 @@ export function chooseLocation (data) {
   let url = `https://3gimg.qq.com/lightmap/components/locationPicker2/index.html?search=1&type=1&coord=39.90403%2C116.407526&key=JMRBZ-R4HCD-X674O-PXLN4-B7CLH-42BSB&referer=wxdevtools`
   router.openExternal(url)
   let called = false
-  Bus.once('back', (send) => {
+  Bus.once('back', send => {
     if (!called && !send) {
       called = true
       onCancel(data)
@@ -606,7 +613,7 @@ export function uploadFile (data) {
   xhr.open('POST', reqUrl)
   xhr.onload = function () {
     if ((xhr.status / 100) | (0 === 2)) {
-      onSuccess(data, {statusCode: xhr.status, data: xhr.responseText})
+      onSuccess(data, { statusCode: xhr.status, data: xhr.responseText })
     } else {
       onError(data, `request error ${xhr.status}`)
     }
@@ -716,7 +723,7 @@ export function openDocument (data) {
     title: '确认打开',
     content: `openDocument ${args.filePath}`
   }).then(confirm => {
-    onSuccess(data, {confirm})
+    onSuccess(data, { confirm })
   })
 }
 
@@ -730,7 +737,7 @@ export function removeStorage (data) {
   if (requiredArgs(['key'], data)) return
 
   let o = storage.remove(args.key)
-  onSuccess(data, {data: o})
+  onSuccess(data, { data: o })
 }
 
 export function showToast (data) {
@@ -747,7 +754,7 @@ export function hideToast (data) {
 export function showModal (data) {
   if (requiredArgs(['title', 'content'], data)) return
   modal(data.args).then(confirm => {
-    onSuccess(data, {confirm})
+    onSuccess(data, { confirm })
   })
 }
 
@@ -797,6 +804,20 @@ export function showPickerView (args) {
       index: n
     })
   })
+}
+
+export function insertHTMLWebView (args) {
+  createWebview(
+    'webview_site_' + args.htmlId,
+    document.querySelector(`#weweb-view-${window.__webviewId__}`)
+  )
+  WeixinJSBridge.subscribeHandler('insertHTMLWebView', {
+    errMsg: 'insertHTMLWebView:ok'
+  })
+}
+
+export function updateHTMLWebView (args) {
+  updateWebView('webview_site_' + args.htmlId, args.src)
 }
 
 export function showDatePickerView (args) {

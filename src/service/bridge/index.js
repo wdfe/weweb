@@ -69,6 +69,10 @@ function showSdk (msg) {
       command.showPickerView(msg.args)
     } else if (sdkName == 'showDatePickerView') {
       command.showDatePickerView(msg.args)
+    } else if (sdkName == 'updateHTMLWebView') {
+      command.updateHTMLWebView(msg.args)
+    } else if (sdkName == 'insertHTMLWebView') {
+      command.insertHTMLWebView(msg.args)
     } else if (
       sdkName == 'onKeyboardComplete' ||
       sdkName == 'getPublicLibVersion' ||

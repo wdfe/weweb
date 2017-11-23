@@ -10,9 +10,10 @@
     "start": "sh run.sh",
     "format":
       "prettier-standard './*.js' && prettier-standard 'src/**/*.js' && prettier-standard 'lib/**/*.js'",
-    "dev": "WATCH=true webpack --progress",
+    "dev": "WATCH=true webpack --progress --config webpack.config.js",
     "dev:tm": "WATCH=true webpack --progress --config webpack.config.dev.js",
-    "build": "NODE_ENV=production webpack --progress",
+    "build":
+      "NODE_ENV=production webpack --progress --config webpack.config.js",
     "precommit": "lint-staged",
     "autostart":
       "nodemon -w demos -w lib/template -d 1.5 -e js,json,wxss,wxml --exec 'npm run start'"

@@ -7,6 +7,7 @@ var utils = {
       try {
         res = fn.apply(fn, arguments)
       } catch (error) {
+        console.error(error)
         var key = 'thirdScriptError'
         var content = extend ? error.message + ';' + extend : error.message
         utils.triggerErrorMessage(key + '\n' + content + '\n' + error.stack)

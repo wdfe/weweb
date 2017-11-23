@@ -486,6 +486,7 @@ require('./behaviors/wx-mask-Behavior')
 require('./behaviors/wx-native')
 require('./behaviors/wx-player')
 require('./behaviors/wx-touchtrack')
+require('./behaviors/wx-positioning-target')
 
 require('./components/wx-button')
 require('./components/wx-checkbox')
@@ -499,6 +500,7 @@ require('./components/wx-mask')
 require('./components/wx-navigator')
 require('./components/wx-text')
 require('./components/wx-view')
+require('./components/wx-web-view')
 
 window.exparser.registerAsyncComp = function (names, cb) {
   let len = names.length

@@ -45,6 +45,46 @@ export function createFrame (id, src, hidden, parent = document.body) {
   return el
 }
 
+export function createWebview (id, parent = document.body) {
+  let el = document.createElement('iframe')
+  let hidden = true
+  // el.setAttribute('src', src)
+  el.setAttribute('id', id)
+  el.setAttribute('seamless', 'seamless')
+  el.setAttribute(
+    'sandbox',
+    'allow-scripts allow-same-origin allow-forms allow-modals'
+  )
+  el.setAttribute('frameborder', '0')
+  el.setAttribute('width', hidden ? '0' : '100%')
+  el.setAttribute('height', hidden ? '0' : '100%')
+  if (hidden) {
+    el.setAttribute('style', 'width:0;height:0;border:0; display:none;')
+  }
+  parent.appendChild(el)
+  return el
+}
+
+export function updateWebView (id, src) {
+  let el = document.querySelector('#' + id)
+  let hidden = false
+  el.setAttribute('src', src)
+  // el.setAttribute('id', id)
+  // el.setAttribute('seamless', 'seamless')
+  // el.setAttribute(
+  //   'sandbox',
+  //   'allow-scripts allow-same-origin allow-forms allow-modals'
+  // )
+  // el.setAttribute('frameborder', '0')
+  el.setAttribute('width', hidden ? '0' : '100%')
+  el.setAttribute('height', hidden ? '0' : '100%')
+  // if (hidden) {
+  //   el.setAttribute('style', 'width:0;height:0;border:0; display:none;')
+  // }
+  el.setAttribute('style', '')
+  return el
+}
+
 export function parsePath (path) {
   let parts = path.split(/\?/)
   return {
