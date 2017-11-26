@@ -50,7 +50,7 @@ var request = function (event, params, callback) {
     method = params.method || 'POST',
     networkTimeout = 3e4
   if (__wxConfig__ && __wxConfig__.weweb && __wxConfig__.weweb.requestProxy) {
-    requestObj.open(method, __wxConfig__.weweb.requestProxy, true)
+    requestObj.open(method, url, true)
     requestObj.onreadystatechange = function () {
       if ((requestObj.readyState == 3, requestObj.readyState == 4)) {
         requestObj.onreadystatechange = null
