@@ -1,7 +1,7 @@
 {
-  "name": "weweb-cli",
+  "name": "strikingly-weweb-cli",
   "version": "1.0.2",
-  "description": "微信小程序转成h5的小工具",
+  "description": "修正 requestProxy",
   "main": "bin/weweb",
   "bin": {
     "weweb": "bin/weweb"
@@ -23,7 +23,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wdfe/weweb.git"
+    "url": "https://github.com/iShawnWang/weweb.git"
   },
   "author": "wdfe",
   "license": "MIT",
