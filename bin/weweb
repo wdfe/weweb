@@ -128,7 +128,6 @@ function checkProject () {
     }
     // var chdirFail = false
     try {
-      printLog(folder)
       process.chdir(folder)
     } catch (err) {
       // chdirFail = true
