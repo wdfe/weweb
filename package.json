@@ -10,8 +10,11 @@
     "start": "sh run.sh",
     "format":
       "prettier-standard './*.js' && prettier-standard 'src/**/*.js' && prettier-standard 'lib/**/*.js'",
+    "//dev": "dev 开头的都没有压缩代码",
     "dev": "WATCH=true webpack --progress --config webpack.config.js",
-    "dev:tm": "WATCH=true webpack --progress --config webpack.config.dev.js",
+    "dev:nowatch": "webpack --progress --config webpack.config.js",
+    "//dev:tmp": "直接打包到 tmp 文件夹",
+    "dev:tmp": "WATCH=true webpack --progress --config webpack.config.dev.js",
     "build":
       "NODE_ENV=production webpack --progress --config webpack.config.js",
     "precommit": "lint-staged",
@@ -59,7 +62,7 @@
     "tunnel": "0.0.4",
     "uglify-js": "^2.8.29",
     "update-notifier": "^1.0.2",
-    "wxml-transpiler": "^1.0.3",
+    "wxml-transpiler": "^1.0.4",
     "wxss-transpiler": "^0.1.6"
   },
   "devDependencies": {

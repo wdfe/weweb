@@ -667,6 +667,7 @@ window.exparser.registerAsyncComp = function (names, cb) {
       case 'wx-template':
       case 'wx-div':
       case 'wx-import':
+      case 'wx-include':
       case 'wx-block':
         checkState()
         break
