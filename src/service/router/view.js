@@ -197,12 +197,16 @@ export default class View extends Emitter {
         }
         let resArr = res.split('@code-separator-line:')
         try {
-          new Function(`${resArr[2]}\n //# sourceURL=${window.location.origin}/${self.path}.js`)() // define page service
+          new Function(
+            `${resArr[2]}\n //# sourceURL=${window.location
+              .origin}/${self.path}.js`
+          )() // define page service
         } catch (e) {
           console.error(e)
         }
         var func = new Function(
-          `${resArr[0]} \n return $gwx("./${self.path}.wxml") \n //# sourceURL=${window.location.origin}/${self.path}.wxml`
+          `${resArr[0]} \n return $gwx("./${self.path}.wxml") \n //# sourceURL=${window
+            .location.origin}/${self.path}.wxml`
         )
 
         try {
@@ -216,7 +220,7 @@ export default class View extends Emitter {
         }
 
         function componentLoaded () {
-          window.firstRender = 0 // 重置
+          window.reRender = 0 // 重置
           Bus.emit('ready', self.id)
           Pull.register(function () {
             ServiceJSBridge.subscribeHandler('onPullDownRefresh', {}, self.id)

@@ -9,7 +9,7 @@ Init.init()
 
 window.__mergeData__ = AppData.mergeData
 window.__DOMTree__ = void 0 // 虚拟dom生成的domtree
-window.firstRender = 0
+window.reRender = 0
 let domReady = '__DOMReady'
 let rootNode = void 0
 
@@ -97,7 +97,7 @@ const reRender = function (event) {
 }
 
 const renderOnDataChange = function (event) {
-  if (window.firstRender) {
+  if (window.reRender) {
     reRender(event)
     document.dispatchEvent(new CustomEvent('pageReRender', {}))
   } else {
@@ -111,7 +111,7 @@ const renderOnDataChange = function (event) {
         extend: 'firstRender not the data from Page.data'
       })
     }
-    window.firstRender = !0
+    window.reRender = !0
     document.dispatchEvent(new CustomEvent('pageReRender', {}))
   }
 }

@@ -171,7 +171,7 @@ class PageParser {
       if (callback) {
         document.addEventListener('pageReRender', execCallback)
       }
-      if (window.firstRender) {
+      if (window.reRender) {
         WeixinJSBridge.subscribeHandler('custom_event_appDataChange', {
           data: {
             data: dataObj
