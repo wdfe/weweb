@@ -17,7 +17,6 @@ const path = require('path')
 const semCmp = require('semver-compare')
 var util = require('../lib/util')
 // const Parallel = require('node-parallel')
-// const co = require('co')
 // const notify = require('node-notifier')
 let cmdRm, cmdCp, cmdCpArg
 if (isWin) {
@@ -232,7 +231,7 @@ function build () {
         // console.log('b',program.babel)
         loadConfig({ babel: program.babel }).then(function (appConfig) {
           var core = require('../lib/core')
-          core.getIndex.then(function (content) {
+          core.getIndex().then(function (content) {
             /*
            if(program.transform){
            content = content.replace('var __wxConfig__ = {"weweb":{','var __wxConfig__ = {"weweb":{ "requestProxy":"/remoteProxy",')
@@ -247,7 +246,7 @@ function build () {
             )
           })
 
-          core.getServiceJs.then(function (content) {
+          core.getServiceJs().then(function (content) {
             util.createFile(
               distPath + '/script',
               'app-service.js',
