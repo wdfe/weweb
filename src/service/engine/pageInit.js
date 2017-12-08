@@ -118,9 +118,9 @@ const pageParse = function (routePath, webviewId, params) {
     page: page,
     route: routePath
   }
+  pageInitData(page, webviewId)
   page.onLoad(params)
   page.onShow()
-  pageInitData(page, webviewId)
   triggerAnalytics('enterPage', page)
 }
 
