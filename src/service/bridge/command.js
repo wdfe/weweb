@@ -370,7 +370,11 @@ export function enableAccelerometer () {
 }
 
 export function getNetworkType (data) {
-  let type = navigator.connection == null ? 'WIFI' : navigator.connection.type
+  const connection = navigator.connection
+  let type =
+    connection == null
+      ? 'WIFI'
+      : connection.type ? connection.type : connection.effectiveType
   onSuccess(data, {
     networkType: type
   })
