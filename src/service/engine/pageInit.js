@@ -77,8 +77,8 @@ var pageInitData = Reporter.surroundThirdByTryCatch(function (
 ) {
   utils.info('Update view with init data')
   var ext = {}
-  ;(ext.webviewId = webviewId),
-  (ext.enablePullUpRefresh = pageObj.hasOwnProperty('onReachBottom'))
+  ext.webviewId = webviewId
+  ext.enablePullUpRefresh = pageObj.hasOwnProperty('onReachBottom')
   var params = {
     data: {
       data: pageObj.data,
@@ -89,7 +89,6 @@ var pageInitData = Reporter.surroundThirdByTryCatch(function (
     }
   }
   utils.publish('appDataChange', params, [webviewId])
-  triggerAnalytics('pageReady', pageObj)
 })
 
 const pageParse = function (routePath, webviewId, params) {
@@ -118,9 +117,12 @@ const pageParse = function (routePath, webviewId, params) {
     page: page,
     route: routePath
   }
+
   pageInitData(page, webviewId)
   page.onLoad(params)
   page.onShow()
+  let domReady = '__DOMReady'
+  wx.publishPageEvent(domReady, {})
   triggerAnalytics('enterPage', page)
 }
 
@@ -243,29 +245,33 @@ const doWebviewEvent = function (pWebviewId, pEvent, params) {
       'OnWebviewEvent: ' + pEvent + ', WebviewId: ' + pWebviewId + ' not found'
     )
   }
-  var pageItem = pageStackObjs[pWebviewId],
-    pageObj = pageItem.page
-  return pEvent === DOM_READY_EVENT
-    ? ((app.pageReadyTime = Date.now()),
-      utils.info('Invoke event onReady in page: ' + pageItem.route),
-      pageObj.onReady())
-    : (utils.info('Invoke event ' + pEvent + ' in page: ' + pageItem.route),
-      pageObj.hasOwnProperty(pEvent)
-        ? utils.safeInvoke.call(pageObj, pEvent, params)
-        : utils.warn(
-          '事件警告',
-          'Do not have ' +
-              pEvent +
-              ' handler in current page: ' +
-              pageItem.route +
-              '. Please make sure that ' +
-              pEvent +
-              ' handler has been defined in ' +
-              pageItem.route +
-              ', or ' +
-              pageItem.route +
-              ' has been added into app.json'
-        ))
+  let pageItem = pageStackObjs[pWebviewId]
+  let pageObj = pageItem.page
+  if (pEvent === DOM_READY_EVENT) {
+    app.pageReadyTime = Date.now()
+    utils.info('Invoke event onReady in page: ' + pageItem.route)
+    pageObj.onReady()
+  } else {
+    utils.info('Invoke event ' + pEvent + ' in page: ' + pageItem.route)
+    if (pageObj.hasOwnProperty(pEvent)) {
+      utils.safeInvoke.call(pageObj, pEvent, params)
+    } else {
+      utils.warn(
+        '事件警告',
+        'Do not have ' +
+          pEvent +
+          ' handler in current page: ' +
+          pageItem.route +
+          '. Please make sure that ' +
+          pEvent +
+          ' handler has been defined in ' +
+          pageItem.route +
+          ', or ' +
+          pageItem.route +
+          ' has been added into app.json'
+      )
+    }
+  }
 }
 
 const pullDownRefresh = function (pWebviewId) {
@@ -320,8 +326,8 @@ const shareAppMessage = function (params, webviewId) {
         ? shareInfo.cancel(res)
         : /^shareAppMessage:fail/.test(res.errMsg) &&
           typeof shareInfo.fail === 'function' &&
-          shareInfo.fail(res), // bug?? 原代码：shareInfo.fail && shareInfo.cancel(res)
-    typeof shareInfo.complete === 'function' && shareInfo.complete(res)
+          shareInfo.fail(res),
+    typeof shareInfo.complete === 'function' && shareInfo.complete(res) // bug?? 原代码：shareInfo.fail && shareInfo.cancel(res)
   })
 }
 

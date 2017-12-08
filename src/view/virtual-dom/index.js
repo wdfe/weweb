@@ -10,7 +10,6 @@ Init.init()
 window.__mergeData__ = AppData.mergeData
 window.__DOMTree__ = void 0 // 虚拟dom生成的domtree
 window.reRender = 0
-let domReady = '__DOMReady'
 let rootNode = void 0
 
 function setGlobalPageAttr (name, value) {
@@ -80,8 +79,6 @@ const firstTimeRender = function (event) {
     window.__DOMTree__,
     document.querySelector('#view-body-' + window.__wxConfig.viewId)
   )
-  wx.publishPageEvent(domReady, {})
-  // wx.initReady()
   TouchEvents.enablePullUpRefresh()
 }
 
