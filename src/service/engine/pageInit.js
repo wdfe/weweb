@@ -118,11 +118,9 @@ const pageParse = function (routePath, webviewId, params) {
     route: routePath
   }
 
-  pageInitData(page, webviewId)
   page.onLoad(params)
   page.onShow()
-  let domReady = '__DOMReady'
-  wx.publishPageEvent(domReady, {})
+  pageInitData(page, webviewId)
   triggerAnalytics('enterPage', page)
 }
 

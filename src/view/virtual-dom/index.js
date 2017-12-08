@@ -79,6 +79,8 @@ const firstTimeRender = function (event) {
     window.__DOMTree__,
     document.querySelector('#view-body-' + window.__wxConfig.viewId)
   )
+  let domReady = '__DOMReady'
+  wx.publishPageEvent(domReady, {})
   TouchEvents.enablePullUpRefresh()
 }
 
