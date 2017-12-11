@@ -114,12 +114,10 @@ const pageParse = function (routePath, webviewId, params) {
   }
   pageStack.push(currentPage)
   pageStackObjs[webviewId] = {
+    params: params,
     page: page,
     route: routePath
   }
-
-  page.onLoad(params)
-  page.onShow()
   pageInitData(page, webviewId)
   triggerAnalytics('enterPage', page)
 }
@@ -246,6 +244,8 @@ const doWebviewEvent = function (pWebviewId, pEvent, params) {
   let pageItem = pageStackObjs[pWebviewId]
   let pageObj = pageItem.page
   if (pEvent === DOM_READY_EVENT) {
+    pageObj.onLoad(pageItem.params)
+    pageObj.onShow()
     app.pageReadyTime = Date.now()
     utils.info('Invoke event onReady in page: ' + pageItem.route)
     pageObj.onReady()

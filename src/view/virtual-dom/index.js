@@ -100,6 +100,7 @@ const renderOnDataChange = function (event) {
     reRender(event)
     document.dispatchEvent(new CustomEvent('pageReRender', {}))
   } else {
+    window.reRender = !0
     firstTimeRender(event)
     if (!(event.options && event.options.firstRender)) {
       console.log(event)
@@ -110,7 +111,6 @@ const renderOnDataChange = function (event) {
         extend: 'firstRender not the data from Page.data'
       })
     }
-    window.reRender = !0
     document.dispatchEvent(new CustomEvent('pageReRender', {}))
   }
 }
