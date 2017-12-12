@@ -2,7 +2,7 @@ const requestUrl = require('../../../../config').requestUrl
 const duration = 2000
 
 Page({
-  makeRequest: function() {
+  makeRequest: function () {
     var self = this
 
     self.setData({
@@ -14,7 +14,7 @@ Page({
       data: {
         noncestr: Date.now()
       },
-      success: function(result) {
+      success: function (result) {
         wx.showToast({
           title: '请求成功',
           icon: 'success',
@@ -27,10 +27,44 @@ Page({
         console.log('request success', result)
       },
 
-      fail: function({errMsg}) {
+      fail: function ({ errMsg }) {
         console.log('request fail', errMsg)
         self.setData({
           loading: false
+        })
+      }
+    })
+  },
+  makePostRequest: function () {
+    var self = this
+
+    self.setData({
+      PostLoading: true
+    })
+
+    wx.request({
+      url: `https://httpbin.org/post`,
+      method: 'POST',
+      data: {
+        noncestr: Date.now()
+      },
+      success: function (result) {
+        wx.showToast({
+          title: '请求成功',
+          icon: 'success',
+          mask: true,
+          duration: duration
+        })
+        self.setData({
+          PostLoading: false
+        })
+        console.log('request success', result)
+      },
+
+      fail: function ({ errMsg }) {
+        console.log('request fail', errMsg)
+        self.setData({
+          PostLoading: false
         })
       }
     })
