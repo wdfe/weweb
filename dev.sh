@@ -9,5 +9,5 @@ if [ "$1" != "dev" ]; then
   npm run dev:nowatch
 fi
 
-./bin/weweb $app
+./bin/weweb -b $app
 
