@@ -80,7 +80,7 @@ const firstTimeRender = function (event) {
     document.querySelector('#view-body-' + window.__wxConfig.viewId)
   )
   let domReady = '__DOMReady'
-  wx.publishPageEvent(domReady, {})
+  wd.publishPageEvent(domReady, {})
   TouchEvents.enablePullUpRefresh()
 }
 
@@ -123,7 +123,7 @@ window.onerror = function (messageOrEvent, source, lineno, colno, error) {
   })
 }
 
-wx.onAppDataChange(
+wd.onAppDataChange(
   Reporter.surroundThirdByTryCatch(function (event) {
     renderOnDataChange(event)
   })

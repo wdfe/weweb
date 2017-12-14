@@ -3,7 +3,7 @@ import utils from '../../common/utils'
 
 var localImgDataIng = !1,
   imgData = [],
-  wx = {},
+  wdApi = {},
   foregroundCallbacks = [],
   backgroundCallbacks = [],
   publish = function (name, args) {
@@ -147,8 +147,8 @@ bridge.subscribe('onAppEnterBackground', function (e) {
   })
 })
 
-utils.copyObj(wx, apiObj)
+utils.copyObj(wdApi, apiObj)
 
 // export default wx
-module.exports = wx
-window.wx = wx
+module.exports = wdApi
+window.wd = wdApi

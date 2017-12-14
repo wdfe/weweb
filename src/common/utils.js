@@ -494,7 +494,7 @@ const utils = {
         distObj.__defineGetter__(attrName, function () {
           return Reporter.surroundThirdByTryCatch(
             orgObj[attrName],
-            'wd.' + attrName
+            'wx.' + attrName
           )
         })
       })(attrName)

@@ -86,8 +86,8 @@ class appClass {
             reportRealtimeAction.triggerAnalytics('foreground', null, '小程序转到前台'))
       }
     }
-    wd.onAppEnterBackground(hide.bind(this))
-    wd.onAppEnterForeground(show.bind(this))
+    wx.onAppEnterBackground(hide.bind(this))
+    wx.onAppEnterForeground(show.bind(this))
   }
   getCurrentPage () {
     utils.warn(

@@ -24,7 +24,7 @@ window.exparser.registerElement({
     this.uuid = this.getPositioningId()
     var t = this,
       n = this.uuid
-    wd.getSystemInfo({
+    wx.getSystemInfo({
       success: function (e) {
         t.$$.style.width = e.windowWidth + 'px'
         t.$$.style.height = e.windowHeight + 'px'

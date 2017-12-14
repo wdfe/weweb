@@ -122,7 +122,7 @@ export const Video = window.exparser.registerElement({
     if (!this._isError && srcURL) {
       var self = this
       /*
-                 if (wx.getPlatform() === 'wechatdevtools') {
+                 if (wd.getPlatform() === 'wechatdevtools') {
                  this.$.player.src = srcURL.replace(
                  'wdfile://',
                  'http://wxfile.open.weixin.qq.com/'

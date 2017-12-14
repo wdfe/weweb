@@ -58,7 +58,7 @@ var emptyFn = function () {},
   appRouteCallbacks = [],
   appRouteDoneCallback = [],
   pageEventFn = void 0,
-  wd = {},
+  wx = {},
   hasInvokeEnableAccelerometer = !1,
   hasInvokeEnableCompass = !1,
   accelerometerChangeFns = [],
@@ -267,7 +267,7 @@ var apiObj = {
       arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {}
     if (paramCheck('switchTab', params, { url: '' })) {
       ;/\?.*$/.test(params.url) &&
-        (console.warn('wd.switchTab: url 不支持 queryString'),
+        (console.warn('wx.switchTab: url 不支持 queryString'),
           (params.url = params.url.replace(/\?.*$/, '')))
       params.url = utils.getRealRoute(currUrl, params.url)
       params.url = utils.encodeUrlQuery(params.url)
@@ -422,7 +422,7 @@ var apiObj = {
       params.header = utils.convertObjectValueToString(params.header)
       headerType !== 'Undefined' &&
         headerType !== 'Object' &&
-        (console.warn('wd.request: header must be an object'),
+        (console.warn('wx.request: header must be an object'),
           (params.header = {}))
       params.header = Object.keys(params.header).reduce(function (res, cur) {
         cur.toLowerCase() === 'content-type'
@@ -1800,6 +1800,6 @@ bridge.onMethod('onMapClick', function () {
       })
 })
 
-utils.copyObj(wd, apiObj)
-window.wd = wd
-export default wd
+utils.copyObj(wx, apiObj)
+window.wx = wx
+export default wx
