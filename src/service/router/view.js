@@ -32,6 +32,7 @@ export default class View extends Emitter {
         })
       }
     } else {
+      window.reRender = 0
       window.__pageFrameStartTime__ = Date.now()
       this.el = this.createPage(id, false, root)
       this.loadWxml()

@@ -49,8 +49,16 @@ var request = function (event, params, callback) {
     requestObj = new XMLHttpRequest(),
     method = params.method || 'POST',
     networkTimeout = 3e4
-  if (__wxConfig__ && __wxConfig__.weweb && __wxConfig__.weweb.requestProxy) {
-    requestObj.open(method, __wxConfig__.weweb.requestProxy, true)
+  if (
+    __wxConfig__ &&
+    __wxConfig__.weweb &&
+    (__wxConfig__.weweb.requestProxy ||
+      __wxConfig__.weweb.requestType == 'ajax')
+  ) {
+    if (__wxConfig__.weweb.requestProxy) {
+      url = __wxConfig__.weweb.requestProxy
+    }
+    requestObj.open(method, url, true)
     requestObj.onreadystatechange = function () {
       if ((requestObj.readyState == 3, requestObj.readyState == 4)) {
         requestObj.onreadystatechange = null
@@ -73,7 +81,9 @@ var request = function (event, params, callback) {
           errMsg: 'request:fail'
         })
     }
-    requestObj.setRequestHeader('X-Remote', params.url)
+    if (__wxConfig__.weweb.requestType != 'ajax') {
+      requestObj.setRequestHeader('X-Remote', params.url)
+    }
     requestObj.setRequestHeader(
       'Cache-Control',
       'no-cache, no-store, must-revalidate'
