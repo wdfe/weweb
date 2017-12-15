@@ -65,12 +65,7 @@ const require = function (path) {
     }
     var exports
     if (factoryFun) {
-      exports = factoryFun(
-        getRequireFun(path),
-        module,
-        module.exports,
-        window.Promise
-      )
+      exports = factoryFun(getRequireFun(path), module, module.exports)
     }
 
     moduleObj.exports = module.exports || exports
