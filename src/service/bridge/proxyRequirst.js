@@ -84,12 +84,14 @@ var request = function (event, params, callback) {
     if (__wxConfig__.weweb.requestType != 'ajax') {
       requestObj.setRequestHeader('X-Remote', params.url)
     }
-    requestObj.setRequestHeader(
-      'Cache-Control',
-      'no-cache, no-store, must-revalidate'
-    )
-    requestObj.setRequestHeader('Pragma', 'no-cache')
-    requestObj.setRequestHeader('Expires', '0')
+    if (__wxConfig__.weweb.requestProxy) {
+      requestObj.setRequestHeader('Pragma', 'no-cache')
+      requestObj.setRequestHeader(
+        'Cache-Control',
+        'no-cache, no-store, must-revalidate'
+      )
+      requestObj.setRequestHeader('Expires', '0')
+    }
 
     var attrCount = 0
     for (var attr in header) {
