@@ -1,6 +1,6 @@
 {
   "name": "weweb-cli",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "微信小程序转成h5的小工具",
   "main": "bin/weweb",
   "bin": {

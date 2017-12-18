@@ -59,6 +59,10 @@ var request = function (event, params, callback) {
       url = __wxConfig__.weweb.requestProxy
     }
     requestObj.open(method, url, true)
+    if (__wxConfig__.weweb.requestType == 'ajax') {
+      requestObj.withCredentials = true
+    }
+
     requestObj.onreadystatechange = function () {
       if ((requestObj.readyState == 3, requestObj.readyState == 4)) {
         requestObj.onreadystatechange = null
@@ -83,13 +87,13 @@ var request = function (event, params, callback) {
     }
     if (__wxConfig__.weweb.requestType != 'ajax') {
       requestObj.setRequestHeader('X-Remote', params.url)
+      requestObj.setRequestHeader(
+        'Cache-Control',
+        'no-cache, no-store, must-revalidate'
+      )
+      requestObj.setRequestHeader('Pragma', 'no-cache')
+      requestObj.setRequestHeader('Expires', '0')
     }
-    requestObj.setRequestHeader(
-      'Cache-Control',
-      'no-cache, no-store, must-revalidate'
-    )
-    requestObj.setRequestHeader('Pragma', 'no-cache')
-    requestObj.setRequestHeader('Expires', '0')
 
     var attrCount = 0
     for (var attr in header) {
