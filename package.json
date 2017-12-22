@@ -62,7 +62,7 @@
     "uglify-js": "^2.8.29",
     "update-notifier": "^1.0.2",
     "wxml-transpiler": "^1.0.4",
-    "wxss-transpiler": "^1.0.3"
+    "wxss-transpiler": "^1.0.4"
   },
   "devDependencies": {
     "actionsheet": "^0.1.2",
