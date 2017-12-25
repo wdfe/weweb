@@ -1,21 +1,23 @@
 #!/usr/bin/env node
 const startTime = new Date()
 const loadConfig = require('../lib/config')
-var os = require('os')
-var childProcess = require('child_process')
-var exec = childProcess.exec
-var program = require('commander')
-var json = require('../package.json')
-var UpdateNotifier = require('update-notifier').UpdateNotifier
-var fs = require('fs')
-var open = require('open')
-var chalk = require('chalk')
-var net = require('net')
-var boxen = require('boxen')
+const os = require('os')
+const childProcess = require('child_process')
+const pify = require('pify')
+const exec = pify(childProcess.exec)
+const program = require('commander')
+const json = require('../package.json')
+const UpdateNotifier = require('update-notifier').UpdateNotifier
+const open = require('open')
+const fs = require('fs-extra')
+const has = require('has-value')
+const chalk = require('chalk')
+const net = require('net')
+const boxen = require('boxen')
 const isWin = /^win/.test(process.platform)
 const path = require('path')
 const semCmp = require('semver-compare')
-var util = require('../lib/util')
+const util = require('../lib/util')
 // const Parallel = require('node-parallel')
 // const notify = require('node-notifier')
 let cmdRm, cmdCp, cmdCpArg
@@ -48,19 +50,19 @@ program.parse(process.argv)
  * @param {any} msg
  * @param {any} allow
  */
-var printLog = function (msg, allow) {
+const printLog = function (msg, allow) {
   if (!program.transform || allow) {
     console.log(msg)
   }
 }
 
 // 更新检查方法
-var notifier = new UpdateNotifier({
+const notifier = new UpdateNotifier({
   pkg: json,
   callback: function (err, result) {
     if (err) return
     if (semCmp(result.latest, result.current) > 0) {
-      var message =
+      const message =
         'Update available ' +
         chalk.dim(result.current) +
         chalk.reset(' → ') +
@@ -68,7 +70,7 @@ var notifier = new UpdateNotifier({
         ' \nRun ' +
         chalk.cyan('npm i -g ' + json.name) +
         ' to update'
-      var msg =
+      const msg =
         '\n' +
         boxen(message, {
           padding: 1,
@@ -88,13 +90,13 @@ if (program.list) {
   process.exit()
 }
 
-var tmpFolderName
-var curPath = process.cwd()
+let tmpFolderName
+let curPath = process.cwd()
 
 function checkProject () {
-  var folder = program.args[0]
+  let folder = program.args[0]
   if (folder) {
-    var stats
+    let stats
     try {
       stats = fs.statSync(folder)
     } catch (e) {}
@@ -115,7 +117,7 @@ function checkProject () {
           .execSync(`find ${tmpFolderName} -name app.json -print`)
           .toString()
           .replace(/^\s+|(app\.json\s*$)/, '')
-        var tmpMatchValue = folder.match(/(^.*)\n/)
+        let tmpMatchValue = folder.match(/(^.*)\n/)
         if (tmpMatchValue) {
           folder = tmpMatchValue[1].replace(/app\.json\s*$/, '')
         }
@@ -127,7 +129,7 @@ function checkProject () {
       printLog('指定目录不存在或者不是目录，请检查')
       process.exit()
     }
-    // var chdirFail = false
+    // let chdirFail = false
     try {
       process.chdir(folder)
     } catch (err) {
@@ -142,14 +144,18 @@ function checkProject () {
 }
 
 // 开始转换代码
+let distPath = path.resolve(curPath, program.dist || './wewebTmp/dist')
 
-var distPath = path.resolve(curPath, program.dist || './wewebTmp/dist')
 /**
  *   记录构建时间
  */
 function printRunTime () {
   const endTime = new Date()
-  console.log(chalk.yellow(`Time elapsed: ${(endTime - startTime) / 1000}s`))
+  console.log(
+    chalk.yellow(
+      `Build Complete. Time elapsed: ${(endTime - startTime) / 1000}s`
+    )
+  )
 }
 
 /**
@@ -157,8 +163,8 @@ function printRunTime () {
  *
  */
 function bootWebServer () {
-  var server = require('../lib/server')(distPath)
-  var startPort = 2000
+  let server = require('../lib/server')(distPath)
+  let startPort = 2000
 
   getPort(function (port) {
     if (os.platform() === 'darwin' && program.open) {
@@ -167,7 +173,7 @@ function bootWebServer () {
     server.listen(port, function () {
       // printLog('listening on port ' + port)
       const openMsg = `Opening it on: http://localhost:${port}`
-      var msg =
+      let msg =
         '\n' +
         boxen(openMsg, {
           padding: 1,
@@ -188,9 +194,9 @@ function bootWebServer () {
 
   function getPort (cb) {
     if (program.port) return cb(program.port)
-    var port = startPort
+    let port = startPort
 
-    var server = net.createServer()
+    let server = net.createServer()
     server.listen(port, function () {
       server.once('close', function () {
         cb(port)
@@ -209,140 +215,133 @@ function bootWebServer () {
  *
  */
 function build () {
-  var execBuild = function (err, out) {
+  let execBuild = async function (err, out) {
     // printLog(out)
     err && printLog(err)
     util.mkdirsSync(distPath)
     printLog('文件将生成到:\n' + distPath)
     // doTransformFile()
     const assetsPath = path.resolve(__dirname, '../lib/template/assets')
-    exec(
+
+    await exec(
       cmdCp +
         JSON.stringify(assetsPath) +
         (isWin ? ' ' : '/* ') +
         distPath +
-        cmdCpArg,
-      function (err, out) {
-        err && printLog(err)
-        util.copyDir('./', distPath, {
-          filename: ['.git'],
-          extname: ['.js', '.json', '.wxss', '.css', '.git', '.md', '.wxml']
-        })
-        // printRunTime()
-        // console.log('b',program.babel)
-        loadConfig({ babel: program.babel }).then(function (appConfig) {
-          var core = require('../lib/core')
-          core.getIndex().then(function (content) {
-            /*
+        cmdCpArg
+    )
+
+    await util.copy('./', distPath, {
+      exclude: {
+        basename: ['.git', 'node_modules'],
+        extname: ['.js', '.json', '.wxss', '.css', '.git', '.md', '.wxml']
+      }
+    })
+
+    const appConfig = await loadConfig({ babel: program.babel })
+
+    let core = require('../lib/core')
+
+    await core.getIndex().then(content =>
+      /*
            if(program.transform){
-           content = content.replace('var __wxConfig__ = {"weweb":{','var __wxConfig__ = {"weweb":{ "requestProxy":"/remoteProxy",')
+           content = content.replace('let __wxConfig__ = {"weweb":{','let __wxConfig__ = {"weweb":{ "requestProxy":"/remoteProxy",')
            }
            */
-            util.createFile(
-              distPath,
-              'index.html',
-              content,
-              null,
-              program.transform
-            )
-          })
-
-          core.getServiceJs().then(function (content) {
-            util.createFile(
-              distPath + '/script',
-              'app-service.js',
-              content,
-              null,
-              program.transform
-            )
-          })
-
-          core.getAppWxss('./app').then(function (content) {
-            util.createFile(
-              distPath + '/css',
-              'app.css',
-              content.replace(/\/\*#\s*sourceMappingURL=.*\*\/$/, ''),
-              null,
-              program.transform
-            )
-          })
-
-          let tabBar = appConfig.tabBar
-          let pages = appConfig.pages
-          let count = 0
-          pages.forEach(function (path) {
-            let fullpath = path.replace(/^(\/|\.\/)/, '')
-            let paths = fullpath.split('/')
-            let file = paths.pop()
-            path = paths.join('/')
-
-            core
-              .getPage(fullpath)
-              .then(function (arr) {
-                // page generateFunc
-                let content = arr[0][0] // .replace(/(src=[\"\']?)\/+/,"$1");//对以/开始的路径做处理
-                if (arr[1]) {
-                  arr[1] = arr[1]
-                    .replace(/\/\*#\s*sourceMappingURL=.*\*\/$/, '')
-                    .replace(
-                      /(position:\s*fixed\s*[^}]*[^w]top:)\s*0\s*;/g,
-                      '$142px;'
-                    )
-                  if (
-                    tabBar &&
-                    tabBar.list &&
-                    tabBar.list.findIndex(
-                      item =>
-                        item.pagePath.replace(/^(\/|\.\/)/, '') === fullpath
-                    ) !== -1
-                  ) {
-                    if (tabBar.position !== 'top') {
-                      arr[1] = arr[1].replace(
-                        /(position:\s*fixed\s*[^}]*[^w]bottom:)\s*0\s*;/g,
-                        '$156px;'
-                      )
-                    }
-                  }
-                } else {
-                  arr[1] = ''
-                }
-                content += '@code-separator-line:' + arr[1] // page css
-                if (!arr[2]) arr[2] = ''
-                content += '@code-separator-line:' + arr[2] // app-service
-                content += '@code-separator-line:' + JSON.stringify(arr[0][1]) // tags
-                util.createFile(
-                  distPath + '/src/' + path,
-                  file + '.js',
-                  content,
-                  function () {
-                    count++
-                    if (count === pages.length) {
-                      if (program.transform) {
-                        printRunTime()
-                        printLog('ok:' + distPath, true)
-
-                        if (tmpFolderName) {
-                          exec(`${cmdRm}${tmpFolderName}`)
-                        }
-                        util.rmEmptyDirsSync(distPath)
-                        process.exit(0)
-                      } else {
-                        bootWebServer()
-                        util.rmEmptyDirsSync(distPath)
-                      }
-                    }
-                  },
-                  program.transform
-                )
-              })
-              .catch(err => console.error(err))
-          })
-        })
-      }
+      util.createFilePromise(distPath, 'index.html', content, program.transform)
     )
+
+    await core
+      .getServiceJs()
+      .then(content =>
+        util.createFilePromise(
+          distPath + '/script',
+          'app-service.js',
+          content,
+          program.transform
+        )
+      )
+
+    await core
+      .getAppWxss('./app')
+      .then(content =>
+        util.createFilePromise(
+          distPath + '/css',
+          'app.css',
+          content.replace(/\/\*#\s*sourceMappingURL=.*\*\/$/, ''),
+          program.transform
+        )
+      )
+
+    let tabBar = appConfig.tabBar
+    let pages = appConfig.pages
+    let count = 0
+
+    await Promise.all(
+      pages.map(async function (path) {
+        let fullpath = path.replace(/^(\/|\.\/)/, '')
+        let paths = fullpath.split('/')
+        let file = paths.pop()
+        path = paths.join('/')
+
+        const arr = await core.getPage(fullpath)
+
+        // page generateFunc
+        let content = arr[0][0] // .replace(/(src=[\"\']?)\/+/,"$1");//对以/开始的路径做处理
+        if (arr[1]) {
+          arr[1] = arr[1]
+            .replace(/\/\*#\s*sourceMappingURL=.*\*\/$/, '')
+            .replace(/(position:\s*fixed\s*[^}]*[^w]top:)\s*0\s*;/g, '$142px;')
+          if (
+            has(tabBar, 'list') &&
+            tabBar.list.findIndex(
+              item => item.pagePath.replace(/^(\/|\.\/)/, '') === fullpath
+            ) !== -1
+          ) {
+            if (tabBar.position !== 'top') {
+              arr[1] = arr[1].replace(
+                /(position:\s*fixed\s*[^}]*[^w]bottom:)\s*0\s*;/g,
+                '$156px;'
+              )
+            }
+          }
+        } else {
+          arr[1] = ''
+        }
+        content += '@code-separator-line:' + arr[1] // page css
+        if (!arr[2]) arr[2] = ''
+        content += '@code-separator-line:' + arr[2] // app-service
+        content += '@code-separator-line:' + JSON.stringify(arr[0][1]) // tags
+        return util
+          .createFilePromise(
+            distPath + '/src/' + path,
+            file + '.js',
+            content,
+            program.transform
+          )
+          .catch(err => console.error(err))
+      })
+    )
+
+    if (program.transform) {
+      printRunTime()
+      printLog('ok:' + distPath, true)
+
+      if (tmpFolderName) {
+        await exec(`${cmdRm}${tmpFolderName}`)
+      }
+      util.rmEmptyDirsSync(distPath)
+      process.exit(0)
+    } else {
+      bootWebServer()
+      util.rmEmptyDirsSync(distPath)
+    }
+
+    // printRunTime()
+    // console.log('b',program.babel)
   }
   if (fs.existsSync(distPath)) {
-    exec(cmdRm + JSON.stringify(distPath), execBuild)
+    exec(cmdRm + JSON.stringify(distPath)).then(execBuild)
   } else {
     execBuild()
   }
