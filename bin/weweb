@@ -32,11 +32,12 @@ if (isWin) {
 program
   .version(json.version)
   .usage('[options] <appRoot>')
-  .option('-o, --open', '使用 Chrome 打开小程序，仅对 Mac 有效')
-  .option('-l, --list', '使用默认浏览器打开更新历史')
-  .option('-p, --port <n>', '指定服务端口，默认 3000', parseInt)
-  .option('-d, --dist <p>', '指定生成的路径')
   .option('-b, --babel', '对小程序源码采用babel转换')
+  .option('-d, --dist <p>', '指定生成的路径')
+  .option('-l, --list', '使用默认浏览器打开更新历史')
+  .option('-n, --nocheck', '不检查更新')
+  .option('-o, --open', '使用 Chrome 打开小程序，仅对 Mac 有效')
+  .option('-p, --port <n>', '指定服务端口，默认 3000', parseInt)
   .option('-t, --transform', '只转换小程序,不起web服务')
 
 program.parse(process.argv)
@@ -358,7 +359,10 @@ process.on('unhandledRejection', (reason, p) => {
 })
 
 // 执行更新检查
-notifier.check()
+if (program.nocheck) {
+  notifier.check()
+}
+
 // 检查项目目录
 checkProject()
 // 开始构建

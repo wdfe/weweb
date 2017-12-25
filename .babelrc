@@ -1,5 +1,5 @@
 {
-  "presets": ["react", "env", "stage-0"],
+  "presets": [ "env", "stage-0"],
   "plugins": [
     "transform-runtime",
     "add-module-exports"
