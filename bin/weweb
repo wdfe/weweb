@@ -358,7 +358,7 @@ process.on('unhandledRejection', (reason, p) => {
 })
 
 // 执行更新检查
-if (program.nocheck) {
+if (!program.nocheck) {
   notifier.check()
 }
 
