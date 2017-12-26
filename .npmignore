@@ -7,6 +7,10 @@ src
 gulpfile.js
 webpack.*.js
 run.sh
+bin/wcc*
+bin/wcsc*
+.vscode
+dev.sh
 .eslintrc
 wewebTmp
 logs
