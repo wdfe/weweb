@@ -1,5 +1,6 @@
 # weweb
 
+[![node](https://img.shields.io/badge/node-%3E%3D%207.6.0-brightgreen.svg)]()
 [![npm package](https://img.shields.io/npm/v/weweb-cli.svg)](https://www.npmjs.com/package/weweb-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
@@ -44,6 +45,7 @@ npm install weweb-cli -g
 运行示例：
 
 ```sh
+# Node 版本需高于 7.6.0， 推荐使用 lts 版本
 weweb ./demos/demo20170111/
 ```
 
