@@ -62,7 +62,7 @@
     "tunnel": "0.0.4",
     "uglify-js": "^3.3.1",
     "update-notifier": "^2.3.0",
-    "wxml-transpiler": "^1.0.4",
+    "wxml-transpiler": "^1.0.5",
     "wxss-transpiler": "^1.0.4"
   },
   "devDependencies": {
