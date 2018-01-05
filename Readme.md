@@ -2,6 +2,7 @@
 
 [![node](https://img.shields.io/badge/node-%3E%3D%207.6.0-brightgreen.svg)]()
 [![npm package](https://img.shields.io/npm/v/weweb-cli.svg)](https://www.npmjs.com/package/weweb-cli)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 ## 简介
