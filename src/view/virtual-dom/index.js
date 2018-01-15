@@ -60,12 +60,30 @@ const createWXVirtualNodeRec = function (opt) {
 }
 const createBodyNode = function (data) {
   window.__curPage__.envData || (window.__curPage__.envData = {})
-  let root = window.__generateFunc__(
-    window.__curPage__.envData, // AppData.getAppData(),
-    data
-  )
-  // t.tag = "body"
-  return createWXVirtualNodeRec(root)
+  if (window.__curPage__.path == data['ext-path'] || data['ext-path'] == null) {
+    let root = window.__generateFunc__(
+      window.__curPage__.envData, // AppData.getAppData(),
+      data.data
+    )
+    // t.tag = "body"
+    return createWXVirtualNodeRec(root)
+  } else {
+    let view = null
+    for (var i in window.__views) {
+      if (
+        window.__views[i].path &&
+        window.__views[i].path == data['ext-path']
+      ) {
+        view = window.__views[i]
+      }
+    }
+    let root = view.__generateFunc__(
+      view.envData, // AppData.getAppData(),
+      data.data
+    )
+    // t.tag = "body"
+    return createWXVirtualNodeRec(root)
+  }
 }
 
 const firstTimeRender = function (event) {
@@ -73,7 +91,7 @@ const firstTimeRender = function (event) {
     event.ext.enablePullUpRefresh &&
       setGlobalPageAttr('__enablePullUpRefresh__', !0)
   }
-  setRootNode(createBodyNode(event.data))
+  setRootNode(createBodyNode(event))
   setGlobalPageAttr('__DOMTree__', rootNode.render())
   exparser.Element.replaceDocumentElement(
     window.__DOMTree__,
@@ -85,12 +103,12 @@ const firstTimeRender = function (event) {
 }
 
 const reRender = function (event) {
-  let newBodyNode = createBodyNode(event.data)
+  let newBodyNode = createBodyNode(event)
   if (window.__curPage__ && window.__curPage__.rootNode != rootNode) {
     // 切换页面了
     rootNode = window.__curPage__.rootNode
   }
-  if (rootNode != null) {
+  if (window.__curPage__.path == event['ext-path']) {
     let patch = rootNode.diff(newBodyNode)
     patch.apply(window.__DOMTree__)
     setRootNode(newBodyNode)

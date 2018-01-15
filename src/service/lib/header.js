@@ -24,12 +24,12 @@ let header = {
     }
     if (!this.dom) {
       this.dom = {
-        head: this.$('.jshook-ws-head'),
-        headBack: this.$('.jshook-ws-head-back'),
-        headBackText: this.$('.jshook-ws-head-back-text'),
-        headHome: this.$('.jshook-ws-head-home'),
-        headTitle: this.$('.jshook-ws-head-title'),
-        headOption: this.$('.jshook-ws-head-option')
+        head: this.$('.jshook-ws-weweb-head'),
+        headBack: this.$('.jshook-ws-weweb-head-back'),
+        headBackText: this.$('.jshook-ws-weweb-head-back-text'),
+        headHome: this.$('.jshook-ws-weweb-head-home'),
+        headTitle: this.$('.jshook-ws-weweb-head-title'),
+        headOption: this.$('.jshook-ws-weweb-head-option')
       }
       this.dom.headBackSpan = this.dom.headBack.querySelector('span')
       this.dom.headTitleSpan = this.dom.headTitle.querySelector('span')
@@ -86,15 +86,15 @@ let header = {
       })
     }
   },
-  onBack: function (e,send) {
+  onBack: function (e, send) {
     e.preventDefault()
-    Bus.emit('back',send)
+    Bus.emit('back', send)
   },
   onSend: function (e) {
     // TODO send location
     e.stopPropagation()
-    const data = Object.assign({},router.currentView().location)
-    this.onBack(e,true)
+    const data = Object.assign({}, router.currentView().location)
+    this.onBack(e, true)
     Bus.emit('location', data)
   },
   onOptions: function (e) {
@@ -197,7 +197,9 @@ let header = {
     this.dom.headBackI.style.borderBottom = `1px solid ${state.color}`
     this.dom.headHome.style.display = state.back ? 'none' : 'flex'
     this.dom.headHomeI.className =
-      state.color == 'white' ? 'head-home-icon white' : 'head-home-icon'
+      state.color == 'white'
+        ? 'weweb-head-home-icon white'
+        : 'weweb-head-home-icon'
     this.dom.headHomeI.style.display = state.back ? 'none' : 'flex'
     if (state.sendText) {
       this.dom.headOption.innerHTML = '<div>发送</div>'
