@@ -8,6 +8,7 @@ const Bus = util.getBus()
 
 let curr = null
 let views = {}
+window.__views = views
 let tabViews = {}
 if (!window.__wxConfig) {
   Object.defineProperty(window, '__wxConfig', {

@@ -209,7 +209,9 @@ export function publish (data) {
   }
   router.eachView(view => {
     if (ids.indexOf(view.id) !== -1) {
-      view.postMessage(obj)
+      var newObj = JSON.parse(JSON.stringify(obj))
+      newObj.ext = { path: view.path }
+      view.postMessage(JSON.parse(JSON.stringify(newObj)))
     }
   })
 }

@@ -171,10 +171,13 @@ class PageParser {
       if (callback) {
         document.addEventListener('pageReRender', execCallback)
       }
-      if (window.reRender) {
+      if (window.reRender[this.route]) {
         WeixinJSBridge.subscribeHandler('custom_event_appDataChange', {
           data: {
             data: dataObj
+          },
+          options: {
+            'ext-path': this.route
           }
         })
       } else {

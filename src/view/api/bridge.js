@@ -97,6 +97,10 @@ function subscribe () {
     callback = params[1]
   params[1] = function (args, ext) {
     var data = args.data
+    if (args.options && args.options['ext-path']) {
+      data['ext-path'] = args.options['ext-path']
+    }
+
     typeof callback === 'function' && callback(data, ext)
   }
   WeixinJSBridge.subscribe.apply(WeixinJSBridge, params)

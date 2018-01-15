@@ -9,7 +9,7 @@ Init.init()
 
 window.__mergeData__ = AppData.mergeData
 window.__DOMTree__ = void 0 // 虚拟dom生成的domtree
-window.reRender = 0
+window.reRender = {}
 let rootNode = void 0
 
 function setGlobalPageAttr (name, value) {
@@ -90,17 +90,34 @@ const reRender = function (event) {
     // 切换页面了
     rootNode = window.__curPage__.rootNode
   }
-  let patch = rootNode.diff(newBodyNode)
-  patch.apply(window.__DOMTree__)
-  setRootNode(newBodyNode)
+  if (rootNode != null) {
+    let patch = rootNode.diff(newBodyNode)
+    patch.apply(window.__DOMTree__)
+    setRootNode(newBodyNode)
+  } else {
+    let view = null
+    for (var i in window.__views) {
+      if (
+        window.__views[i].path &&
+        window.__views[i].path == event['ext-path']
+      ) {
+        view = window.__views[i]
+      }
+    }
+
+    let patch = view.rootNode.diff(newBodyNode)
+    patch.apply(view.__DOMTree__)
+    view.rootNode = newBodyNode
+  }
 }
 
 const renderOnDataChange = function (event) {
-  if (window.reRender) {
+  const path = event['ext-path']
+  if (window.reRender[path]) {
     reRender(event)
     document.dispatchEvent(new CustomEvent('pageReRender', {}))
   } else {
-    window.reRender = !0
+    window.reRender[path] = !0
     firstTimeRender(event)
     if (!(event.options && event.options.firstRender)) {
       console.log(event)

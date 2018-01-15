@@ -32,7 +32,7 @@ export default class View extends Emitter {
         })
       }
     } else {
-      window.reRender = 0
+      window.reRender[path] = 0
       window.__pageFrameStartTime__ = Date.now()
       this.el = this.createPage(id, false, root)
       this.loadWxml()
@@ -122,6 +122,12 @@ export default class View extends Emitter {
       var msg = data.msg,
         command = data.command,
         ext = data.ext
+
+      if (data.ext && data.ext.path) {
+        if (msg.data && msg.data.options) {
+          msg.data.options['ext-path'] = data.ext.path
+        }
+      }
 
       if (command === 'MSG_FROM_APPSERVICE') {
         WeixinJSBridge.subscribeHandler(msg.eventName, msg.data)
@@ -221,7 +227,7 @@ export default class View extends Emitter {
         }
 
         function componentLoaded () {
-          window.reRender = 0 // 重置
+          // window.reRender = 0 // 重置
           Bus.emit('ready', self.id)
           Pull.register(function () {
             ServiceJSBridge.subscribeHandler('onPullDownRefresh', {}, self.id)
