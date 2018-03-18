@@ -5,6 +5,7 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
+[点我快速上手](https://weidian-inc.github.io/hera/#/basics/quickstart)
 ## 简介
 
 weweb是一个兼容小程序语法的前端框架，你可以用小程序的写法，来写web应用。如果你已经有小程序了，通过它你可以将你的小程序运行在浏览器中。如果你熟悉vue的语法，也可以使用wepy编写小程序，再通过weweb转换后将其运行在web端。
