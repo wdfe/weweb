@@ -1,4 +1,4 @@
-import proxyRequirst from './proxyRequirst'
+import proxyRequest from './proxyRequest'
 import * as command from './command'
 var callbacks = {},
   callbackIndex = 0,
@@ -7,6 +7,7 @@ var callbacks = {},
   firstEnter = false,
   handlers = {},
   showWarning = false
+
 function isLimitedApi (event) {
   var limitedApi = ['openAddress', 'chooseContact']
   if (~limitedApi.indexOf(event)) {
@@ -95,11 +96,11 @@ var invoke = function (eventName, params, callback) {
     if (userApi.hasOwnProperty(eventName)) {
       userApi[eventName](eventName, params, callback)
     } else if (!isLimitedApi(eventName)) {
-      if (proxyRequirst[eventName]) {
-        proxyRequirst[eventName].apply(this, arguments)
+      if (proxyRequest[eventName]) {
+        proxyRequest[eventName].apply(this, arguments)
       } else {
         var callbackId = ++callbackIndex
-        ;(callbacks[callbackId] = callback),
+        callbacks[callbackId] = callback
         callSystemCmd(eventName, params, callbackId) // eventName->sdkName
       }
     } else if (!showWarning) {
@@ -108,7 +109,7 @@ var invoke = function (eventName, params, callback) {
       var callbackRes = function (params) {}
       callbacks[callbackId] = callbackRes
       callSystemCmd(
-        'showModal',
+      'showModal',
         {
           title: '请注意，转成h5以后，依赖微信相关的接口调用将无法支持，请自行改造成h5的兼容方式',
           content: '',
@@ -118,14 +119,15 @@ var invoke = function (eventName, params, callback) {
           confirmColor: '#3CC51F',
           cancelColor: '#000000'
         },
-        callbackId
-      ) // eventName->sdkName
+      callbackId
+    ) // eventName->sdkName
     }
   },
   invokeCallbackHandler = function (callbackId, params) {
     var callback = callbacks[callbackId]
-    typeof callback === 'function' && callback(params),
-    delete callbacks[callbackId]
+    typeof callback === 'function' && callback(params), delete callbacks[
+      callbackId
+    ]
   },
   publish = function (eventName, data, webviewIds) {
     doCommand({
@@ -151,11 +153,10 @@ var invoke = function (eventName, params, callback) {
   subscribeHandler = function (eventName, data, webviewId, reportParams) {
     // 执行注册的回调
     var handler
-    ;(handler =
-      eventName.indexOf(eventPrefix) != -1
-        ? handlers[eventName]
-        : defaultEventHandlers[eventName]),
-    typeof handler === 'function' && handler(data, webviewId, reportParams)
+    ;(handler = eventName.indexOf(eventPrefix) != -1
+      ? handlers[eventName]
+      : defaultEventHandlers[eventName]), typeof handler === 'function' &&
+      handler(data, webviewId, reportParams)
   }
 
 window.DeviceOrientation = function (x, y, z) {

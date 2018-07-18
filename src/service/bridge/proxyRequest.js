@@ -1,13 +1,7 @@
-var webSocket = null,
-  requestIndex = 0
+var webSocket = null, requestIndex = 0
 var jsonp = function (params, callback, networkTimeout) {
   var jsonpName =
-      'jsonp_' +
-      Date.now() +
-      '_' +
-      Math.random()
-        .toString()
-        .substr(2),
+    'jsonp_' + Date.now() + '_' + Math.random().toString().substr(2),
     callbackName = 'callback',
     url = params.url,
     timeOut,
@@ -44,84 +38,97 @@ var jsonp = function (params, callback, networkTimeout) {
 var request = function (event, params, callback) {
   requestIndex++
   var url = params.url,
-    header = params.header || {},
+    headers = params.header || {},
     timeOut,
-    requestObj = new XMLHttpRequest(),
+    xhr = new XMLHttpRequest(),
     method = params.method || 'POST',
     networkTimeout = 3e4
+
   if (
     __wxConfig__ &&
     __wxConfig__.weweb &&
     (__wxConfig__.weweb.requestProxy ||
       __wxConfig__.weweb.requestType == 'ajax')
   ) {
+    // 配置了 reqProxy， 使用代理来请求
     if (__wxConfig__.weweb.requestProxy) {
       url = __wxConfig__.weweb.requestProxy
     }
-    requestObj.open(method, url, true)
+
+    xhr.open(method, url, true)
+
     if (__wxConfig__.weweb.requestType == 'ajax') {
-      requestObj.withCredentials = true
+      xhr.withCredentials = true
     }
 
-    requestObj.onreadystatechange = function () {
-      if ((requestObj.readyState == 3, requestObj.readyState == 4)) {
-        requestObj.onreadystatechange = null
-        var statusCode = requestObj.status
+    xhr.onreadystatechange = function () {
+      if ((xhr.readyState == 3, xhr.readyState == 4)) {
+        xhr.onreadystatechange = null
+        var statusCode = xhr.status
         if (statusCode != 0) {
           requestIndex--
           timeOut && clearTimeout(timeOut)
           callback &&
             callback({
               errMsg: 'request:ok',
-              data: requestObj.responseText,
+              data: xhr.responseText,
               statusCode: statusCode
             })
         }
       }
     }
-    requestObj.onerror = function () {
+
+    xhr.onerror = function () {
       callback &&
         callback({
           errMsg: 'request:fail'
         })
     }
+
     if (__wxConfig__.weweb.requestType != 'ajax') {
-      requestObj.setRequestHeader('X-Remote', params.url)
-      requestObj.setRequestHeader(
+      xhr.setRequestHeader('X-Remote', params.url)
+      xhr.setRequestHeader(
         'Cache-Control',
         'no-cache, no-store, must-revalidate'
       )
-      requestObj.setRequestHeader('Pragma', 'no-cache')
-      requestObj.setRequestHeader('Expires', '0')
+      xhr.setRequestHeader('Pragma', 'no-cache')
+      xhr.setRequestHeader('Expires', '0')
     }
 
+    // 不晓得为啥会有两个 content-type
     var attrCount = 0
-    for (var attr in header) {
+    for (var attr in headers) {
       attr.toLowerCase() === 'content-type' && attrCount++
     }
-    attrCount >= 2 && delete header['content-type']
-    var typeTag = false
-    for (var headerAttr in header) {
-      if (header.hasOwnProperty(headerAttr)) {
-        var headerStr = headerAttr.toLowerCase()
-        typeTag = headerStr == 'content-type' || typeTag
-        if (headerStr === 'cookie') {
-          requestObj.setRequestHeader('_Cookie', header[headerAttr])
+    attrCount >= 2 && delete headers['content-type']
+
+    // 设置 请求的 header
+    var hasContentType = false
+    for (var headerKey in headers) {
+      if (headers.hasOwnProperty(headerKey)) {
+        var headerValue = headerKey.toLowerCase()
+        hasContentType = headerValue == 'content-type' || hasContentType
+        if (headerValue === 'cookie') {
+          xhr.setRequestHeader('_Cookie', headers[headerKey])
         } else {
-          requestObj.setRequestHeader(headerAttr, header[headerAttr])
+          xhr.setRequestHeader(headerKey, headers[headerKey])
         }
       }
     }
+
     method != 'POST' ||
-      typeTag ||
-      requestObj.setRequestHeader(
+      hasContentType ||
+      xhr.setRequestHeader(
         'Content-Type',
         'application/x-www-form-urlencoded; charset=UTF-8'
       )
-    requestObj.setRequestHeader('X-Requested-With', 'requestObj')
+
+    xhr.setRequestHeader('X-Requested-With', 'requestObj')
+
+    // 手动模拟超时
     if (typeof networkTimeout === 'number') {
       timeOut = setTimeout(function () {
-        requestObj.abort('timeout')
+        xhr.abort('timeout')
         params.complete && params.complete()
         params.complete = null
         requestIndex--
@@ -132,9 +139,10 @@ var request = function (event, params, callback) {
       }, networkTimeout)
     }
 
-    var tempData = typeof params.data === 'string' ? params.data : null
+    var reqData = typeof params.data === 'string' ? params.data : null
+
     try {
-      requestObj.send(tempData)
+      xhr.send(reqData)
     } catch (y) {
       requestIndex--
       callback &&
@@ -143,13 +151,13 @@ var request = function (event, params, callback) {
         })
     }
   } else {
+    // 不配置 requestPrxy，默认走 jsonp
     jsonp(params, callback, networkTimeout)
   }
 }
 
 var connectSocket = function (event, temp, callback) {
-  var url = temp.url,
-    header = temp.header
+  var url = temp.url, header = temp.header
   /* 安全域名检测
     if (!loadFile.checkUrl(url, "webscoket")) {
         return void(callback && callback({
