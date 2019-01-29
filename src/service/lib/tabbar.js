@@ -1,13 +1,14 @@
 import Emitter from 'emitter'
 import router from '../router/index'
 import * as util from './util'
+
 const Bus = util.getBus()
-let tabBar = Object.assign(
+let tabBarOptions = Object.assign(
   {},
   {
     color: '#7A7E83',
     selectedColor: '#3cc51f',
-    borderStyle: 'black',
+    borderStyle: '#bdbdbd',
     backgroundColor: '#ffffff'
   },
   window.__wxConfig__.tabBar
@@ -35,7 +36,7 @@ var Tabbar = {
     this.select(p)
   },
   select: function (path) {
-    let list = tabBar.list || []
+    let list = tabBarOptions.list || []
     this.activeIdx = -1
     for (let i in list) {
       if (list[i].pagePath === path) {
@@ -47,7 +48,7 @@ var Tabbar = {
   },
   onItemTap: function (idx, elemt) {
     if (idx == this.activeIdx) return
-    let item, list = tabBar.list || []
+    let item, list = tabBarOptions.list || []
     for (let i in list) {
       if (i == idx) {
         item = list[i]
@@ -68,7 +69,7 @@ var Tabbar = {
   doUpdate: function () {
     let active = this.activeIdx
     let hidden = active == -1 || active == null
-    let top = tabBar.position == 'top'
+    let top = tabBarOptions.position == 'top'
     if (hidden || top) {
       this.scrollable.style.bottom = '0px'
     } else {
@@ -94,18 +95,18 @@ var Tabbar = {
           if (!top) {
             iconDom && (iconDom.src = iconDom.getAttribute('select-icon'))
           } else {
-            iDom.style.color = tabBar.selectedColor
+            iDom.style.color = tabBarOptions.selectedColor
             iDom.style.display = 'inline-block'
           }
-          labelDom.style.color = tabBar.selectedColor
+          labelDom.style.color = tabBarOptions.selectedColor
         } else {
           if (!top) {
             iconDom && (iconDom.src = iconDom.getAttribute('icon'))
           } else {
-            iDom.style.color = tabBar.color
+            iDom.style.color = tabBarOptions.color
             iDom.style.display = 'none'
           }
-          labelDom.style.color = tabBar.color
+          labelDom.style.color = tabBarOptions.color
         }
       })
     }

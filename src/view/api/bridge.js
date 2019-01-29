@@ -1,10 +1,10 @@
 import pull from './pull'
-var curViewId = function () {
-    return (window.__wxConfig && window.__wxConfig.viewId) || 0
-  },
-  defaultEventHandlers = {},
+const getCurrentViewId = function () {
+  return (window.__wxConfig && window.__wxConfig.viewId) || 0
+}
+let defaultEventHandlers = {},
   eventPrefix = 'custom_event_',
-  handlers = {},
+  customEventHandlers = {},
   limitedApi = [
     'insertShareButton',
     'updateShareButton',
@@ -17,19 +17,17 @@ var curViewId = function () {
     'systemLog'
   ]
 
-function send (sdkName, args, isOn) {
+function send(sdkName, args, isOn) {
   // send notice
   var sdk = {
     sdkName: sdkName,
     args: args || {}
   }
-  ServiceJSBridge.showSdk(sdk)
+  ServiceJSBridge.callSDK(sdk)
 }
 
-function invoke (event, args, callback) {
-  if (!args) {
-    args = {}
-  }
+function invoke(event, options = {}, callback) {
+
   if (limitedApi.indexOf(event) != -1) {
     console.log(event)
   } else {
@@ -38,25 +36,26 @@ function invoke (event, args, callback) {
       return
     }
     event === 'disableScrollBounce'
-      ? pull.togglePullDownRefresh(args.disable)
-      : send(event, args)
+      ? pull.togglePullDownRefresh(options.disable)
+      : send(event, options)
   }
 }
 
-function on (eventName, handler) {
+function on(eventName, handler) {
   defaultEventHandlers[eventName] = handler
   send(eventName, {}, true)
 }
+
 window.WeixinJSBridge = {
   pull,
-  invoke: invoke,
-  on: on,
-  publish: function (eventName, params, isOn) {
-    eventName = isOn ? eventName : eventPrefix + eventName
+  invoke,
+  on,
+  publish: function (eventName, data, notCustomEvent) {
+    eventName = notCustomEvent ? eventName : eventPrefix + eventName
     var msg = {
       eventName: eventName,
-      data: params,
-      webviewID: curViewId()
+      data: data,
+      webviewID: getCurrentViewId()
     }
     ServiceJSBridge.subscribeHandler(
       msg.eventName,
@@ -65,15 +64,14 @@ window.WeixinJSBridge = {
     )
   },
   subscribe: function (eventName, handler) {
-    handlers[eventPrefix + eventName] = handler
+    customEventHandlers[eventPrefix + eventName] = handler
   },
   subscribeHandler: function (eventName, data) {
     // 执行注册的回调
-    var handler
-    ;(handler =
+    let handler =
       eventName.indexOf(eventPrefix) != -1
-        ? handlers[eventName]
-        : defaultEventHandlers[eventName]),
+        ? customEventHandlers[eventName]
+        : defaultEventHandlers[eventName]
     typeof handler === 'function' && handler(data)
   }
 }
@@ -81,7 +79,7 @@ window.WeixinJSBridge = {
 //   ServiceJSBridge.subscribeHandler('onPullDownRefresh', {}, curViewId())
 // })
 
-function publish () {
+function publish() {
   var params = Array.prototype.slice.call(arguments)
   params[1] = {
     data: params[1],
@@ -92,7 +90,7 @@ function publish () {
   WeixinJSBridge.publish.apply(WeixinJSBridge, params)
 }
 
-function subscribe () {
+function subscribe() {
   var params = Array.prototype.slice.call(arguments),
     callback = params[1]
   params[1] = function (args, ext) {
@@ -102,35 +100,39 @@ function subscribe () {
   WeixinJSBridge.subscribe.apply(WeixinJSBridge, params)
 }
 
-function invokeMethod (eventName, params, innerParams) {
+function invokeMethod(eventName, options = {}, hooks = {}) {
   // invoke 事件
-  params = params || {}
-  innerParams = innerParams || {}
+
   var callbacks = {}
-  for (var r in params) {
-    typeof params[r] === 'function' &&
-      ((callbacks[r] = params[r]), delete params[r])
+  for (var optId in options) {
+    typeof options[optId] === 'function' &&
+      ((callbacks[optId] = options[optId]), delete options[optId])
   }
-  invoke(eventName, params, function (res) {
+  invoke(eventName, options, function (res) {
     res.errMsg = res.errMsg || eventName + ':ok'
-    var isOk = res.errMsg.indexOf(eventName + ':ok') === 0,
-      isCancel = res.errMsg.indexOf(eventName + ':cancel') === 0,
-      isFail = res.errMsg.indexOf(eventName + ':fail') === 0
-    typeof innerParams.beforeAll === 'function' && innerParams.beforeAll(res)
-    isOk
-      ? (typeof innerParams.beforeSuccess === 'function' &&
-          innerParams.beforeSuccess(res),
-        typeof callbacks.success === 'function' && callbacks.success(res),
-        typeof innerParams.afterSuccess === 'function' &&
-          innerParams.afterSuccess(res))
-      : isCancel
-        ? (typeof callbacks.cancel === 'function' && callbacks.cancel(res),
-          typeof innerParams.cancel === 'function' && innerParams.cancel(res))
-        : isFail &&
-          (typeof callbacks.fail === 'function' && callbacks.fail(res),
-            typeof innerParams.fail === 'function' && innerParams.fail(res)),
-    typeof callbacks.complete === 'function' && callbacks.complete(res),
-    typeof innerParams.complete === 'function' && innerParams.complete(res)
+    let isOk = res.errMsg.indexOf(eventName + ':ok') === 0
+    let isCancel = res.errMsg.indexOf(eventName + ':cancel') === 0
+    let isFail = res.errMsg.indexOf(eventName + ':fail') === 0
+
+    typeof hooks.beforeAll === 'function' && hooks.beforeAll(res)
+
+    if (isOk) {
+      typeof hooks.beforeSuccess === 'function' &&
+        hooks.beforeSuccess(res)
+      typeof callbacks.success === 'function' && callbacks.success(res)
+      typeof hooks.afterSuccess === 'function' &&
+        hooks.afterSuccess(res)
+    } else if (isCancel) {
+      typeof callbacks.cancel === 'function' && callbacks.cancel(res)
+      typeof hooks.cancel === 'function' && hooks.cancel(res)
+    } else if (isFail) {
+      typeof callbacks.fail === 'function' && callbacks.fail(res)
+      typeof hooks.fail === 'function' && hooks.fail(res)
+    }
+
+
+    typeof callbacks.complete === 'function' && callbacks.complete(res)
+    typeof hooks.complete === 'function' && hooks.complete(res)
   })
 }
 

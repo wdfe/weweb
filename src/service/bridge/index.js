@@ -63,7 +63,7 @@ var userApi = {
   }
 }
 
-function showSdk (msg) {
+function callSDK (msg) {
   if (msg) {
     let sdkName = msg.sdkName
     if (sdkName == 'showPickerView') {
@@ -169,7 +169,7 @@ window.DeviceOrientation = function (x, y, z) {
 }
 
 window.ServiceJSBridge = {
-  showSdk,
+  callSDK,
   doCommand,
   invoke: invoke,
   invokeCallbackHandler: invokeCallbackHandler,

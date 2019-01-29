@@ -2,28 +2,29 @@ import utils from '../../common/utils'
 import pageInit from './pageInit'
 import * as reportRealtimeAction from './logReport'
 
-var events = ['onLaunch', 'onShow', 'onHide', 'onUnlaunch']
+var appEvents = ['onLaunch', 'onShow', 'onHide', 'onUnlaunch']
 
 var firstRender = true
 
-var isSysEvent = function (key) {
+var isAppEvent = function (key) {
   // 判断是否为app 事件
-  for (var index = 0; index < events.length; ++index) {
-    if (events[index] === key) {
+  for (var index = 0; index < appEvents.length; ++index) {
+    if (appEvents[index] === key) {
       return true
     }
   }
   return false
 }
+
 var isGetCurrentPage = function (key) {
   return key === 'getCurrentPage'
 }
 
-class appClass {
+class App {
   constructor (appObj) {
     // t:app
     var self = this
-    events.forEach(function (eventKey) {
+    appEvents.forEach(function (eventKey) {
       // 给app绑定事件
       var tempFun = function () {
         var eventFun = (appObj[eventKey] || utils.noop).bind(this)
@@ -40,11 +41,12 @@ class appClass {
       }
       self[eventKey] = tempFun.bind(self)
     })
+
     var bindApp = function (attrKey) {
       // 给app绑定其它方法与属性
       isGetCurrentPage(attrKey)
         ? utils.warn('关键字保护', "App's " + attrKey + ' is write-protected')
-        : isSysEvent(attrKey) ||
+        : isAppEvent(attrKey) ||
           (Object.prototype.toString.call(appObj[attrKey]) ===
           '[object Function]'
             ? (self[attrKey] = function () {
@@ -101,13 +103,14 @@ class appClass {
   }
 }
 
-var tempObj
+var appInstance
 
 var appHolder = Reporter.surroundThirdByTryCatch(function (appObj) {
-  tempObj = new appClass(appObj)
+  appInstance = new App(appObj)
 }, 'create app instance')
+
 var getApp = function () {
-  return tempObj
+  return appInstance
 }
 
 export default { appHolder, getApp }

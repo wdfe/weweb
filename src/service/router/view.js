@@ -186,8 +186,8 @@ export default class View extends Emitter {
     // load generateFn and notify view
     // this.el.contentWindow.__gen()
     let self = this
-    let p = './src/' + this.path + '.js'
-    fetch(p)
+    let path = './src/' + this.path + '.js'
+    fetch(path)
       .then(function (response) {
         return response.text()
       })
@@ -196,17 +196,17 @@ export default class View extends Emitter {
           // 确保是当前页面
           return
         }
-        let resArr = res.split('@code-separator-line:')
+        let resources = res.split('##code-separator##')
         try {
           new Function(
-            `${resArr[2]}\n //# sourceURL=${window.location
+            `${resources[2]}\n //# sourceURL=${window.location
               .origin}/${self.path}.js`
           )() // define page service
         } catch (e) {
           console.error(e)
         }
         var func = new Function(
-          `${resArr[0]} \n return $gwx("./${self.path}.wxml") \n //# sourceURL=${window
+          `${resources[0]} \n return $gwx("./${self.path}.wxml") \n //# sourceURL=${window
             .location.origin}/${self.path}.wxml`
         )
 
@@ -216,8 +216,8 @@ export default class View extends Emitter {
           console.error(e)
         }
 
-        if (resArr[1]) {
-          self.inlineCss(resArr[1], self.path)
+        if (resources[1]) {
+          self.inlineCss(resources[1], self.path)
         }
 
         function componentLoaded () {
@@ -228,8 +228,8 @@ export default class View extends Emitter {
           })
         }
 
-        if (resArr[3]) {
-          const deps = JSON.parse(resArr[3]).map(name => `wx-${name}`)
+        if (resources[3]) {
+          const deps = JSON.parse(resources[3]).map(name => `wx-${name}`)
           window.exparser.registerAsyncComp(deps, () => {
             componentLoaded()
           })

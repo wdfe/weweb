@@ -2,7 +2,7 @@ import utils from '../../common/utils'
 import { getObjectByPath } from './parsePath'
 import organize from './iteratorHandle'
 
-const sysEventKeys = [
+const pageEvents = [
   'onLoad',
   'onReady',
   'onShow',
@@ -12,17 +12,17 @@ const sysEventKeys = [
 ]
 const isSysAttr = function (key) {
   // 校验e是否为系统事件或属性
-  for (var i = 0; i < sysEventKeys.length; ++i) {
-    if (sysEventKeys[i] === key) {
+  for (var i = 0; i < pageEvents.length; ++i) {
+    if (pageEvents[i] === key) {
       return true
     }
   }
   return key === 'data'
 }
-var baseAttrs = ['__wxWebviewId__', '__route__']
+var protectedAttributes = ['__wxWebviewId__', '__route__']
 
 var isBaseAttr = function (name) {
-  return baseAttrs.indexOf(name) !== -1
+  return protectedAttributes.indexOf(name) !== -1
 }
 
 class PageParser {
@@ -33,16 +33,16 @@ class PageParser {
       webviewId = arguments[1],
       routePath = arguments[2]
 
-    var pageBaseAttr = {
+    var pageInfo = {
       __wxWebviewId__: webviewId,
       __route__: routePath
     }
-    baseAttrs.forEach(function (key) {
+    protectedAttributes.forEach(function (key) {
       curPage.__defineSetter__(key, function () {
         utils.warn('关键字保护', 'should not change the protected attribute ' + key)
       })
       curPage.__defineGetter__(key, function () {
-        return pageBaseAttr[key]
+        return pageInfo[key]
       })
     })
     pageObj.data = pageObj.data || {}
@@ -55,7 +55,7 @@ class PageParser {
         'data must be an object, your data is ' + JSON.stringify(pageObj.data)
       )
     this.data = JSON.parse(JSON.stringify(pageObj.data))
-    sysEventKeys.forEach(function (eventName) {
+    pageEvents.forEach(function (eventName) {
       // 定义页面事件
       curPage[eventName] = function () {
         var eventFun = (pageObj[eventName] || utils.noop).bind(this),
