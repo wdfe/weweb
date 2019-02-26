@@ -6,7 +6,7 @@ app='demos/demo20170111'
 # 加了 dev 参数就不编译 framwork
 if [ "$1" != "dev" ]; then
   # 不压缩代码
-  npm run dev:nowatch
+  ./node_modules/.bin/webpack --progress --config webpack.config.js
 fi
 
 ./bin/weweb -b $app

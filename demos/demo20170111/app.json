@@ -112,8 +112,8 @@
     "downloadFile": 10000
   },
   "weweb": {
-    "nomap": false,
-    "requestProxy": "/remoteProxy"
+    "//requestProxy": "/remoteProxy",
+    "requestType": "ajax"
   },
   "debug": false
 }

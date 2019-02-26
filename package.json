@@ -7,17 +7,15 @@
     "weweb": "bin/weweb"
   },
   "scripts": {
-    "start": "sh dev.sh",
-    "//dev": "dev 开头的都没有压缩代码",
+    "start": "echo 'Lauching demo' && sh dev.sh",
+    "autostart":
+      "nodemon -w demos -w lib/template -d 1.5 -e js,json,wxss,wxml --exec 'sh dev.sh dev'",
     "dev": "WATCH=true webpack --progress --config webpack.config.js",
-    "dev:nowatch": "webpack --progress --config webpack.config.js",
-    "//dev:tmp": "直接打包到 tmp 文件夹",
-    "dev:tmp": "WATCH=true webpack --progress --config webpack.config.dev.js",
+    "dev:forDemo":
+      "DIST_PATH='./wewebTmp/dist/script' WATCH=true webpack --progress --config webpack.config.js",
     "build":
       "NODE_ENV=production webpack --progress --config webpack.config.js",
-    "precommit": "lint-staged",
-    "autostart":
-      "nodemon -w demos -w lib/template -d 1.5 -e js,json,wxss,wxml --exec 'npm run start'"
+    "precommit": "lint-staged"
   },
   "lint-staged": {
     "{*.js,bin/weweb,*.json}": ["prettier-standard", "git add"]
