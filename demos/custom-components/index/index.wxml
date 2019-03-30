@@ -1,0 +1,7 @@
+<!-- 引用组件的页面模版 -->
+<view>
+  <my-component>
+    <!-- 这部分内容将被放置在组件 <slot> 的位置上 -->
+     <view>这里是插入到组件slot中的内容</view> 
+  </my-component>
+</view>
