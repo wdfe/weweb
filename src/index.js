@@ -16,6 +16,7 @@ import './view/api'
 
 import './view/exparser'
 
+// register components
 import './view/exparser-component'
 
 import './view/virtual-dom'

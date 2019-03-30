@@ -59,11 +59,11 @@ const getViewPortInfo = function (e) {
   e.rect && ((t.left = 0), (t.right = 0), (t.top = 0), (t.bottom = 0))
   e.size &&
     ((t.width = document.documentElement.clientWidth),
-      (t.height = document.documentElement.clientHeight))
+    (t.height = document.documentElement.clientHeight))
   e.scrollOffset &&
     ((t.scrollLeft =
       document.documentElement.scrollLeft || document.body.scrollLeft || 0),
-      (t.scrollTop =
+    (t.scrollTop =
       document.documentElement.scrollTop || document.body.scrollTop || 0))
   return t
 }
@@ -77,9 +77,9 @@ const getInfoInFields = function (info, fields) {
     const domBounding = dom.getBoundingClientRect()
     fields.rect &&
       ((res.left = domBounding.left),
-        (res.right = domBounding.right),
-        (res.top = domBounding.top),
-        (res.bottom = domBounding.bottom))
+      (res.right = domBounding.right),
+      (res.top = domBounding.top),
+      (res.bottom = domBounding.bottom))
     fields.size &&
       ((res.width = domBounding.width), (res.height = domBounding.height))
   }
@@ -451,23 +451,31 @@ const BASE_DEVICE_WIDTH = 750
 const ua = window.navigator.userAgent.toLowerCase()
 const platform = /(iphone|ipad)/.test(ua)
   ? 'ios'
-  : /android/.test(ua) ? 'android' : ''
+  : /android/.test(ua)
+    ? 'android'
+    : ''
 const screenWidth = (platform && window.innerWidth) || 375
 const devicePixelRatio = window.devicePixelRatio || 2
 const SMALL_NUM = 1e-4
 const rpxToPxNum = function (rpxNum) {
-  rpxNum = rpxNum / BASE_DEVICE_WIDTH * screenWidth
+  rpxNum = (rpxNum / BASE_DEVICE_WIDTH) * screenWidth
   rpxNum = Math.floor(rpxNum + SMALL_NUM)
   return rpxNum === 0
-    ? devicePixelRatio !== 1 && platform == 'ios' ? 0.5 : 1
+    ? devicePixelRatio !== 1 && platform == 'ios'
+      ? 0.5
+      : 1
     : rpxNum
 }
 const parseRpx = function (matches) {
-  let num = 0,
-    decimalRadix = 1,
-    isHandlingDecimal = !1,
-    isNeg = !1,
-    idx = 0
+  let num = 0
+
+  let decimalRadix = 1
+
+  let isHandlingDecimal = !1
+
+  let isNeg = !1
+
+  let idx = 0
   for (; idx < matches.length; ++idx) {
     let ch = matches[idx]
     if (ch >= '0' && ch <= '9') {
@@ -487,7 +495,7 @@ const parseRpx = function (matches) {
 const rpxInTemplate = /%%\?[+-]?\d+(\.\d+)?rpx\?%%/g
 const rpxInCSS = /(:|\s)[+-]?\d+(\.\d+)?rpx/g
 
-const utils = {
+export default {
   copyObj (distObj, orgObj) {
     for (var attrName in orgObj) {
       ;(function (attrName) {
@@ -523,9 +531,11 @@ const utils = {
     if (pathname.indexOf('./') === 0) {
       return this.getRealRoute(pathPrefix, pathname.substr(2))
     }
-    var index,
-      folderLength,
-      folderArr = pathname.split('/')
+    var index
+
+    var folderLength
+
+    var folderArr = pathname.split('/')
     for (
       index = 0, folderLength = folderArr.length;
       index < folderLength && folderArr[index] === '..';
@@ -538,11 +548,15 @@ const utils = {
     return pathArr.join('/')
   },
   animationToStyle (params) {
-    var animates = params.animates,
-      option = params.option,
-      opts = void 0 === option ? {} : option,
-      transformOrigin = opts.transformOrigin,
-      transition = opts.transition
+    var animates = params.animates
+
+    var option = params.option
+
+    var opts = void 0 === option ? {} : option
+
+    var transformOrigin = opts.transformOrigin
+
+    var transition = opts.transition
     if (typeof transition === 'undefined' || typeof animates === 'undefined') {
       return {
         transformOrigin: '',
@@ -557,8 +571,9 @@ const utils = {
         return type !== 'style'
       })
       .map(function (animate) {
-        var animateType = animate.type,
-          animateArgs = animate.args
+        var animateType = animate.type
+
+        var animateArgs = animate.args
         switch (animateType) {
           case 'matrix':
             return 'matrix(' + animateArgs.join(',') + ')'
@@ -689,7 +704,9 @@ const utils = {
             ? data.getTime().toString()
             : dataType == 'Undefined'
               ? 'undefined'
-              : dataType == 'Null' ? 'null' : ''
+              : dataType == 'Null'
+                ? 'null'
+                : ''
     }
     return {
       data: data,
@@ -710,7 +727,11 @@ const utils = {
               ? data == 'true'
               : type == 'Date'
                 ? new Date(parseInt(data))
-                : type == 'Undefined' ? void 0 : type == 'Null' ? null : '')
+                : type == 'Undefined'
+                  ? void 0
+                  : type == 'Null'
+                    ? null
+                    : '')
   },
   getDataType (data) {
     // get data type
@@ -724,13 +745,16 @@ const utils = {
   },
   paramCheck (params, paramTpl) {
     // 比较e\t
-    var result,
-      name =
+    var result
+
+    var name =
         arguments.length > 2 && void 0 !== arguments[2]
           ? arguments[2]
-          : 'parameter',
-      tplTpye = this.getDataType(paramTpl),
-      pType = this.getDataType(params)
+          : 'parameter'
+
+    var tplTpye = this.getDataType(paramTpl)
+
+    var pType = this.getDataType(params)
     if (pType != tplTpye) {
       return name + ' should be ' + tplTpye + ' instead of ' + pType + ';'
     }
@@ -782,29 +806,34 @@ const utils = {
       typeof newParams === 'object' &&
       Object.keys(newParams).length > 0
     ) {
-      var urlComponents = originalUrl.split('?'),
-        host = urlComponents[0],
-        oldParams = (urlComponents[1] || '')
-          .split('&')
-          .reduce(function (res, cur) {
-            if (typeof cur === 'string' && cur.length > 0) {
-              var curArr = cur.split('='),
-                key = curArr[0],
-                value = curArr[1]
-              res[key] = value
-            }
-            return res
-          }, {}),
-        refinedNewParams = Object.keys(newParams).reduce(function (res, cur) {
-          typeof newParams[cur] === 'object'
-            ? (res[encodeURIComponent(cur)] = encodeURIComponent(
-              JSON.stringify(newParams[cur])
-            ))
-            : (res[encodeURIComponent(cur)] = encodeURIComponent(
-              newParams[cur]
-            ))
+      var urlComponents = originalUrl.split('?')
+
+      var host = urlComponents[0]
+
+      var oldParams = (urlComponents[1] || '')
+        .split('&')
+        .reduce(function (res, cur) {
+          if (typeof cur === 'string' && cur.length > 0) {
+            var curArr = cur.split('=')
+
+            var key = curArr[0]
+
+            var value = curArr[1]
+            res[key] = value
+          }
           return res
         }, {})
+
+      var refinedNewParams = Object.keys(newParams).reduce(function (res, cur) {
+        typeof newParams[cur] === 'object'
+          ? (res[encodeURIComponent(cur)] = encodeURIComponent(
+            JSON.stringify(newParams[cur])
+          ))
+          : (res[encodeURIComponent(cur)] = encodeURIComponent(
+            newParams[cur]
+          ))
+        return res
+      }, {})
       return (
         host +
         '?' +
@@ -829,18 +858,23 @@ const utils = {
   encodeUrlQuery (url) {
     // 把url中的参数encode
     if (typeof url === 'string') {
-      var urlArr = url.split('?'),
-        urlPath = urlArr[0],
-        queryParams = (urlArr[1] || '').split('&').reduce(function (res, cur) {
-          if (typeof cur === 'string' && cur.length > 0) {
-            var curArr = cur.split('='),
-              key = curArr[0],
-              value = curArr[1]
-            res[key] = value
-          }
-          return res
-        }, {}),
-        urlQueryArr = []
+      var urlArr = url.split('?')
+
+      var urlPath = urlArr[0]
+
+      var queryParams = (urlArr[1] || '').split('&').reduce(function (res, cur) {
+        if (typeof cur === 'string' && cur.length > 0) {
+          var curArr = cur.split('=')
+
+          var key = curArr[0]
+
+          var value = curArr[1]
+          res[key] = value
+        }
+        return res
+      }, {})
+
+      var urlQueryArr = []
       for (var i in queryParams) {
         queryParams.hasOwnProperty(i) &&
           urlQueryArr.push(i + '=' + encodeURIComponent(queryParams[i]))
@@ -1016,9 +1050,11 @@ const utils = {
 
   safeInvoke () {
     // do page method
-    var res = void 0,
-      args = Array.prototype.slice.call(arguments),
-      fn = args[0]
+    var res = void 0
+
+    var args = Array.prototype.slice.call(arguments)
+
+    var fn = args[0]
     args = args.slice(1)
     try {
       var startTime = Date.now()
@@ -1067,12 +1103,13 @@ const utils = {
     __wxConfig__ && __wxConfig__.debug && console.info(msg)
   },
   publish () {
-    var params = Array.prototype.slice.call(arguments),
-      defaultOpt = {
-        options: {
-          timestamp: Date.now()
-        }
+    var params = Array.prototype.slice.call(arguments)
+
+    var defaultOpt = {
+      options: {
+        timestamp: Date.now()
       }
+    }
     params[1]
       ? (params[1].options = Object.assign(
         params[1].options || {},
@@ -1082,4 +1119,3 @@ const utils = {
     ServiceJSBridge.publish.apply(ServiceJSBridge, params)
   }
 }
-export default utils

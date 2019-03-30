@@ -4,17 +4,19 @@
   "description": "微信小程序转成h5的小工具",
   "main": "bin/weweb",
   "bin": {
-    "weweb": "bin/weweb"
+    "weweb": "bin/weweb.js"
   },
   "scripts": {
     "start": "echo 'Lauching demo' && sh dev.sh",
     "autostart":
-      "nodemon -w demos -w lib/template -d 1.5 -e js,json,wxss,wxml --exec 'sh dev.sh dev'",
+      "nodemon -w demos -w bin -w lib/template -d 1.5 -e js,json,wxss,wxml --exec 'sh dev.sh dev'",
     "dev": "WATCH=true webpack --progress --config webpack.config.js",
     "dev:forDemo":
       "DIST_PATH='./wewebTmp/dist/script' WATCH=true webpack --progress --config webpack.config.js",
-    "build":
+    "build": "npm run build:core",
+    "build:core":
       "NODE_ENV=production webpack --progress --config webpack.config.js",
+    "build:bin": "babel bin/weweb-es6 --out-file bin/weweb",
     "precommit": "lint-staged"
   },
   "lint-staged": {
@@ -66,6 +68,7 @@
   "devDependencies": {
     "actionsheet": "^0.1.2",
     "autoscale-canvas": "0.0.3",
+    "babel-cli": "^6.26.0",
     "babel-loader": "^7.1.4",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-syntax-jsx": "^6.18.0",

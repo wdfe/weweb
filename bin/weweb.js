@@ -18,8 +18,9 @@ const isWin = /^win/.test(process.platform)
 const path = require('path')
 const semCmp = require('semver-compare')
 const util = require('../lib/util')
-// const Parallel = require('node-parallel')
-// const notify = require('node-notifier')
+const core = require('../lib/core')
+const { getAllCustomComponents } = require('../lib/builder')
+
 let cmdRm, cmdCp, cmdCpArg
 if (isWin) {
   cmdRm = 'rmdir /s /q '
@@ -50,7 +51,7 @@ program.parse(process.argv)
  * @param {any} msg
  * @param {any} allow
  */
-const printLog = function(msg, allow) {
+const log = function (msg, allow) {
   if (!program.transform || allow) {
     console.log(msg)
   }
@@ -59,7 +60,7 @@ const printLog = function(msg, allow) {
 // 更新检查方法
 const notifier = new UpdateNotifier({
   pkg: json,
-  callback: function(err, result) {
+  callback: function (err, result) {
     if (err) return
     if (semCmp(result.latest, result.current) > 0) {
       const message =
@@ -79,7 +80,7 @@ const notifier = new UpdateNotifier({
           borderColor: 'yellow',
           borderStyle: 'round'
         })
-      printLog(msg)
+      log(msg)
     }
   }
 })
@@ -93,15 +94,16 @@ if (program.list) {
 let tmpFolderName
 let curPath = process.cwd()
 
-function checkProject() {
+function checkProject () {
   let folder = program.args[0]
   if (folder) {
     let stats
     try {
       stats = fs.statSync(folder)
     } catch (e) {}
+
     if (!stats) {
-      printLog('指定目录不存在或者不是目录，请检查')
+      log(`指定目录 ${folder} 不存在或者不是目录，请检查`)
       process.exit()
     } else if (stats.isFile()) {
       if (folder.match(/\.zip$/i)) {
@@ -112,7 +114,7 @@ function checkProject() {
             .substr(2) +
           new Date().getTime()
         childProcess.execSync(`unzip ${folder} -d ${tmpFolderName}`)
-        printLog(folder)
+        log(folder)
         folder = childProcess
           .execSync(`find ${tmpFolderName} -name app.json -print`)
           .toString()
@@ -122,23 +124,22 @@ function checkProject() {
           folder = tmpMatchValue[1].replace(/app\.json\s*$/, '')
         }
       } else {
-        printLog('指定目录不存在或者不是目录，请检查')
+        log('指定目录不存在或者不是目录，请检查')
         process.exit()
       }
     } else if (!stats.isDirectory) {
-      printLog('指定目录不存在或者不是目录，请检查')
+      log('指定目录不存在或者不是目录，请检查')
       process.exit()
     }
-    // let chdirFail = false
+
     try {
       process.chdir(folder)
     } catch (err) {
-      // chdirFail = true
-      printLog('切换目录失败: ' + err)
+      log('切换目录失败: ' + err)
     }
   }
   if (!fs.existsSync('./app.json')) {
-    printLog(chalk.red('无法找到 app.json 文件，请检查'))
+    log(chalk.red('无法找到 app.json 文件，请检查'))
     process.exit()
   }
 }
@@ -149,7 +150,7 @@ let distPath = path.resolve(curPath, program.dist || './wewebTmp/dist')
 /**
  *   记录构建时间
  */
-function printRunTime() {
+function printRunTime () {
   const endTime = new Date()
   console.log(
     chalk.yellow(
@@ -162,15 +163,15 @@ function printRunTime() {
  * 启动服务器
  *
  */
-function bootWebServer() {
+function bootWebServer () {
   let server = require('../lib/server')(distPath)
   let startPort = 2000
 
-  getPort(function(port) {
+  getPort(function (port) {
     if (os.platform() === 'darwin' && program.open) {
-      exec('osascript chrome.scpt ' + port, { cwd: __dirname }, function() {})
+      exec('osascript chrome.scpt ' + port, { cwd: __dirname }, function () {})
     }
-    server.listen(port, function() {
+    server.listen(port, function () {
       // printLog('listening on port ' + port)
       const openMsg = `Opening it on: http://localhost:${port}`
       let msg =
@@ -187,40 +188,84 @@ function bootWebServer() {
       //   'title': 'Build Done',
       //   'message': new Date()
       // });
-      printLog(msg)
+      log(msg)
       if (program.open) open('http://localhost:' + port)
     })
   })
 
-  function getPort(cb) {
+  function getPort (cb) {
     if (program.port) return cb(program.port)
     let port = startPort
 
     let server = net.createServer()
-    server.listen(port, function() {
-      server.once('close', function() {
+    server.listen(port, function () {
+      server.once('close', function () {
         cb(port)
       })
       server.close()
     })
-    server.on('error', function() {
+    server.on('error', function () {
       startPort += 1
       getPort(cb)
     })
   }
 }
 
+async function buildPage ({ path, tabBar }) {
+  let fullpath = path.replace(/^(\/|\.\/)/, '')
+  let paths = fullpath.split('/')
+  let file = paths.pop()
+  path = paths.join('/')
+
+  const arr = await core.getPage(fullpath)
+
+  // page generateFunc
+  let content = arr[0][0] // .replace(/(src=[\"\']?)\/+/,"$1");//对以/开始的路径做处理
+  if (arr[1]) {
+    arr[1] = arr[1]
+      .replace(/\/\*#\s*sourceMappingURL=.*\*\/$/, '')
+      .replace(/(position:\s*fixed\s*[^}]*[^w]top:)\s*0\s*;/g, '$142px;')
+    if (
+      has(tabBar, 'list') &&
+      tabBar.list.findIndex(
+        item => item.pagePath.replace(/^(\/|\.\/)/, '') === fullpath
+      ) !== -1
+    ) {
+      if (tabBar.position !== 'top') {
+        arr[1] = arr[1].replace(
+          /(position:\s*fixed\s*[^}]*[^w]bottom:)\s*0\s*;/g,
+          '$156px;'
+        )
+      }
+    }
+  } else {
+    arr[1] = ''
+  }
+  content += '##code-separator##' + arr[1] // page css
+  if (!arr[2]) arr[2] = ''
+  content += '##code-separator##' + arr[2] // app-service
+  content += '##code-separator##' + JSON.stringify(arr[0][1]) // tags
+  return util
+    .createFilePromise(
+      distPath + '/src/' + path,
+      file + '.js',
+      content,
+      program.transform
+    )
+    .catch(err => console.error(err))
+}
+
 /**
  * 构建 小程序
  *
  */
-function build() {
-  let execBuild = async function(err, out) {
-    // printLog(out)
-    err && printLog(err)
+function build () {
+  let execBuild = async function (err, out) {
+    err && log(err)
     util.mkdirsSync(distPath)
-    printLog('文件将生成到:\n' + distPath)
-    // doTransformFile()
+
+    log('文件将生成到:\n' + distPath)
+
     const assetsPath = path.resolve(__dirname, '../lib/template/assets')
 
     await exec(
@@ -239,8 +284,6 @@ function build() {
     })
 
     const appConfig = await loadConfig({ babel: program.babel })
-
-    let core = require('../lib/core')
 
     await core.getIndex().then(content =>
       /*
@@ -278,54 +321,37 @@ function build() {
     let count = 0
 
     await Promise.all(
-      pages.map(async function(path) {
-        let fullpath = path.replace(/^(\/|\.\/)/, '')
-        let paths = fullpath.split('/')
-        let file = paths.pop()
-        path = paths.join('/')
-
-        const arr = await core.getPage(fullpath)
-
-        // page generateFunc
-        let content = arr[0][0] // .replace(/(src=[\"\']?)\/+/,"$1");//对以/开始的路径做处理
-        if (arr[1]) {
-          arr[1] = arr[1]
-            .replace(/\/\*#\s*sourceMappingURL=.*\*\/$/, '')
-            .replace(/(position:\s*fixed\s*[^}]*[^w]top:)\s*0\s*;/g, '$142px;')
-          if (
-            has(tabBar, 'list') &&
-            tabBar.list.findIndex(
-              item => item.pagePath.replace(/^(\/|\.\/)/, '') === fullpath
-            ) !== -1
-          ) {
-            if (tabBar.position !== 'top') {
-              arr[1] = arr[1].replace(
-                /(position:\s*fixed\s*[^}]*[^w]bottom:)\s*0\s*;/g,
-                '$156px;'
-              )
-            }
-          }
-        } else {
-          arr[1] = ''
-        }
-        content += '##code-separator##' + arr[1] // page css
-        if (!arr[2]) arr[2] = ''
-        content += '##code-separator##' + arr[2] // app-service
-        content += '##code-separator##' + JSON.stringify(arr[0][1]) // tags
-        return util
-          .createFilePromise(
-            distPath + '/src/' + path,
-            file + '.js',
-            content,
-            program.transform
-          )
-          .catch(err => console.error(err))
-      })
+      pages.map(path =>
+        buildPage({
+          path,
+          tabBar
+        })
+      )
     )
+
+    const buildCustomComps = async (comps, parentPath) => {
+      for (let [compName, compPath] of Object.entries(comps)) {
+        await buildPage({
+          path: path.resolve(parentPath, compPath),
+          tabBar
+        })
+        console.log(compName, compPath)
+      }
+    }
+    if (appConfig.usingComponents) {
+      await buildCustomComps(appConfig.usingComponents, '/')
+    }
+    for (const [pageName, pageConfig] of Object.entries(
+      appConfig.window.pages
+    )) {
+      if (pageConfig.usingComponents) {
+        await buildCustomComps(pageConfig.usingComponents, pageName)
+      }
+    }
 
     if (program.transform) {
       printRunTime()
-      printLog('ok:' + distPath, true)
+      log('ok:' + distPath, true)
 
       if (tmpFolderName) {
         await exec(`${cmdRm}${tmpFolderName}`)
@@ -347,8 +373,8 @@ function build() {
   }
 }
 
-process.on('uncaughtException', function(e) {
-  printLog(chalk.red('发生了未知错误'))
+process.on('uncaughtException', function (e) {
+  log(chalk.red('发生了未知错误'))
   console.error(e.stack)
 })
 
@@ -356,13 +382,14 @@ process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection at:', p, 'reason:', reason)
   // application specific logging, throwing an error, or other logic here
 })
+;(function main () {
+  // 执行更新检查
+  if (!program.nocheck) {
+    notifier.check()
+  }
 
-// 执行更新检查
-if (!program.nocheck) {
-  notifier.check()
-}
-
-// 检查项目目录
-checkProject()
-// 开始构建
-build()
+  // 检查项目目录
+  checkProject()
+  // 开始构建
+  build()
+})()

@@ -67,14 +67,14 @@ const normalizeValue = function (value, type) {
 }
 
 // registerElement
-Component.register = function (nElement) {
-  let opts = nElement.options || {}
+Component.register = function (compDef) {
+  let opts = compDef.options || {}
   let propDefination = {
     is: {
-      value: nElement.is || ''
+      value: compDef.is || ''
     }
   }
-  let componentBehavior = Behavior.create(nElement)
+  let componentBehavior = Behavior.create(compDef)
   let behaviorProperties = Object.create(null)
 
   Object.keys(componentBehavior.properties).forEach(function (propKey) {
@@ -163,8 +163,9 @@ Component.register = function (nElement) {
     proto[methodName] = componentBehavior.methods[methodName]
   }
   proto.__lifeTimeFuncs = componentBehavior.getAllLifeTimeFuncs()
-  let publicProps = Object.create(null),
-    defaultValuesJSON = {}
+  let publicProps = Object.create(null)
+
+  let defaultValuesJSON = {}
   for (let propName in behaviorProperties) {
     defaultValuesJSON[propName] = behaviorProperties[propName].value
     publicProps[propName] = !!behaviorProperties[propName].public
@@ -188,12 +189,15 @@ Component.register = function (nElement) {
     opts
   )
   proto.__propPublic = publicProps
-  let allListeners = componentBehavior.getAllListeners(),
-    innerEvents = Object.create(null)
+  let allListeners = componentBehavior.getAllListeners()
+
+  let innerEvents = Object.create(null)
   for (let listenerName in allListeners) {
-    let listener = allListeners[listenerName],
-      eventList = [],
-      idx = 0
+    let listener = allListeners[listenerName]
+
+    let eventList = []
+
+    let idx = 0
     for (; idx < listener.length; idx++) {
       eventList.push(componentBehavior.methods[listener[idx]])
     }
@@ -255,8 +259,9 @@ Component.create = function (tagName) {
       }
     }
     if (nComponent) {
-      let innerEvent = innerEvents[innerEventName],
-        listenerIdx = 0
+      let innerEvent = innerEvents[innerEventName]
+
+      let listenerIdx = 0
       for (; listenerIdx < innerEvent.length; listenerIdx++) {
         if (isRootNode) {
           addListenerToElement(

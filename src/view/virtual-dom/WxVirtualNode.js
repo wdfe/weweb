@@ -6,12 +6,15 @@ import WxVirtualText from './WxVirtualText'
 import './Enums'
 
 class WxVirtualNode {
+  type = 'WxVirtualNode'
+
   constructor (tagName, props, newProps, wxKey, wxVkey, children) {
     this.tagName = tagName || 'div'
     this.props = props || {}
     this.children = children || []
     this.newProps = newProps || []
     this.wxVkey = wxVkey
+
     Utils.isUndefined(wxKey)
       ? (this.wxKey = void 0)
       : (this.wxKey = String(wxKey))
@@ -52,7 +55,5 @@ class WxVirtualNode {
     return Diff.diff(this, newNode)
   }
 }
-
-WxVirtualNode.prototype.type = 'WxVirtualNode'
 
 export default WxVirtualNode

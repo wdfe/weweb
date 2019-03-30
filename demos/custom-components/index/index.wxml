@@ -2,6 +2,11 @@
 <view>
   <my-component>
     <!-- 这部分内容将被放置在组件 <slot> 的位置上 -->
-     <view>这里是插入到组件slot中的内容</view> 
+     <view>这里是插入到组件slot中的内容 - 定义于 index.json</view> 
   </my-component>
+
+    <my-component-global>
+    <!-- 这部分内容将被放置在组件 <slot> 的位置上 -->
+     <view>这里是插入到组件slot中的内容 - 定义于 app.json</view> 
+  </my-component-global>
 </view>
