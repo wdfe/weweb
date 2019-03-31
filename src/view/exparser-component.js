@@ -1,12 +1,43 @@
 // 转发 window 上的 animation 和 transition 相关的动画事件到 exparser
-;(function (win) {
+// 同步加载的行为和组件
+import './behaviors/wx-base'
+import './behaviors/wx-data-component'
+import './behaviors/wx-disabled'
+import './behaviors/wx-group'
+import './behaviors/wx-hover'
+import './behaviors/wx-input-base'
+import './behaviors/wx-item'
+import './behaviors/wx-label-target'
+import './behaviors/wx-mask-Behavior'
+import './behaviors/wx-native'
+import './behaviors/wx-player'
+import './behaviors/wx-touchtrack'
+import './behaviors/wx-positioning-target'
+
+import './components/wx-button'
+import './components/wx-checkbox'
+import './components/wx-checkbox-Group'
+import './components/wx-icon'
+import './components/wx-image'
+import './components/wx-input'
+import './components/wx-label'
+import './components/wx-loading'
+import './components/wx-mask'
+import './components/wx-navigator'
+import './components/wx-text'
+import './components/wx-view'
+import './components/wx-web-view'
+import './components/wx-rich-text'
+import resolvePath from '../common/resolvePath'
+  ;(function (win) {
   var getOpt = function (args) {
-      return {
-        animationName: args.animationName,
-        elapsedTime: args.elapsedTime
-      }
-    },
-    isWebkit = null
+    return {
+      animationName: args.animationName,
+      elapsedTime: args.elapsedTime
+    }
+  }
+
+  var isWebkit = null
   var animationAPIList = [
     'webkitAnimationStart',
     'webkitAnimationIteration',
@@ -199,115 +230,131 @@
 ;(function (win) {
   // touch events
   var triggerEvent = function (event, name, params) {
-      exparser.triggerEvent(event.target, name, params, {
-        originalEvent: event,
-        bubbles: !0,
-        composed: !0,
-        extraFields: {
-          touches: event.touches,
-          changedTouches: event.changedTouches
-        }
-      })
-    },
-    distanceThreshold = 10,
-    longtapGapTime = 350,
-    wxScrollTimeLowestValue = 50,
-    setTouches = function (event, change) {
-      event[change ? 'changedTouches' : 'touches'] = [
-        {
-          identifier: 0,
-          pageX: event.pageX,
-          pageY: event.pageY,
-          clientX: event.clientX,
-          clientY: event.clientY,
-          screenX: event.screenX,
-          screenY: event.screenY,
-          target: event.target
-        }
-      ]
-      return event
-    },
-    isTouchstart = !1,
-    oriTimeStamp = 0,
-    curX = 0,
-    curY = 0,
-    curEvent = 0,
-    longtapTimer = null,
-    isCancletap = !1,
-    canceltap = function (node) {
-      for (; node; node = node.parentNode) {
-        var element = node.__wxElement || node
-        if (
-          element.__wxScrolling &&
-          Date.now() - element.__wxScrolling < wxScrollTimeLowestValue
-        ) {
-          return !0
-        }
+    exparser.triggerEvent(event.target, name, params, {
+      originalEvent: event,
+      bubbles: !0,
+      composed: !0,
+      extraFields: {
+        touches: event.touches,
+        changedTouches: event.changedTouches
       }
-      return !1
-    },
-    triggerLongtap = function () {
-      triggerEvent(curEvent, 'longtap', {
-        x: curX,
-        y: curY
-      })
-    },
-    touchstart = function (event, x, y) {
-      if (!oriTimeStamp) {
-        oriTimeStamp = event.timeStamp
-        curX = x
-        curY = y
-        if (canceltap(event.target)) {
-          longtapTimer = null
-          isCancletap = !0
-          triggerEvent(event, 'canceltap', {
-            x: x,
-            y: y
-          })
-        } else {
-          longtapTimer = setTimeout(triggerLongtap, longtapGapTime)
-          isCancletap = !1
-        }
-        curEvent = event
-        event.defaultPrevented && (oriTimeStamp = 0)
+    })
+  }
+
+  var distanceThreshold = 10
+
+  var longtapGapTime = 350
+
+  var wxScrollTimeLowestValue = 50
+
+  var setTouches = function (event, change) {
+    event[change ? 'changedTouches' : 'touches'] = [
+      {
+        identifier: 0,
+        pageX: event.pageX,
+        pageY: event.pageY,
+        clientX: event.clientX,
+        clientY: event.clientY,
+        screenX: event.screenX,
+        screenY: event.screenY,
+        target: event.target
       }
-    },
-    touchmove = function (e, x, y) {
-      if (oriTimeStamp) {
-        if (
-          !(
-            Math.abs(x - curX) < distanceThreshold &&
-            Math.abs(y - curY) < distanceThreshold
-          )
-        ) {
-          longtapTimer && (clearTimeout(longtapTimer), (longtapTimer = null))
-          isCancletap = !0
-          triggerEvent(curEvent, 'canceltap', {
-            x: x,
-            y: y
-          })
-        }
+    ]
+    return event
+  }
+
+  var isTouchstart = !1
+
+  var oriTimeStamp = 0
+
+  var curX = 0
+
+  var curY = 0
+
+  var curEvent = 0
+
+  var longtapTimer = null
+
+  var isCancletap = !1
+
+  var canceltap = function (node) {
+    for (; node; node = node.parentNode) {
+      var element = node.__wxElement || node
+      if (
+        element.__wxScrolling &&
+        Date.now() - element.__wxScrolling < wxScrollTimeLowestValue
+      ) {
+        return !0
       }
-    },
-    touchend = function (event, x, y, isTouchcancel) {
-      if (oriTimeStamp) {
-        oriTimeStamp = 0
+    }
+    return !1
+  }
+
+  var triggerLongtap = function () {
+    triggerEvent(curEvent, 'longtap', {
+      x: curX,
+      y: curY
+    })
+  }
+
+  var touchstart = function (event, x, y) {
+    if (!oriTimeStamp) {
+      oriTimeStamp = event.timeStamp
+      curX = x
+      curY = y
+      if (canceltap(event.target)) {
+        longtapTimer = null
+        isCancletap = !0
+        triggerEvent(event, 'canceltap', {
+          x: x,
+          y: y
+        })
+      } else {
+        longtapTimer = setTimeout(triggerLongtap, longtapGapTime)
+        isCancletap = !1
+      }
+      curEvent = event
+      event.defaultPrevented && (oriTimeStamp = 0)
+    }
+  }
+
+  var touchmove = function (e, x, y) {
+    if (oriTimeStamp) {
+      if (
+        !(
+          Math.abs(x - curX) < distanceThreshold &&
+          Math.abs(y - curY) < distanceThreshold
+        )
+      ) {
         longtapTimer && (clearTimeout(longtapTimer), (longtapTimer = null))
-        if (isTouchcancel) {
-          event = curEvent
-          x = curX
-          y = curY
-        } else {
-          if (!isCancletap) {
-            triggerEvent(curEvent, 'tap', {
-              x: x,
-              y: y
-            })
-            readyAnalyticsReport(curEvent)
-          }
+        isCancletap = !0
+        triggerEvent(curEvent, 'canceltap', {
+          x: x,
+          y: y
+        })
+      }
+    }
+  }
+
+  var touchend = function (event, x, y, isTouchcancel) {
+    if (oriTimeStamp) {
+      oriTimeStamp = 0
+      longtapTimer && (clearTimeout(longtapTimer), (longtapTimer = null))
+      if (isTouchcancel) {
+        event = curEvent
+        x = curX
+        y = curY
+      } else {
+        if (!isCancletap) {
+          triggerEvent(curEvent, 'tap', {
+            x: x,
+            y: y
+          })
+          readyAnalyticsReport(curEvent)
         }
       }
     }
+  }
   win.addEventListener(
     'scroll',
     function (event) {
@@ -415,54 +462,52 @@
       passive: !1
     }
   )
-  var analyticsConfig = {},
-    readyAnalyticsReport = function (event) {
-      if (analyticsConfig.selector) {
-        for (
-          var selector = analyticsConfig.selector, target = event.target;
-          target;
+  var analyticsConfig = {}
 
-        ) {
-          if (target.tagName && target.tagName.indexOf('WX-') === 0) {
-            var classNames = target.className
-              .split(' ')
-              .map(function (className) {
-                return '.' + className
-              })
-            ;['#' + target.id]
-              .concat(classNames)
-              .forEach(function (curSelector) {
-                selector.indexOf(curSelector) > -1 &&
-                  analyticsReport(target, curSelector)
-              })
-          }
-          target = target.parentNode
-        }
-      }
-    },
-    analyticsReport = function (ele, selector) {
-      for (var i = 0; i < analyticsConfig.data.length; i++) {
-        var curData = analyticsConfig.data[i]
-        if (curData.element === selector) {
-          var data = {
-            eventID: curData.eventID,
-            page: curData.page,
-            element: curData.element,
-            action: curData.action,
-            time: Date.now()
-          }
-          selector.indexOf('.') === 0 &&
-            (data.index = Array.prototype.indexOf.call(
-              document.body.querySelectorAll(curData.element),
-              ele
-            ))
-          WeixinJSBridge.publish('analyticsReport', {
-            data: data
+  var readyAnalyticsReport = function (event) {
+    if (analyticsConfig.selector) {
+      for (
+        var selector = analyticsConfig.selector, target = event.target;
+        target;
+
+      ) {
+        if (target.tagName && target.tagName.indexOf('WX-') === 0) {
+          var classNames = target.className.split(' ').map(function (className) {
+            return '.' + className
           })
-          break
+          ;['#' + target.id].concat(classNames).forEach(function (curSelector) {
+            selector.indexOf(curSelector) > -1 &&
+              analyticsReport(target, curSelector)
+          })
         }
+        target = target.parentNode
       }
     }
+  }
+
+  var analyticsReport = function (ele, selector) {
+    for (var i = 0; i < analyticsConfig.data.length; i++) {
+      var curData = analyticsConfig.data[i]
+      if (curData.element === selector) {
+        var data = {
+          eventID: curData.eventID,
+          page: curData.page,
+          element: curData.element,
+          action: curData.action,
+          time: Date.now()
+        }
+        selector.indexOf('.') === 0 &&
+          (data.index = Array.prototype.indexOf.call(
+            document.body.querySelectorAll(curData.element),
+            ele
+          ))
+        WeixinJSBridge.publish('analyticsReport', {
+          data: data
+        })
+        break
+      }
+    }
+  }
   WeixinJSBridge.subscribe('analyticsConfig', function (params) {
     if (Object.prototype.toString.call(params.data) === '[object Array]') {
       analyticsConfig.data = params.data
@@ -473,36 +518,6 @@
     }
   })
 })(window)
-
-// 同步加载的行为和组件
-require('./behaviors/wx-base')
-require('./behaviors/wx-data-component')
-require('./behaviors/wx-disabled')
-require('./behaviors/wx-group')
-require('./behaviors/wx-hover')
-require('./behaviors/wx-input-base')
-require('./behaviors/wx-item')
-require('./behaviors/wx-label-target')
-require('./behaviors/wx-mask-Behavior')
-require('./behaviors/wx-native')
-require('./behaviors/wx-player')
-require('./behaviors/wx-touchtrack')
-require('./behaviors/wx-positioning-target')
-
-require('./components/wx-button')
-require('./components/wx-checkbox')
-require('./components/wx-checkbox-Group')
-require('./components/wx-icon')
-require('./components/wx-image')
-require('./components/wx-input')
-require('./components/wx-label')
-require('./components/wx-loading')
-require('./components/wx-mask')
-require('./components/wx-navigator')
-require('./components/wx-text')
-require('./components/wx-view')
-require('./components/wx-web-view')
-require('./components/wx-rich-text')
 
 // 异步加载的组件
 window.exparser.registerAsyncComp = function (components, cb) {
@@ -522,6 +537,137 @@ window.exparser.registerAsyncComp = function (components, cb) {
     if (len == 0) {
       cb()
     }
+  }
+
+  function handleCustomComponent (tagName) {
+    let currPagePath = __curPage__.path
+    let currPageConfig = __wxConfig__.window.pages[currPagePath]
+    let compName = ~tagName.indexOf('wx-') ? tagName.substring(3) : tagName
+    console.log('custom-tag:', compName)
+    if (
+      currPageConfig.usingComponents &&
+      currPageConfig.usingComponents[compName]
+    ) {
+      let compPath = resolvePath(
+        currPagePath,
+        currPageConfig.usingComponents[compName]
+      )
+      loadCustomComponent({ compPath, compName, tagName })
+    } else if (
+      __wxConfig__.usingComponents &&
+      __wxConfig__.usingComponents[compName]
+    ) {
+      let compPath = resolvePath('/', __wxConfig__.usingComponents[compName])
+      loadCustomComponent({ compPath, compName, tagName })
+    } else {
+      console.log(`Unknown Tag: ${name}`)
+      checkState()
+    }
+  }
+
+  function inlineCss (content, path) {
+    content = utils.transformRpx(content, false)
+    if (!content) return
+    /*
+     content = content.split('\n').map(function(value){
+     return value==''?value:"#weweb-view-"+self.id+" "+value.replace(/([^\{]+?,)([^\{]+?)/g,"$1#weweb-view-"+self.id+" $2")
+     }).join('\n');
+     */
+
+    var link = document.createElement('style')
+    link.setAttribute('type', 'text/css')
+    link.setAttribute('page', path)
+    link.appendChild(document.createTextNode(content))
+    if (path != './css/app.css') {
+      link.id = 'view-css-' + this.id
+      link.setAttribute('scoped', '')
+      this.el.appendChild(link)
+    } else {
+      document.querySelector('head').appendChild(link)
+    }
+  }
+
+  function loadCustomComponent ({ compPath, tagName }) {
+    let path = './src' + compPath + '.js'
+    fetch(path)
+      .then(function (response) {
+        return response.text()
+      })
+      .then(function (res) {
+        // console.log(res)
+        // if (window.__curPage__ && window.__curPage__.id != self.id) {
+        //   // 确保是当前页面
+        //   return
+        // }
+        let resources = res.split('##code-separator##')
+
+        let generateFunc = new Function(
+          `
+          ${resources[0]}
+           return $gwx(".${compPath}.wxml")
+          //# sourceURL=${window.location.origin}${compPath}.wxml`
+        )
+
+        let comTPL = null
+        try {
+          comTPL = generateFunc()
+          console.log(comTPL)
+        } catch (e) {
+          console.error(e)
+        }
+
+        if (window.__wxCustomComponent) {
+          window.__wxCustomComponent[tagName] = comTPL
+        } else {
+          window.__wxCustomComponent = {
+            [tagName]: comTPL
+          }
+        }
+
+        try {
+          // define page service
+          let pageScript = new Function(
+            `          var __wxRoute = '';
+            var __wxRouteBegin = false;
+            var Component = function (compDef) {
+              // // console.log(compDef)
+              if (compDef) {
+                compDef.is =  "${tagName}"
+                compDef.template = __wxCustomComponent["${tagName}"]
+                ComponentRegister.register(compDef)
+              }
+            }
+
+            ${resources[2]}\n
+            require('${compPath.slice(1)}.js')
+            //# sourceURL=${
+              window.location.origin
+            }${compPath}.js`
+          )
+          pageScript()
+        } catch (e) {
+          console.error(e)
+        }
+
+
+
+        if (resources[1]) {
+          inlineCss(resources[1], compPath)
+        }
+
+        function componentLoaded () {
+          checkState()
+        }
+
+        if (resources[3]) {
+          const deps = JSON.parse(resources[3]).map(name => `wx-${name}`)
+          window.exparser.registerAsyncComp(deps, () => {
+            componentLoaded()
+          })
+        } else {
+          componentLoaded()
+        }
+      })
   }
 
   function requireAsync (name) {
@@ -674,8 +820,9 @@ window.exparser.registerAsyncComp = function (components, cb) {
         checkState()
         break
       default:
-        console.log(`Unknown Tag: ${name}`)
-        checkState()
+        handleCustomComponent(name)
+
+        // checkState()
         break
     }
   }

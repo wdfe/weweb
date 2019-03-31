@@ -1,0 +1,60 @@
+{
+  "type": "WxVirtualNode",
+  "tagName": "wx-page",
+  "props": {},
+  "children": [
+    {
+      "type": "WxVirtualNode",
+      "tagName": "wx-view",
+      "props": {},
+      "children": [
+        {
+          "type": "WxVirtualNode",
+          "tagName": "wx-my-component",
+          "props": {},
+          "children": [
+            {
+              "type": "WxVirtualNode",
+              "tagName": "wx-view",
+              "props": {},
+              "children": [
+                {
+                  "text": "这里是插入到组件slot中的内容 - 定义于 index.json"
+                }
+              ],
+              "newProps": [],
+              "descendants": 1
+            }
+          ],
+          "newProps": [],
+          "descendants": 2
+        },
+        {
+          "type": "WxVirtualNode",
+          "tagName": "wx-my-component-global",
+          "props": {},
+          "children": [
+            {
+              "type": "WxVirtualNode",
+              "tagName": "wx-view",
+              "props": {},
+              "children": [
+                {
+                  "text": "这里是插入到组件slot中的内容 - 定义于 app.json"
+                }
+              ],
+              "newProps": [],
+              "descendants": 1
+            }
+          ],
+          "newProps": [],
+          "descendants": 2
+        }
+      ],
+      "newProps": [],
+      "descendants": 6
+    }
+  ],
+  "newProps": [],
+  "descendants": 7
+}

@@ -4,6 +4,7 @@ import Template from './Template'
 import Behavior from './Behavior'
 import Element from './Element'
 import Observer from './Observer'
+import { createWXVirtualNodeRec } from '../virtual-dom/index'
 
 function camelToDashed (txt) {
   return txt.replace(/[A-Z]/g, function (ch) {
@@ -13,7 +14,12 @@ function camelToDashed (txt) {
 
 const addListenerToElement = EventManager.addListenerToElement
 
-const Component = function () {}
+const Component = function (compDef) {
+  // // console.log(compDef)
+  // if (compDef) {
+  //   Component.register(compDef)
+  // }
+}
 
 Component.prototype = Object.create(Object.prototype, {
   constructor: {
@@ -182,12 +188,19 @@ Component.register = function (compDef) {
     insElement.innerHTML = componentBehavior.template || ''
   }
 
-  let template = Template.create(
-    insElement,
-    defaultValuesJSON,
-    componentBehavior.methods,
-    opts
-  )
+  let template = null
+
+  if (typeof componentBehavior.template === 'string') {
+    template = Template.create(
+      insElement,
+      defaultValuesJSON,
+      componentBehavior.methods,
+      opts
+    )
+  } else {
+    template = componentBehavior.template
+  }
+
   proto.__propPublic = publicProps
   let allListeners = componentBehavior.getAllListeners()
 
@@ -222,9 +235,22 @@ Component.create = function (tagName) {
   newComponent.__domElement = newElement
   newElement.__wxElement = newComponent
   newComponent.__propData = JSON.parse(sysComponent.defaultValuesJSON)
-  let templateInstance = (newComponent.__templateInstance = sysComponent.template.createInstance(
-    newComponent
-  )) // 参数多余？
+  let templateInstance = null
+
+  if (sysComponent.template.createInstance) {
+    templateInstance = newComponent.__templateInstance = sysComponent.template.createInstance(
+      newComponent
+    ) // 参数多余？
+  } else {
+    let vNode = sysComponent.template(
+      window.__curPage__.envData,
+      newComponent.__propData
+    )
+    vNode = vNode.children[0]
+    vNode = createWXVirtualNodeRec(vNode)
+    vNode = vNode.render()
+    return vNode
+  }
 
   if (templateInstance.shadowRoot instanceof Element) {
     // VirtualNode
@@ -297,5 +323,13 @@ Component.register({
   template: '<wx-content></wx-content>',
   properties: {}
 })
+
+Component.register({
+  is: 'wx-slot',
+  template: '<slot></slot>',
+  properties: {}
+})
+
+window.ComponentRegister = Component
 
 export default Component

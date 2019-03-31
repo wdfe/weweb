@@ -1,0 +1,42 @@
+{
+  "tag": "wx-page",
+  "children": [
+    {
+      "tag": "wx-view",
+      "attr": {},
+      "children": [
+        {
+          "tag": "wx-my-component",
+          "attr": {},
+          "children": [
+            {
+              "tag": "wx-view",
+              "attr": {},
+              "children": [
+                "这里是插入到组件slot中的内容 - 定义于 index.json"
+              ],
+              "n": []
+            }
+          ],
+          "n": []
+        },
+        {
+          "tag": "wx-my-component-global",
+          "attr": {},
+          "children": [
+            {
+              "tag": "wx-view",
+              "attr": {},
+              "children": [
+                "这里是插入到组件slot中的内容 - 定义于 app.json"
+              ],
+              "n": []
+            }
+          ],
+          "n": []
+        }
+      ],
+      "n": []
+    }
+  ]
+}

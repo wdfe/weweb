@@ -110,4 +110,5 @@ Behavior.prototype.getAllLifeTimeFuncs = function () {
   return tempObj
 }
 
+window.Behavior = Behavior
 export default Behavior

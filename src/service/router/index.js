@@ -4,23 +4,24 @@
 import * as util from '../lib/util'
 import View from './view'
 import mask from '../lib/component/mask'
+
 const Bus = util.getBus()
 
-let curr = null
+let currPage = null
 let views = {}
 let tabViews = {}
 if (!window.__wxConfig) {
   Object.defineProperty(window, '__wxConfig', {
     get: function () {
-      return curr ? curr.getConfig() : __wxConfig__
+      return currPage ? currPage.getConfig() : __wxConfig__
     }
   })
   Object.defineProperty(window, '__curPage__', {
     get: function () {
-      return curr
+      return currPage
     },
     set: function (obj) {
-      curr[obj.name] = obj.value
+      currPage[obj.name] = obj.value
     }
   })
   window.addEventListener('message', function (event) {
@@ -42,7 +43,7 @@ if (!window.__wxConfig) {
           cityname: data.city
         }
       }
-      curr.setLocation(data)
+      currPage.setLocation(data)
     }
   })
 }
@@ -61,7 +62,7 @@ export function lifeSycleEvent (path, query, openType) {
 }
 
 function toAppService (obj) {
-  const id = curr ? curr.id : 0
+  const id = currPage ? currPage.id : 0
   const msg = obj.msg || {}
   ServiceJSBridge.subscribeHandler(msg.eventName, msg.data || {}, id)
 }
@@ -86,11 +87,11 @@ function onRoute () {
   // 改变地址栏
   let home = `${location.protocol}//${location.host}${location.pathname}`
   if (typeof history.replaceState === 'function') {
-    history.replaceState({}, '', `${home}#!${curr.url}`)
+    history.replaceState({}, '', `${home}#!${currPage.url}`)
   }
-  Bus.emit('route', curr) // tabbar状态变化
+  Bus.emit('route', currPage) // tabbar状态变化
   let arr = []
-  let view = curr
+  let view = currPage
   while (view) {
     arr.push(view.url)
     if (view.pid != null) {
@@ -104,19 +105,19 @@ function onRoute () {
 }
 
 function onBack () {
-  if (!curr.external) {
-    lifeSycleEvent(curr.path, curr.query, 'navigateBack')
+  if (!currPage.external) {
+    lifeSycleEvent(currPage.path, currPage.query, 'navigateBack')
   }
 }
 
 function onNavigate (url, type = 'navigateTo') {
   if (!url) throw new Error('url not found')
-  if (type == 'reLaunch' && util.isTabbar(curr.path) && curr.query) {
+  if (type == 'reLaunch' && util.isTabbar(currPage.path) && currPage.query) {
     console.error('wx.reLaunch 跳转到 tabbar 页面时不允许携带参数，请去除参数或使用 wx.switchTab')
     return
   }
-  curr.onReady(() => {
-    lifeSycleEvent(curr.path, curr.query, type)
+  currPage.onReady(() => {
+    lifeSycleEvent(currPage.path, currPage.query, type)
   })
 }
 
@@ -136,7 +137,7 @@ const router = {
     }
     if (routes.length) {
       mask.show()
-      let cid = curr.id
+      let cid = currPage.id
       Bus.once('ready', id => {
         mask.hide()
         if (id !== cid) return
@@ -167,30 +168,30 @@ const router = {
   },
   redirectTo (path) {
     path = util.normalize(path)
-    if (!curr) throw new Error('Current view not exists')
-    let pid = curr.pid
-    curr.destroy()
-    delete views[curr.id]
-    let v = (curr = new View(path))
-    curr.pid = pid
-    views[curr.id] = v
+    if (!currPage) throw new Error('Current view not exists')
+    let pid = currPage.pid
+    currPage.destroy()
+    delete views[currPage.id]
+    let v = (currPage = new View(path))
+    currPage.pid = pid
+    views[currPage.id] = v
     onRoute()
     onNavigate(path, 'redirectTo')
   },
   navigateTo (path, isLaunch) {
     path = util.normalize(path)
     let exists = tabViews[path]
-    if (curr) curr.hide()
+    if (currPage) currPage.hide()
     if (exists && exists.__DOMTree__) {
-      curr = exists
+      currPage = exists
       exists.show()
     } else {
       let isTabView = util.isTabbar(path)
-      let pid = curr ? curr.id : null
-      let v = (curr = new View(path))
-      curr.pid = isTabView ? null : pid
+      let pid = currPage ? currPage.id : null
+      let v = (currPage = new View(path))
+      currPage.pid = isTabView ? null : pid
       views[v.id] = v
-      if (isTabView) tabViews[path] = curr
+      if (isTabView) tabViews[path] = currPage
     }
     onRoute()
     if (isLaunch) {
@@ -203,24 +204,24 @@ const router = {
     sessionStorage.clear()
     path = util.normalize(path)
     let exists = tabViews[path]
-    if (curr) curr.hide()
+    if (currPage) currPage.hide()
     if (exists && exists.__DOMTree__) {
-      curr = exists
+      currPage = exists
       exists.show()
     } else {
       let isTabView = util.isTabbar(path)
-      let v = (curr = new View(path))
-      curr.pid = null
+      let v = (currPage = new View(path))
+      currPage.pid = null
       views = []
       views[v.id] = v
-      if (isTabView) tabViews[path] = curr
+      if (isTabView) tabViews[path] = currPage
     }
     onRoute()
     onNavigate(path, 'reLaunch')
   },
   switchTab (path) {
     path = util.normalize(path)
-    if (util.isTabbar(curr.path)) curr.hide()
+    if (util.isTabbar(currPage.path)) currPage.hide()
     let exists = tabViews[path]
     Object.keys(views).forEach(key => {
       let view = views[key]
@@ -230,46 +231,46 @@ const router = {
       }
     })
     if (exists && exists.__DOMTree__) {
-      curr = exists
+      currPage = exists
       exists.show()
     } else {
       let isTabView = util.isTabbar(path)
-      let pid = curr ? curr.id : null
-      let v = (curr = new View(path))
-      curr.pid = isTabView ? null : pid
+      let pid = currPage ? currPage.id : null
+      let v = (currPage = new View(path))
+      currPage.pid = isTabView ? null : pid
       views[v.id] = v
-      if (isTabView) tabViews[path] = curr
+      if (isTabView) tabViews[path] = currPage
       // return Toast(`无法找到存在的 ${path} 页面`, {type: 'error'})
     }
     onRoute()
     onNavigate(path, 'switchTab')
   },
   navigateBack (delta = 1) {
-    if (!curr) throw new Error('Current page not exists')
-    if (curr.pid == null) return
+    if (!currPage) throw new Error('Current page not exists')
+    if (currPage.pid == null) return
     for (let i = delta; i > 0; i--) {
-      if (curr.pid == null) break
-      curr.destroy()
-      delete views[curr.id]
-      curr = views[curr.pid]
+      if (currPage.pid == null) break
+      currPage.destroy()
+      delete views[currPage.id]
+      currPage = views[currPage.pid]
       onBack()
     }
-    curr.show()
+    currPage.show()
     onRoute()
-    onNavigate(curr.path, 'navigateBack')
+    onNavigate(currPage.path, 'navigateBack')
   },
   openExternal (url) {
     console.log('openExternal start!!!')
-    if (curr) curr.hide()
-    let pid = curr ? curr.id : null
-    let v = (curr = new View(url))
+    if (currPage) currPage.hide()
+    let pid = currPage ? currPage.id : null
+    let v = (currPage = new View(url))
     views[v.id] = v
     v.pid = pid
     v.show()
     onRoute()
   },
   currentView () {
-    return curr
+    return currPage
   },
   getViewById (id) {
     return views[id]

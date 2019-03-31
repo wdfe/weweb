@@ -78,10 +78,10 @@ export default class View extends Emitter {
       backgroundColor: win.backgroundColor || '#fff',
       enablePullDownRefresh: win.enablePullDownRefresh || false
     }
-    let winConfig = win.pages[this.path] || {}
+    let pageConfig = win.pages[this.path] || {}
     Object.keys(obj).forEach(function (key) {
-      if (winConfig.hasOwnProperty(key)) {
-        obj[key] = winConfig[key]
+      if (pageConfig.hasOwnProperty(key)) {
+        obj[key] = pageConfig[key]
       }
     })
     return { window: obj, viewId: this.id }
@@ -169,7 +169,7 @@ export default class View extends Emitter {
      return value==''?value:"#weweb-view-"+self.id+" "+value.replace(/([^\{]+?,)([^\{]+?)/g,"$1#weweb-view-"+self.id+" $2")
      }).join('\n');
      */
-
+ 
     var link = document.createElement('style')
     link.setAttribute('type', 'text/css')
     link.setAttribute('page', path)

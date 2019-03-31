@@ -40,7 +40,8 @@ const createWXVirtualNode = function (
 const createWxVirtualText = function (txt) {
   return new WxVirtualText(txt)
 }
-const createWXVirtualNodeRec = function (opt) {
+
+export const createWXVirtualNodeRec = function (opt) {
   // Recursively
   if (Utils.isString(opt) || (Number(opt) === opt && Number(opt) % 1 === 0)) {
     return createWxVirtualText(String(opt))
@@ -128,14 +129,6 @@ wd.onAppDataChange(
     renderOnDataChange(event)
   })
 )
-
-exparser.addGlobalErrorListener(function (error, errData) {
-  Reporter.errorReport({
-    key: 'webviewScriptError',
-    error: error,
-    extend: errData.message
-  })
-})
 
 export default {
   reset: function () {

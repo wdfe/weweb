@@ -20,3 +20,11 @@ import './view/exparser'
 import './view/exparser-component'
 
 import './view/virtual-dom'
+
+exparser.addGlobalErrorListener(function (error, errData) {
+  Reporter.errorReport({
+    key: 'webviewScriptError',
+    error: error,
+    extend: errData.message
+  })
+})
