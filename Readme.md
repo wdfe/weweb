@@ -86,10 +86,10 @@ NODE_ENV=production DFT_CMP=true ./bin/weweb demos/demo20170111
 ### 开发用命令
 
 ```sh
-# 自动执行rebuild
+# 构建进程
 npm run dev
 
-# 自动重启服务器
+# demo 构建进程
 npm run autostart
 ```
 
@@ -145,7 +145,10 @@ success : function(rt){
 }
 ```
 
-- 跨域请求：当后端接口不支持JSONP时，可以增加requestProxy配置项来设置服务器端代理地址，以实现跨域请求
+## 跨域请求
+- 方案一：默认使用 JSONP 所以请求最终都变为 Get
+
+- 方案二：使用代理服务器, 在 app.json 中增加如下字段
 
 ``` js
 /**
@@ -155,6 +158,13 @@ success : function(rt){
 
 "weweb":{
   "requestProxy":"/remoteProxy"
+}
+```
+
+- 方案三：服务器配置好 cors 请求头, 并在 app.json 中增加如下字段
+```
+"weweb":{
+  "requestType": "ajax"
 }
 ```
 

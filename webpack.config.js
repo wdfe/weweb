@@ -4,15 +4,17 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
-const DIST_PATH = './lib/template/assets/script'
+const DIST_PATH = process.env.DIST_PATH || './lib/template/assets/script'
 const isProd = process.env.NODE_ENV === 'production'
 const showAnalysis = process.env.ANA === 'true'
 const watch = process.env.WATCH === 'true'
+
 // 将 css 从文本中提取出来，参数为资源存放的位置
 let plugins = [new ExtractTextPlugin('../css/weweb.min.css')]
 if (showAnalysis) {
   plugins = plugins.concat([new BundleAnalyzerPlugin()])
 }
+
 if (isProd) {
   plugins = plugins.concat([
     new webpack.DefinePlugin({
@@ -56,6 +58,7 @@ module.exports = {
     path: getPath(DIST_PATH)
   },
   watch: watch,
+  devtool: isProd ? 'source-map' : 'inline-source-map',
   module: {
     loaders: [
       {
@@ -84,7 +87,7 @@ module.exports = {
         test: /\.(jpe?g|png|gif|svg)$/i,
         loaders: [
           // 注意此处 outputPath 为输出结果的地址
-          'file-loader?name=[name].[ext]&publicPath=&outputPath=../images/'
+          'file-loader?name=[name].[ext]&publicPath='
           // 'image-webpack-loader?bypassOnDebug&optimizationLevel=7&interlaced=false'
         ]
       },

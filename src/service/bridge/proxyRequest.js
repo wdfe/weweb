@@ -1,5 +1,5 @@
-var webSocket = null, requestIndex = 0
-var jsonp = function (params, callback, networkTimeout) {
+let webSocket = null, requestIndex = 0
+const jsonp = function (params, callback, networkTimeout) {
   var jsonpName =
     'jsonp_' + Date.now() + '_' + Math.random().toString().substr(2),
     callbackName = 'callback',
@@ -11,7 +11,7 @@ var jsonp = function (params, callback, networkTimeout) {
   script.src = url
   if (typeof networkTimeout === 'number') {
     timeOut = setTimeout(function () {
-      window[jsonpName] = function () {}
+      window[jsonpName] = function () { }
       callback &&
         callback({
           errMsg: 'request:fail'
@@ -35,7 +35,7 @@ var jsonp = function (params, callback, networkTimeout) {
   }
   document.body.appendChild(script)
 }
-var request = function (event, params, callback) {
+const request = function (event, params, callback) {
   requestIndex++
   var url = params.url,
     headers = params.header || {},
@@ -156,7 +156,7 @@ var request = function (event, params, callback) {
   }
 }
 
-var connectSocket = function (event, temp, callback) {
+const connectSocket = function (event, temp, callback) {
   var url = temp.url, header = temp.header
   /* 安全域名检测
     if (!loadFile.checkUrl(url, "webscoket")) {
@@ -225,9 +225,11 @@ var sendSocketMessage = function (event, temp, callback) {
       })
   }
 }
+
+
 export default {
-  request: request,
-  connectSocket: connectSocket,
-  sendSocketMessage: sendSocketMessage,
-  closeSocket: closeSocket
+  request,
+  connectSocket,
+  sendSocketMessage,
+  closeSocket
 }

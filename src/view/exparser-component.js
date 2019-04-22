@@ -474,6 +474,7 @@
   })
 })(window)
 
+// 同步加载的行为和组件
 require('./behaviors/wx-base')
 require('./behaviors/wx-data-component')
 require('./behaviors/wx-disabled')
@@ -503,9 +504,10 @@ require('./components/wx-view')
 require('./components/wx-web-view')
 require('./components/wx-rich-text')
 
-window.exparser.registerAsyncComp = function (names, cb) {
-  let len = names.length
-  names
+// 异步加载的组件
+window.exparser.registerAsyncComp = function (components, cb) {
+  let len = components.length
+  components
     .filter(name => {
       if (window.exparser.componentList[name]) {
         checkState()

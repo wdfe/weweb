@@ -9,8 +9,8 @@
   "scripts": {
     "start": "echo 'Lauching demo' && sh dev.sh",
     "autostart": "nodemon -w demos -w lib/template -d 1.5 -e js,json,wxss,wxml --exec 'sh dev.sh dev'",
-    "dev": "WATCH=true webpack --progress --config webpack.config.js",
-    "dev:forDemo": "DIST_PATH='./wewebTmp/dist/script' WATCH=true webpack --progress --config webpack.config.js",
+    "dev": "cross-env WATCH=true webpack --progress --config webpack.config.js",
+    "dev:forDemo": "cross-env DIST_PATH='./wewebTmp/dist/script' WATCH=true webpack --progress --config webpack.config.js",
     "build": "cross-env NODE_ENV=production webpack --progress --config webpack.config.js",
     "precommit": "lint-staged"
   },
