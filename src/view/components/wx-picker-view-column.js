@@ -466,7 +466,7 @@ export default !(function () {
       return this._current || 0
     },
     _setCurrent: function (indicator) {
-      this._current = indicator
+      this._current = indicator || 0
     },
     _setStyle: function (style) {
       this.$.indicator.setAttribute('style', style)
@@ -518,9 +518,12 @@ export default !(function () {
       this.__handleTouchMove = this._handleTouchMove.bind(this)
       this.__handleTouchEnd = this._handleTouchEnd.bind(this)
       this.$.main.addEventListener('touchstart', this.__handleTouchStart)
-      document.body.addEventListener('touchmove', this.__handleTouchMove)
-      document.body.addEventListener('touchend', this.__handleTouchEnd)
-      document.body.addEventListener('touchcancel', this.__handleTouchEnd)
+      this.$.main.addEventListener('touchmove', this.__handleTouchMove)
+      this.$.main.addEventListener('touchend', this.__handleTouchEnd)
+      this.$.main.addEventListener('touchcancel', this.__handleTouchEnd)
+      // document.body.addEventListener('touchmove', this.__handleTouchMove)
+      // document.body.addEventListener('touchend', this.__handleTouchEnd)
+      // document.body.addEventListener('touchcancel', this.__handleTouchEnd)
     },
     _update: function () {
       this._handlers.update(this._current)
@@ -575,7 +578,8 @@ export default !(function () {
     _handleTouchMove: function (event) {
       var touchInfo = this._touchInfo
       if (touchInfo.trackingID != -1) {
-        event.preventDefault()
+        event.preventDefault();
+        event.stopPropagation();
         var delta = this._findDelta(event)
         if (delta) {
           touchInfo.maxDy = Math.max(touchInfo.maxDy, Math.abs(delta.y))
@@ -597,7 +601,8 @@ export default !(function () {
     _handleTouchEnd: function (event) {
       var touchInfo = this._touchInfo
       if (touchInfo.trackingID != -1) {
-        event.preventDefault()
+        event.preventDefault();
+        event.stopPropagation();
         var delta = this._findDelta(event)
         if (delta) {
           var listener = touchInfo.listener
