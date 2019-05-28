@@ -92,7 +92,7 @@ export default window.exparser.registerElement({
         }
       }
 
-      WeixinJSBridge.invoke(
+      WgWebServiceJSBridge.invoke(
         'showPickerView',
         {
           array: pickerData,
@@ -116,7 +116,7 @@ export default window.exparser.registerElement({
   showDatePickerView: function () {
     var _this = this
     if (!this.disabled) {
-      WeixinJSBridge.invoke(
+      WgWebServiceJSBridge.invoke(
         'showDatePickerView',
         {
           range: {

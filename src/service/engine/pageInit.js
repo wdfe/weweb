@@ -352,7 +352,7 @@ const getRouteToPage = function () {
   return pageRegObjs
 }
 
-wx.onAppRoute(
+wgweb_wx.onAppRoute(
   Reporter.surroundThirdByTryCatch(function (params) {
     var path = params.path,
       webviewId = params.webviewId,
@@ -363,7 +363,7 @@ wx.onAppRoute(
   'onAppRoute'
 )
 
-wx.onWebviewEvent(
+wgweb_wx.onWebviewEvent(
   Reporter.surroundThirdByTryCatch(function (params) {
     var webviewId = params.webviewId,
       eventName = params.eventName,

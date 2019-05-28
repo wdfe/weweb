@@ -139,11 +139,11 @@ export default window.exparser.registerElement({
         window.__canvasNumber__ + __webviewId__
       window.__canvasNumber__ += 1e5
       this._canvasNumber = window.__canvasNumbers__[canvasId]
-      WeixinJSBridge.publish('canvasInsert', {
+      WgWebServiceJSBridge.publish('canvasInsert', {
         canvasId: self.canvasId,
         canvasNumber: self._canvasNumber
       })
-      WeixinJSBridge.subscribe(
+      WgWebServiceJSBridge.subscribe(
         'canvas' + self._canvasNumber + 'actionsChanged',
         function (params) {
           var actions = params.actions,
@@ -152,11 +152,11 @@ export default window.exparser.registerElement({
           self.actionsChanged(actions, reserve)
         }
       )
-      WeixinJSBridge.subscribe(
+      WgWebServiceJSBridge.subscribe(
         'invokeCanvasToDataUrl_' + self._canvasNumber,
         function () {
           var dataUrl = self.$.canvas.toDataURL()
-          WeixinJSBridge.publish('onCanvasToDataUrl_' + self._canvasNumber, {
+          WgWebServiceJSBridge.publish('onCanvasToDataUrl_' + self._canvasNumber, {
             dataUrl: dataUrl
           })
         }
@@ -172,7 +172,7 @@ export default window.exparser.registerElement({
   detached: function () {
     var canvasId = __webviewId__ + 'canvas' + this.canvasId
     delete window.__canvasNumbers__[canvasId]
-    WeixinJSBridge.publish('canvasRemove', {
+    WgWebServiceJSBridge.publish('canvasRemove', {
       canvasId: this.canvasId,
       canvasNumber: this._canvasNumber
     })

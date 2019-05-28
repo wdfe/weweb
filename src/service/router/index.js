@@ -112,7 +112,7 @@ function onBack () {
 function onNavigate (url, type = 'navigateTo') {
   if (!url) throw new Error('url not found')
   if (type == 'reLaunch' && util.isTabbar(curr.path) && curr.query) {
-    console.error('wx.reLaunch 跳转到 tabbar 页面时不允许携带参数，请去除参数或使用 wx.switchTab')
+    console.error('wgweb_wx.reLaunch 跳转到 tabbar 页面时不允许携带参数，请去除参数或使用 wx.switchTab')
     return
   }
   curr.onReady(() => {

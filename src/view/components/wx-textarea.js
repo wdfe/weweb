@@ -234,7 +234,7 @@ export default !(function () {
           offsetTop: this.$$.offsetTop,
           offsetLeft: this.$$.offsetLeft
         }
-        WeixinJSBridge.publish('SPECIAL_PAGE_EVENT', {
+        WgWebServiceJSBridge.publish('SPECIAL_PAGE_EVENT', {
           eventName: this.bindinput,
           ext: {
             setKeyboardValue: !1

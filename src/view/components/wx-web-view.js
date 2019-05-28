@@ -10,7 +10,7 @@ window.exparser.registerElement({
   srcChange: function (e, t) {
     if (this._isReady) {
       var n = this.uuid
-      WeixinJSBridge.invoke(
+      WgWebServiceJSBridge.invoke(
         'updateHTMLWebView',
         { htmlId: n, src: (e || '').trim() },
         function (e) {}
@@ -24,14 +24,14 @@ window.exparser.registerElement({
     this.uuid = this.getPositioningId()
     var t = this,
       n = this.uuid
-    wx.getSystemInfo({
+      wgweb_wx.getSystemInfo({
       success: function (e) {
         t.$$.style.width = e.windowWidth + 'px'
         t.$$.style.height = e.windowHeight + 'px'
         // var i = document.querySelector('body')
         // i.style.height = e.windowHeight + 'px'
         // i.style.overflowY = 'hidden'
-        WeixinJSBridge.invoke(
+        WgWebServiceJSBridge.invoke(
           'insertHTMLWebView',
           {
             htmlId: n,
@@ -52,7 +52,7 @@ window.exparser.registerElement({
   },
   detached: function () {
     var t = this.uuid
-    WeixinJSBridge.invoke('removeHTMLWebView', { htmlId: t }, t => {
+    WgWebServiceJSBridge.invoke('removeHTMLWebView', { htmlId: t }, t => {
       document.body.style.height = ''
       document.body.style.overflowY = ''
       this.inserted = !1

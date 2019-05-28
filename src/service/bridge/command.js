@@ -816,7 +816,7 @@ export function showPickerView (args) {
   picker.show()
   // picker.on('cancel', () => {})
   picker.on('select', n => {
-    WeixinJSBridge.subscribeHandler('showPickerView', {
+    WgWebServiceJSBridge.subscribeHandler('showPickerView', {
       errMsg: 'showPickerView:ok',
       index: n
     })
@@ -828,7 +828,7 @@ export function insertHTMLWebView (args) {
     'webview_site_' + args.htmlId,
     document.querySelector(`#weweb-view-${window.__webviewId__}`)
   )
-  WeixinJSBridge.subscribeHandler('insertHTMLWebView', {
+  WgWebServiceJSBridge.subscribeHandler('insertHTMLWebView', {
     errMsg: 'insertHTMLWebView:ok'
   })
 }
@@ -847,7 +847,7 @@ export function showDatePickerView (args) {
 
   picker.show()
   picker.on('select', val => {
-    WeixinJSBridge.subscribeHandler('showDatePickerView', {
+    WgWebServiceJSBridge.subscribeHandler('showDatePickerView', {
       errMsg: 'showDatePickerView:ok',
       value: val
     })
