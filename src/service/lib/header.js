@@ -17,6 +17,7 @@ let header = {
       backgroundColor: win.navigationBarBackgroundColor,
       color: win.navigationBarTextStyle,
       title: win.navigationBarTitleText,
+      navigationStyle: win.navigationStyle,
       loading: false,
       backText: '返回',
       back: false,
@@ -24,6 +25,7 @@ let header = {
     }
     if (!this.dom) {
       this.dom = {
+        headContainer: this.$('.jshook-ws-head').parentElement, //顶部导航的容器
         head: this.$('.jshook-ws-head'),
         headBack: this.$('.jshook-ws-head-back'),
         headBackText: this.$('.jshook-ws-head-back-text'),
@@ -40,7 +42,15 @@ let header = {
       this.dom.headHome.onclick = this.onHome.bind(null)
       this.dom.headOption.onclick = this.onOptions.bind(null)
     }
-    this.dom.head.style.display = 'block'
+
+    //navigationStyle == 'custom'时，隐藏顶栏容器，同时把底下的容器位移变高
+    if(win.navigationStyle == 'custom'){
+      this.dom.headContainer.style.display = 'none';
+      this.$('.scrollable').style.top = '0px';
+    }else{
+      this.dom.headContainer.style.display = 'block';
+    }
+
     Bus.on('route', this.reset.bind(this))
     this.setState()
   },
@@ -48,10 +58,11 @@ let header = {
     return document.querySelector(name)
   },
   reset: function () {
-    let d = {
+    let temp = {
       backgroundColor: win.navigationBarBackgroundColor,
       color: win.navigationBarTextStyle,
       title: win.navigationBarTitleText,
+      isCustomNavigationStyle: (win.navigationStyle == 'custom'),
       loading: false,
       back: false
     }
@@ -62,6 +73,9 @@ let header = {
 
     let top = tabBar && tabBar.position == 'top'
     let hide = top && util.isTabbar(curr.url)
+    if(temp.isCustomNavigationStyle){
+      hide = true
+    }
     if (curr.isMap) {
       this.setState({
         hide: false,
@@ -76,9 +90,9 @@ let header = {
       this.setState({
         hide,
         backgroundColor:
-          winConfig.navigationBarBackgroundColor || d.backgroundColor,
-        color: winConfig.navigationBarTextStyle || d.color,
-        title: winConfig.navigationBarTitleText || d.title,
+          winConfig.navigationBarBackgroundColor || temp.backgroundColor,
+        color: winConfig.navigationBarTextStyle || temp.color,
+        title: winConfig.navigationBarTitleText || temp.title,
         loading: false,
         backText: '返回',
         sendText: false,
