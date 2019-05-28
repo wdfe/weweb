@@ -163,6 +163,19 @@ export function navigateTo (data) {
   router.navigateTo(data.args.url)
 }
 
+//跳转到其它小程序，这里需要额外加一个小程序名字，或者目标的域名给h5使用
+export function navigateToMiniProgram(params) {
+  console.log('navigateToMiniProgram, todo')
+}
+//分享信息
+export function showShareMenu (params) {
+  console.log('showShareMenu, todo')
+}
+
+export function hideShareMenu(params) {
+  console.log('hideShareMenu, todo')
+}
+
 export function reLaunch (data) {
   router.reLaunch(data.args.url)
 }
