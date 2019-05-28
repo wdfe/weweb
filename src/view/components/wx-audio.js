@@ -145,12 +145,12 @@ export default window.exparser.registerElement({
         typeof player[self.action.method] === 'function' &&
         player[self.action.method]()
     }
-    WgWebServiceJSBridge.subscribe('audio_' + this.id + '_actionChanged', function (
+    WeWebServiceJSBridge.subscribe('audio_' + this.id + '_actionChanged', function (
       t
     ) {
       self.action = t
     })
-    WgWebServiceJSBridge.publish('audioInsert', {
+    WeWebServiceJSBridge.publish('audioInsert', {
       audioId: this.id
     })
     wd.onAppEnterBackground(function (t) {

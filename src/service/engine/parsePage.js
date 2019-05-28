@@ -172,7 +172,7 @@ class PageParser {
         document.addEventListener('pageReRender', execCallback)
       }
       if (window.reRender) {
-        WgWebServiceJSBridge.subscribeHandler('custom_event_appDataChange', {
+        WeWebServiceJSBridge.subscribeHandler('custom_event_appDataChange', {
           data: {
             data: dataObj
           }

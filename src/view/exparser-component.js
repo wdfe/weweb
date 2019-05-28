@@ -35,9 +35,9 @@
   })
 })(window)
 
-// 订阅并转发 WgWebServiceJSBridge 提供的全局事件到 exparser
+// 订阅并转发 WeWebServiceJSBridge 提供的全局事件到 exparser
 ;(function (glob) {
-  WgWebServiceJSBridge.subscribe('onAppRouteDone', function () {
+  WeWebServiceJSBridge.subscribe('onAppRouteDone', function () {
     window.__onAppRouteDone = !0
     exparser.triggerEvent(
       document,
@@ -49,7 +49,7 @@
     )
     document.dispatchEvent(new CustomEvent('pageReRender', {}))
   })
-  WgWebServiceJSBridge.subscribe('setKeyboardValue', function (event) {
+  WeWebServiceJSBridge.subscribe('setKeyboardValue', function (event) {
     event &&
       event.data &&
       exparser.triggerEvent(
@@ -65,7 +65,7 @@
         }
       )
   })
-  WgWebServiceJSBridge.subscribe('hideKeyboard', function (e) {
+  WeWebServiceJSBridge.subscribe('hideKeyboard', function (e) {
     exparser.triggerEvent(
       document,
       'hideKeyboard',
@@ -75,7 +75,7 @@
       }
     )
   })
-  WgWebServiceJSBridge.on('onKeyboardComplete', function (event) {
+  WeWebServiceJSBridge.on('onKeyboardComplete', function (event) {
     exparser.triggerEvent(
       document,
       'onKeyboardComplete',
@@ -88,7 +88,7 @@
       }
     )
   })
-  WgWebServiceJSBridge.on('onKeyboardConfirm', function (event) {
+  WeWebServiceJSBridge.on('onKeyboardConfirm', function (event) {
     exparser.triggerEvent(
       document,
       'onKeyboardConfirm',
@@ -101,7 +101,7 @@
       }
     )
   })
-  WgWebServiceJSBridge.on('onTextAreaHeightChange', function (event) {
+  WeWebServiceJSBridge.on('onTextAreaHeightChange', function (event) {
     exparser.triggerEvent(
       document,
       'onTextAreaHeightChange',
@@ -115,7 +115,7 @@
       }
     )
   })
-  WgWebServiceJSBridge.on('onKeyboardShow', function (event) {
+  WeWebServiceJSBridge.on('onKeyboardShow', function (event) {
     exparser.triggerEvent(
       document,
       'onKeyboardShow',
@@ -456,14 +456,14 @@
               document.body.querySelectorAll(curData.element),
               ele
             ))
-          WgWebServiceJSBridge.publish('analyticsReport', {
+          WeWebServiceJSBridge.publish('analyticsReport', {
             data: data
           })
           break
         }
       }
     }
-  WgWebServiceJSBridge.subscribe('analyticsConfig', function (params) {
+  WeWebServiceJSBridge.subscribe('analyticsConfig', function (params) {
     if (Object.prototype.toString.call(params.data) === '[object Array]') {
       analyticsConfig.data = params.data
       analyticsConfig.selector = []

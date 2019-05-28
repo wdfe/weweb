@@ -69,7 +69,7 @@ export default window.exparser.registerElement({
     }
     this.__handleTouchStart = function (t) {
       ;(self.__touchStartY = t.touches[0].pageY),
-      WgWebServiceJSBridge.invoke(
+      WeWebServiceJSBridge.invoke(
         'disableScrollBounce',
         {
           disable: !0
@@ -85,7 +85,7 @@ export default window.exparser.registerElement({
           self._touchScrollLeft + main.offsetWidth === main.scrollWidth)
     }
     this.__handleTouchEnd = function () {
-      WgWebServiceJSBridge.invoke(
+      WeWebServiceJSBridge.invoke(
         'disableScrollBounce',
         {
           disable: !1

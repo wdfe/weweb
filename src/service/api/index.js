@@ -281,7 +281,7 @@ var apiObj = {
       arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {}
     if (paramCheck('switchTab', params, { url: '' })) {
       ;/\?.*$/.test(params.url) &&
-        (console.warn('wgweb_wx.switchTab: url 不支持 queryString'),
+        (console.warn('weweb_wx.switchTab: url 不支持 queryString'),
           (params.url = params.url.replace(/\?.*$/, '')))
       params.url = utils.getRealRoute(currUrl, params.url)
       params.url = utils.encodeUrlQuery(params.url)
@@ -1829,5 +1829,5 @@ bridge.onMethod('onMapClick', function () {
 })
 
 utils.copyObj(wx, apiObj)
-window.wgweb_wx = wx
+window.weweb_wx = wx
 export default wx

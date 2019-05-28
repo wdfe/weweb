@@ -46,7 +46,7 @@ function on(eventName, handler) {
   send(eventName, {}, true)
 }
 
-window.WgWebServiceJSBridge = {
+window.WeWebServiceJSBridge = {
   pull,
   invoke,
   on,
@@ -87,7 +87,7 @@ function publish() {
       timestamp: Date.now()
     }
   }
-  WgWebServiceJSBridge.publish.apply(WgWebServiceJSBridge, params)
+  WeWebServiceJSBridge.publish.apply(WeWebServiceJSBridge, params)
 }
 
 function subscribe() {
@@ -97,7 +97,7 @@ function subscribe() {
     var data = args.data
     typeof callback === 'function' && callback(data, ext)
   }
-  WgWebServiceJSBridge.subscribe.apply(WgWebServiceJSBridge, params)
+  WeWebServiceJSBridge.subscribe.apply(WeWebServiceJSBridge, params)
 }
 
 function invokeMethod(eventName, options = {}, hooks = {}) {
