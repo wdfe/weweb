@@ -842,8 +842,9 @@ const utils = {
         }, {}),
         urlQueryArr = []
       for (var i in queryParams) {
+        //解决页面跳转带特殊参数传参出现解码失败的问题--会重复encode
         queryParams.hasOwnProperty(i) &&
-          urlQueryArr.push(i + '=' + encodeURIComponent(queryParams[i]))
+          urlQueryArr.push(i + '=' + encodeURIComponent(decodeURIComponent(queryParams[i])))
       }
       return urlQueryArr.length > 0
         ? urlPath + '?' + urlQueryArr.join('&')
