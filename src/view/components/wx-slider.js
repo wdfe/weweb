@@ -77,7 +77,10 @@ export default window.exparser.registerElement({
   _onTrack: function (event) {
     if (!this.disabled) {
       return event.detail.state === 'move'
-        ? (this._onUserChangedValue(event), !1)
+        ? (this._onUserChangedValue(event), 
+        this.triggerEvent('changing', {
+          value: this.value
+        }), !1)
         : void (
           event.detail.state === 'end' &&
             this.triggerEvent('change', {
@@ -90,6 +93,9 @@ export default window.exparser.registerElement({
     this.disabled ||
       (this._onUserChangedValue(event),
         this.triggerEvent('change', {
+          value: this.value
+        }),
+        this.triggerEvent('changing', {
           value: this.value
         }))
   },
