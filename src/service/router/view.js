@@ -124,15 +124,15 @@ export default class View extends Emitter {
         ext = data.ext
 
       if (command === 'MSG_FROM_APPSERVICE') {
-        WeixinJSBridge.subscribeHandler(msg.eventName, msg.data)
+        WeWebServiceJSBridge.subscribeHandler(msg.eventName, msg.data)
       } else if (
         command == 'GET_JSSDK_RES' ||
         command == 'INVOKE_SDK' ||
         /^private_/.test(msg.sdkName)
       ) {
-        WeixinJSBridge.subscribeHandler(msg.sdkName, msg.res, ext) // ext其实也没用 了
+        WeWebServiceJSBridge.subscribeHandler(msg.sdkName, msg.res, ext) // ext其实也没用 了
       } else if (command === 'STOP_PULL_DOWN_REFRESH') {
-        WeixinJSBridge.pull.reset()
+        WeWebServiceJSBridge.pull.reset()
       }
     })
   }

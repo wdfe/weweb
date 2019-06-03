@@ -163,6 +163,19 @@ export function navigateTo (data) {
   router.navigateTo(data.args.url)
 }
 
+//跳转到其它小程序，这里需要额外加一个小程序名字，或者目标的域名给h5使用
+export function navigateToMiniProgram(params) {
+  console.log('navigateToMiniProgram, todo')
+}
+//分享信息
+export function showShareMenu (params) {
+  console.log('showShareMenu, todo')
+}
+
+export function hideShareMenu(params) {
+  console.log('hideShareMenu, todo')
+}
+
 export function reLaunch (data) {
   router.reLaunch(data.args.url)
 }
@@ -803,7 +816,7 @@ export function showPickerView (args) {
   picker.show()
   // picker.on('cancel', () => {})
   picker.on('select', n => {
-    WeixinJSBridge.subscribeHandler('showPickerView', {
+    WeWebServiceJSBridge.subscribeHandler('showPickerView', {
       errMsg: 'showPickerView:ok',
       index: n
     })
@@ -815,7 +828,7 @@ export function insertHTMLWebView (args) {
     'webview_site_' + args.htmlId,
     document.querySelector(`#weweb-view-${window.__webviewId__}`)
   )
-  WeixinJSBridge.subscribeHandler('insertHTMLWebView', {
+  WeWebServiceJSBridge.subscribeHandler('insertHTMLWebView', {
     errMsg: 'insertHTMLWebView:ok'
   })
 }
@@ -834,7 +847,7 @@ export function showDatePickerView (args) {
 
   picker.show()
   picker.on('select', val => {
-    WeixinJSBridge.subscribeHandler('showDatePickerView', {
+    WeWebServiceJSBridge.subscribeHandler('showDatePickerView', {
       errMsg: 'showDatePickerView:ok',
       value: val
     })

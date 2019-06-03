@@ -247,7 +247,7 @@ export default !(function () {
           offsetTop: this.$$.offsetTop,
           offsetLeft: this.$$.offsetLeft
         }
-        WeixinJSBridge.publish('SPECIAL_PAGE_EVENT', {
+        WeWebServiceJSBridge.publish('SPECIAL_PAGE_EVENT', {
           eventName: this.bindinput,
           data: {
             ext: {

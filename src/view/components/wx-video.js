@@ -259,7 +259,7 @@ export const Video = window.exparser.registerElement({
   attached: function () {
     // var e = this
     var self = this
-    WeixinJSBridge.publish('videoPlayerInsert', {
+    WeWebServiceJSBridge.publish('videoPlayerInsert', {
       domId: this.id,
       videoPlayerId: 0
     })
@@ -317,7 +317,7 @@ export const Video = window.exparser.registerElement({
       })
     }
 
-    WeixinJSBridge.subscribe('video_' + this.id + '_actionChanged', function (
+    WeWebServiceJSBridge.subscribe('video_' + this.id + '_actionChanged', function (
       res
     ) {
       self.action = res

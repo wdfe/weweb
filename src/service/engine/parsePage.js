@@ -9,7 +9,7 @@ const pageEvents = [
   'onRouteEnd',
   'onHide',
   'onUnload'
-]
+];
 const isSysAttr = function (key) {
   // 校验e是否为系统事件或属性
   for (var i = 0; i < pageEvents.length; ++i) {
@@ -172,7 +172,7 @@ class PageParser {
         document.addEventListener('pageReRender', execCallback)
       }
       if (window.reRender) {
-        WeixinJSBridge.subscribeHandler('custom_event_appDataChange', {
+        WeWebServiceJSBridge.subscribeHandler('custom_event_appDataChange', {
           data: {
             data: dataObj
           }

@@ -42,7 +42,7 @@ var userApi = {
   },
   authorize: function (event, temp, sendMsg) {
     sendMsg({
-      errMsg: 'authorize:fail'
+      errMsg: 'authorize:ok'
     })
   },
   operateWXData: function (event, temp, sendMsg) {

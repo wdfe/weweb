@@ -262,12 +262,26 @@ var apiObj = {
         })
     }
   },
+  //跳转到其它小程序，这里需要额外加一个小程序名字，或者目标的域名给h5使用
+  navigateToMiniProgram: function (params) {
+    arguments.length > 1 && void 0 !== arguments[1] && arguments[1]
+    bridge.invokeMethod('showToast', {title:`请打开【${params.appName}】小程序查看更多功能`})
+    bridge.invokeMethod('navigateToMiniProgram', params)
+  },
+  showShareMenu : function (params) {
+    console.log('showShareMenu, todo')
+    bridge.invokeMethod('showShareMenu', {})
+  },
+  hideShareMenu: function (params) {
+    console.log('hideShareMenu, todo')
+    bridge.invokeMethod('hideShareMenu', {})
+  },
   switchTab: function () {
     var params =
       arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {}
     if (paramCheck('switchTab', params, { url: '' })) {
       ;/\?.*$/.test(params.url) &&
-        (console.warn('wx.switchTab: url 不支持 queryString'),
+        (console.warn('weweb_wx.switchTab: url 不支持 queryString'),
           (params.url = params.url.replace(/\?.*$/, '')))
       params.url = utils.getRealRoute(currUrl, params.url)
       params.url = utils.encodeUrlQuery(params.url)
@@ -940,6 +954,20 @@ var apiObj = {
       }
     )
   },
+
+  //这个方法，暂时没啥用
+  getSetting: function (params) {
+    console.log('getSetting', params)
+    utils.assign(
+      {
+        success:()=>{},
+        fail:()=>{},
+        complete:()=>{}
+      },
+      params
+    );
+  },
+
   getFriends: function (params) {
     bridge.invokeMethod(
       'operateWXData',
@@ -1801,5 +1829,5 @@ bridge.onMethod('onMapClick', function () {
 })
 
 utils.copyObj(wx, apiObj)
-window.wx = wx
+window.weweb_wx = wx
 export default wx

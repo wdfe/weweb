@@ -97,7 +97,7 @@ window.exparser.registerElement({
   _update: function (opt, t) {
     ;(opt.mapId = this._mapId),
     (opt.hide = this.hidden),
-    WeixinJSBridge.invoke('updateMap', opt, function (e) {})
+    WeWebServiceJSBridge.invoke('updateMap', opt, function (e) {})
   },
   _updatePosition: function () {},
   _transformPath: function (path, t) {
@@ -163,7 +163,7 @@ window.exparser.registerElement({
     this._mapId &&
       (((this.markers && this.markers.length > 0) ||
         (this.covers && this.covers.length > 0)) &&
-        WeixinJSBridge.invoke(
+        WeWebServiceJSBridge.invoke(
           'addMapMarkers',
           {
             mapId: this._mapId,
@@ -173,7 +173,7 @@ window.exparser.registerElement({
         ),
         this.includePoints &&
         this.includePoints.length > 0 &&
-        WeixinJSBridge.invoke(
+        WeWebServiceJSBridge.invoke(
           'includeMapPoints',
           {
             mapId: this._mapId,
@@ -183,7 +183,7 @@ window.exparser.registerElement({
         ),
         this.polyline &&
         this.polyline.length > 0 &&
-        WeixinJSBridge.invoke(
+        WeWebServiceJSBridge.invoke(
           'addMapLines',
           {
             mapId: this._mapId,
@@ -193,7 +193,7 @@ window.exparser.registerElement({
         ),
         this.circles &&
         this.circles.length > 0 &&
-        WeixinJSBridge.invoke(
+        WeWebServiceJSBridge.invoke(
           'addMapCircles',
           {
             mapId: this._mapId,
@@ -203,7 +203,7 @@ window.exparser.registerElement({
         ),
         this.controls &&
         this.controls.length > 0 &&
-        WeixinJSBridge.invoke(
+        WeWebServiceJSBridge.invoke(
           'addMapControls',
           {
             mapId: this._mapId,
@@ -252,11 +252,11 @@ window.exparser.registerElement({
       function () {
         self._mapId = __map_jssdk_id++
         self._ready()
-        WeixinJSBridge.subscribe('doMapAction' + self._mapId, function (res) {
+        WeWebServiceJSBridge.subscribe('doMapAction' + self._mapId, function (res) {
           if (self._map && self._mapId === res.data.mapId) {
             if (res.data.method === 'getMapCenterLocation') {
               var center = self._map.getCenter()
-              WeixinJSBridge.publish('doMapActionCallback', {
+              WeWebServiceJSBridge.publish('doMapActionCallback', {
                 mapId: self._mapId,
                 callbackId: res.data.callbackId,
                 method: res.data.method,
@@ -266,7 +266,7 @@ window.exparser.registerElement({
             } else {
               res.data.method === 'moveToMapLocation' &&
                 self.showLocation &&
-                WeixinJSBridge.invoke('private_geolocation', {}, function (res) {
+                WeWebServiceJSBridge.invoke('private_geolocation', {}, function (res) {
                   try {
                     res = JSON.parse(res)
                   } catch (e) {
@@ -285,7 +285,7 @@ window.exparser.registerElement({
             }
           }
         })
-        WeixinJSBridge.publish('mapInsert', {
+        WeWebServiceJSBridge.publish('mapInsert', {
           domId: self.id,
           mapId: self._mapId,
           showLocation: self.showLocation,
@@ -522,7 +522,7 @@ window.exparser.registerElement({
       ? (this._posOverlay &&
           (this._posOverlay.setMap(null), (this._posOverlay = null)),
         location &&
-          WeixinJSBridge.invoke('private_geolocation', {}, function (res) {
+          WeWebServiceJSBridge.invoke('private_geolocation', {}, function (res) {
             try {
               res = JSON.parse(res)
             } catch (e) {
