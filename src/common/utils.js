@@ -452,7 +452,7 @@ const ua = window.navigator.userAgent.toLowerCase()
 const platform = /(iphone|ipad)/.test(ua)
   ? 'ios'
   : /android/.test(ua) ? 'android' : ''
-const screenWidth = (platform && window.innerWidth) || 375
+const screenWidth = (platform && screen.width) || 375
 const devicePixelRatio = window.devicePixelRatio || 2
 const SMALL_NUM = 1e-4
 const rpxToPxNum = function (rpxNum) {

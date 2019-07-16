@@ -251,7 +251,7 @@ class ImagesPreview extends Emitter {
     }
   }
   positionWrapper (wrapper, image) {
-    let vw = Math.max(doc.documentElement.clientWidth, window.innerWidth || 0)
+    let vw = Math.max(doc.documentElement.clientWidth, screen.width || 0)
     let dims = imgDimension(image)
     let h = (vw - 10) * dims.height / dims.width
     let top = Math.min(this.container.clientHeight - 10, h) / 2
@@ -432,7 +432,7 @@ function imgDimension (image) {
 }
 
 function viewportWidth () {
-  return Math.max(doc.documentElement.clientWidth, window.innerWidth || 0)
+  return Math.max(doc.documentElement.clientWidth, screen.width || 0)
 }
 
 function preventDefault (e) {

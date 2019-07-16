@@ -104,7 +104,7 @@ export default !(function () {
     attached: function () {
       var self = this
       this.__attached = !0
-      this.__scale = 750 / window.innerWidth
+      this.__scale = 750 / screen.width
       this.getComputedStyle()
       this.checkRows(this.value)
       this.__updateTextArea = this.updateTextArea.bind(this)
