@@ -6,7 +6,7 @@ const init = function () {
   document.addEventListener(
     'DOMContentLoaded',
     function () {
-      let screenWidth = (utils.getPlatform() && window.innerWidth) || 375
+      let screenWidth = (utils.getPlatform() && screen.width) || 375
       document.documentElement.style.fontSize =
         screenWidth / Enums.RPX_RATE + 'px'
     },

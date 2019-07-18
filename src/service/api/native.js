@@ -4,8 +4,8 @@ function systemInfo () {
   return {
     model: /iPhone/.test(navigator.userAgent) ? 'iPhone' : 'Android',
     pixelRatio: window.devicePixelRatio || 1,
-    windowWidth: window.innerWidth || 0,
-    windowHeight: window.innerHeight || 0,
+    windowWidth: screen.width || 0,
+    windowHeight: screen.height || 0,
     language: window.navigator.userLanguage || window.navigator.language,
     platform: 'weweb',
     version: '0.0.1'
