@@ -26,19 +26,17 @@ export default function ({ itemList, itemColor = '#000000' }) {
   if (el && el.parentNode) el.parentNode.removeChild(el)
 
   el = domify(fn({ itemList, itemColor }))
-  setTimeout(function () {
-    // 必须延迟一些，要不然会立即触发click
-    document.body.appendChild(el)
-  }, 100)
   let called = false
-  return new Promise(resolve => {
+  return new Promise((resolve,reject) => {
     el.addEventListener(
       'click',
       e => {
+        e.preventDefault();
+        e.stopPropagation();
         if (called) return
         if (classes(e.target).has('wx-action-sheet-mask')) {
           called = true
-          resolve({ cancel: true })
+          reject({ cancel:true, errMsg:"showActionSheet:fail cancel" })
         } else if (classes(e.target).has('wx-action-sheet-item')) {
           called = true
           resolve({
@@ -47,11 +45,16 @@ export default function ({ itemList, itemColor = '#000000' }) {
           })
         } else if (classes(e.target).has('wx-action-sheet-cancel')) {
           called = true
-          resolve({ cancel: true })
+          reject({ cancel:true, errMsg:"showActionSheet:fail cancel" })
         }
         if (called && el && el.parentNode) el.parentNode.removeChild(el)
       },
       false
     )
+    // 解决遮罩弹框事件穿透的问题
+    setTimeout(function () {
+      // 必须延迟一些，要不然会立即触发click
+      document.body.appendChild(el)
+    }, 100)
   })
 }

@@ -784,6 +784,9 @@ export function showActionSheet (data) {
   args.itemList = args.itemList.slice(0, 6)
   actionSheet(args).then(res => {
     onSuccess(data, res)
+  }).catch((res) => {
+    console.log('res', res);
+    onError(data, res)
   })
 }
 
