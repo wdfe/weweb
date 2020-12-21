@@ -107,7 +107,7 @@
     "jsondiffpatch": "^0.3.11",
     "lint-staged": "^7.2.0",
     "minimatch": "^3.0.4",
-    "node-notifier": "^5.2.1",
+    "node-notifier": "^8.0.1",
     "node-serial": "^0.1.1",
     "nodemon": "^1.17.5",
     "nprogress": "^0.2.0",
